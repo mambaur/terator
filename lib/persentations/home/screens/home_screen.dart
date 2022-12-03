@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:terator/core/styles.dart';
+import 'package:terator/persentations/letters/screens/letter_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -37,24 +38,35 @@ class _HomeScreenState extends State<HomeScreen> {
                     //     color: Style.hexToColor('#23074d')),
                     borderRadius: BorderRadius.circular(10)),
                 child: Container(
-                  margin: const EdgeInsets.only(left: 15),
-                  child: TextField(
-                    // controller: _searchController,
-                    textInputAction: TextInputAction.search,
-                    onSubmitted: (value) {
-                      // context.read<SearchWordProvider>().q = value;
-                      // _refresh();
-                    },
-                    decoration: InputDecoration(
-                        isDense: true,
-                        border: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        disabledBorder: InputBorder.none,
-                        hintStyle: TextStyle(
-                            color: Colors.grey.withOpacity(0.5), fontSize: 14),
-                        hintText: 'Cari template surat..'),
+                  margin: const EdgeInsets.only(left: 15, right: 15),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          // controller: _searchController,
+                          textInputAction: TextInputAction.search,
+                          onSubmitted: (value) {
+                            // context.read<SearchWordProvider>().q = value;
+                            // _refresh();
+                          },
+                          decoration: InputDecoration(
+                              isDense: true,
+                              border: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              errorBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              hintStyle: TextStyle(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  fontSize: 14),
+                              hintText: 'Cari template surat..'),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      const Icon(Icons.search, color: bSecondary)
+                    ],
                   ),
                 ),
               ),
@@ -92,6 +104,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                   child: ListTile(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (builder) {
+                        return const LetterScreen();
+                      }));
+                    },
                     title: Text('Surat Izin Sekolah'),
                     leading: Icon(Icons.description_outlined, color: bInfo),
                     trailing: Icon(Icons.trending_flat, color: bSecondary),

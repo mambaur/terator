@@ -1,26 +1,31 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:terator/data/letter_data.dart';
 
-class LetterEditor extends StatefulWidget {
-  const LetterEditor({super.key});
+class LetterEditorScreen extends StatefulWidget {
+  const LetterEditorScreen({super.key});
 
   @override
-  State<LetterEditor> createState() => _LetterEditorState();
+  State<LetterEditorScreen> createState() => _LetterEditorScreenState();
 }
 
-class _LetterEditorState extends State<LetterEditor> {
+class _LetterEditorScreenState extends State<LetterEditorScreen> {
   HtmlEditorController controller = HtmlEditorController();
 
   convert(String htmlData, String name) async {
     var targetPath = await _localPath;
     var targetFileName = name;
+    var html = '<div style="margin: 50px">$htmlData</div>';
 
     var generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
-        htmlData, targetPath!, targetFileName);
+        html, targetPath!, targetFileName);
     print(generatedPdfFile);
     // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     //   content: Text(generatedPdfFile.toString()),
@@ -63,7 +68,10 @@ class _LetterEditorState extends State<LetterEditor> {
             IconButton(
                 onPressed: () async {
                   String data = await controller.getText();
-                  convert(data, "Test 2");
+                  Clipboard.setData(ClipboardData(text: data)).then((_) {
+                    Fluttertoast.showToast(msg: 'Html berhasil disalin.');
+                  });
+                  convert(data, "Test 4");
                 },
                 icon: Icon(Icons.save))
           ],
@@ -77,8 +85,12 @@ class _LetterEditorState extends State<LetterEditor> {
                 callbacks: Callbacks(onImageUpload: (file) {
                   print(file.base64);
                 }, onInit: () {
-                  controller.setText(
-                      "<p>Hello bro</p><img width='20%' src='$image64'>");
+                  // String text =
+                  //     LetterData.html('surat_izin_sekolah', image: image64);
+                  String text = LetterData.html('surat_izin_sekolah',
+                      image:
+                          "<div style='margin-top:10px;margin-bottom:10px;text-align: right;'><img width='50px' src='$image64'></div>");
+                  controller.setText(text);
                 }),
                 htmlToolbarOptions: HtmlToolbarOptions(),
                 htmlEditorOptions: HtmlEditorOptions(
