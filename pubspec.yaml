@@ -20,6 +20,7 @@ dependencies:
   cached_network_image: ^3.2.3
   google_fonts: ^3.0.1
   intl: ^0.17.0
+  sqflite: ^2.2.1
   
   cupertino_icons: ^1.0.2
 
