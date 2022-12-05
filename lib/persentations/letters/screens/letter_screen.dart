@@ -54,7 +54,7 @@ class _LetterScreenState extends State<LetterScreen> {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (builder) {
                         return LetterEditorScreen(
-                          account: AccountModel(),
+                          account: AccountModel(id: 1),
                         );
                       }));
                     },
@@ -81,7 +81,7 @@ class _LetterScreenState extends State<LetterScreen> {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (builder) {
                         return LetterEditorScreen(
-                          account: AccountModel(),
+                          account: AccountModel(id: 1),
                         );
                       }));
                     },

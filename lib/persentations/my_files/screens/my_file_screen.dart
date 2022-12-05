@@ -1,5 +1,11 @@
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
+import 'package:terator/core/loading_overlay.dart';
 import 'package:terator/core/styles.dart';
+import 'package:terator/models/letter_model.dart';
+import 'package:terator/persentations/my_files/cubits/file_cubit/file_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:terator/repositories/letter_repository.dart';
 
 class MyFileScreen extends StatefulWidget {
   const MyFileScreen({super.key});
@@ -9,83 +15,134 @@ class MyFileScreen extends StatefulWidget {
 }
 
 class _MyFileScreenState extends State<MyFileScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-          // controller: _scrollController,
-          physics: const AlwaysScrollableScrollPhysics(),
-          slivers: [
-            SliverList(
-                delegate: SliverChildListDelegate([
-              SizedBox(
-                height: 15,
-              ),
-              Container(
-                  margin:
-                      const EdgeInsets.only(left: 15, right: 15, bottom: 15),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 7,
-                        offset: const Offset(1, 3),
-                      )
-                    ],
-                  ),
-                  child: ListTile(
-                    onTap: () {
-                      _showDetailFileModal();
-                    },
-                    title: Text(
-                      'Surat Izin Sekolah',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    subtitle: Text('Monday, 12 Januari 2022 12:00',
-                        maxLines: 1, overflow: TextOverflow.ellipsis),
-                    leading: Icon(Icons.picture_as_pdf, color: bSecondary),
-                    trailing:
-                        Icon(Icons.keyboard_arrow_down, color: bSecondary),
-                  )),
-              Container(
-                  margin:
-                      const EdgeInsets.only(left: 15, right: 15, bottom: 15),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 7,
-                        offset: const Offset(1, 3),
-                      )
-                    ],
-                  ),
-                  child: ListTile(
-                    onTap: () {
-                      _showDetailFileModal();
-                    },
-                    title: Text(
-                      'Surat Izin Sekolah',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    subtitle: Text('Monday, 12 Januari 2022 12:00',
-                        maxLines: 1, overflow: TextOverflow.ellipsis),
-                    leading: Icon(Icons.picture_as_pdf, color: bSecondary),
-                    trailing:
-                        Icon(Icons.keyboard_arrow_down, color: bSecondary),
-                  )),
-            ])),
-            SliverList(delegate: SliverChildListDelegate([])),
-          ]),
+  final LetterRepository _letterRepo = LetterRepository();
+  final ScrollController _scrollController = ScrollController();
+
+  void onScroll() {
+    double maxScroll = _scrollController.position.maxScrollExtent;
+    double currentScroll = _scrollController.position.pixels;
+
+    if (currentScroll == maxScroll && !context.read<FileCubit>().hasReachMax) {
+      context.read<FileCubit>().getFiles(isInit: false);
+    }
+  }
+
+  Future<void> _refresh() async {
+    context.read<FileCubit>().getFiles(isInit: true);
+  }
+
+  Future<void> delete(LetterModel letter) async {
+    LoadingOverlay.show(context);
+    await _letterRepo.delete(letter.id!);
+    _refresh();
+    // ignore: use_build_context_synchronously
+    LoadingOverlay.hide(context);
+    CoolAlert.show(
+      backgroundColor: Colors.white,
+      context: context,
+      type: CoolAlertType.success,
+      title: "Sukses!!!",
+      text: "Surat berhasil dihapus!",
     );
   }
 
-  Future<void> _showDetailFileModal() {
+  @override
+  void initState() {
+    context.read<FileCubit>().getFiles(isInit: true);
+
+    _scrollController.addListener(onScroll);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: RefreshIndicator(
+        backgroundColor: Colors.white,
+        color: Colors.blue.shade700,
+        displacement: 20,
+        onRefresh: () => _refresh(),
+        child: CustomScrollView(
+            controller: _scrollController,
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverList(
+                  delegate: SliverChildListDelegate([
+                BlocBuilder<FileCubit, FileState>(
+                  builder: (context, state) {
+                    if (state.status == FileStatusCubit.success) {
+                      return ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.only(top: 15),
+                        itemCount: state.hasReachMax
+                            ? state.letters!.length
+                            : state.letters!.length + 1,
+                        itemBuilder: (context, index) {
+                          if (index < state.letters!.length) {
+                            return Container(
+                                margin: const EdgeInsets.only(
+                                    left: 15, right: 15, bottom: 15),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 7,
+                                      offset: const Offset(1, 3),
+                                    )
+                                  ],
+                                ),
+                                child: ListTile(
+                                  onTap: () {
+                                    _showDetailFileModal(state.letters![index]);
+                                  },
+                                  title: Text(
+                                    state.letters![index].title ?? '',
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  subtitle: Text(
+                                      state.letters![index].createdAt ?? '',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis),
+                                  leading: const Icon(Icons.picture_as_pdf,
+                                      color: bSecondary),
+                                  trailing: const Icon(
+                                      Icons.keyboard_arrow_down,
+                                      color: bSecondary),
+                                ));
+                          } else {
+                            return Container(
+                              padding: const EdgeInsets.all(15.0),
+                              alignment: Alignment.center,
+                              child: const CircularProgressIndicator(
+                                color: bInfo,
+                              ),
+                            );
+                          }
+                        },
+                      );
+                    } else {
+                      return Container(
+                        padding: const EdgeInsets.all(15.0),
+                        alignment: Alignment.topCenter,
+                        child: const CircularProgressIndicator(
+                          color: bInfo,
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ])),
+              SliverList(delegate: SliverChildListDelegate([])),
+            ]),
+      ),
+    );
+  }
+
+  Future<void> _showDetailFileModal(LetterModel letter) {
     return showModalBottomSheet<void>(
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
@@ -106,10 +163,10 @@ class _MyFileScreenState extends State<MyFileScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    const Text(
-                      '📃 Surat Izin Sekolah',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                    Text(
+                      '📃 ${letter.title}',
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.w500),
                     ),
                     const SizedBox(
                       height: 20,
@@ -129,6 +186,10 @@ class _MyFileScreenState extends State<MyFileScreen> {
                       ),
                     ),
                     ListTile(
+                      onTap: () {
+                        Navigator.pop(context);
+                        _showDeleteDialog(letter);
+                      },
                       title: Text('Hapus'),
                       leading: Icon(
                         Icons.delete,
@@ -140,6 +201,39 @@ class _MyFileScreenState extends State<MyFileScreen> {
               ],
             ),
           ),
+        );
+      },
+    );
+  }
+
+  Future<void> _showDeleteDialog(LetterModel letter) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Apakah kamu yakin ingin menhapus ${letter.title}'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                'Batal',
+                style: TextStyle(color: bSecondary),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text(
+                'Hapus',
+                style: TextStyle(color: bInfo, fontWeight: FontWeight.bold),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                delete(letter);
+              },
+            ),
+          ],
         );
       },
     );

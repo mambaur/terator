@@ -90,7 +90,7 @@ class DatabaseInstance {
             $letterHtml TEXT NULL,
             $letterWithSignature INTEGER NULL,
             $letterCreatedAt TEXT NULL,
-            $letterUpdatedAt TEXT NULL,
+            $letterUpdatedAt TEXT NULL
           )
           ''');
   }

@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+// ignore: depend_on_referenced_packages
 import 'package:meta/meta.dart';
 import 'package:terator/models/letter_model.dart';
 import 'package:terator/repositories/letter_repository.dart';
@@ -24,7 +25,7 @@ class FileCubit extends Cubit<FileState> {
           await _letterRepo.all(page: _page, limit: _limit);
       _data = response;
       hasReachMax = _data.length < _limit ? true : false;
-      return emit(FileState(
+      emit(FileState(
           status: FileStatusCubit.success,
           hasReachMax: hasReachMax,
           letters: _data));
@@ -34,7 +35,7 @@ class FileCubit extends Cubit<FileState> {
           await _letterRepo.all(page: _page, limit: _limit);
       _data.addAll(response);
       hasReachMax = (response).length < _limit ? true : false;
-      return emit(FileState(
+      emit(FileState(
           status: FileStatusCubit.success,
           hasReachMax: hasReachMax,
           letters: _data));

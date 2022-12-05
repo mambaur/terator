@@ -1,5 +1,15 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
+import 'package:terator/core/loading_overlay.dart';
 import 'package:terator/core/styles.dart';
+import 'package:terator/models/account_model.dart';
+import 'package:terator/persentations/account/account_cubits/cubit/account_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:terator/persentations/account/screens/account_create_screen.dart';
+import 'package:terator/persentations/account/screens/account_update_screen.dart';
+import 'package:terator/repositories/account_repository.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -9,84 +19,243 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends State<AccountScreen> {
+  final ScrollController _scrollController = ScrollController();
+  final AccountRepository _accountRepo = AccountRepository();
+
+  void onScroll() {
+    double maxScroll = _scrollController.position.maxScrollExtent;
+    double currentScroll = _scrollController.position.pixels;
+
+    if (currentScroll == maxScroll &&
+        !context.read<AccountCubit>().hasReachMax) {
+      context.read<AccountCubit>().getAccounts(isInit: false);
+    }
+  }
+
+  Future<void> _refresh() async {
+    context.read<AccountCubit>().getAccounts(isInit: true);
+  }
+
+  Future<void> delete(AccountModel account) async {
+    LoadingOverlay.show(context);
+    await _accountRepo.delete(account.id!);
+    _refresh();
+    LoadingOverlay.hide(context);
+    CoolAlert.show(
+      backgroundColor: Colors.white,
+      context: context,
+      type: CoolAlertType.success,
+      title: "Sukses!!!",
+      text: "Akun berhasil dihapus!",
+    );
+  }
+
+  @override
+  void initState() {
+    context.read<AccountCubit>().getAccounts(isInit: true);
+
+    _scrollController.addListener(onScroll);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-          // controller: _scrollController,
-          physics: const AlwaysScrollableScrollPhysics(),
-          slivers: [
-            SliverList(
-                delegate: SliverChildListDelegate([
-              SizedBox(
-                height: 15,
-              ),
-              Container(
-                  margin:
-                      const EdgeInsets.only(left: 15, right: 15, bottom: 15),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 7,
-                        offset: const Offset(1, 3),
-                      )
-                    ],
-                  ),
-                  child: ListTile(
-                    onTap: () {
-                      // _showDetailFileModal();
-                    },
-                    title: Text(
-                      'Roziq Alwi',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    subtitle: Text('Surabaya',
-                        maxLines: 1, overflow: TextOverflow.ellipsis),
-                    leading: Icon(Icons.face, color: bSecondary),
-                    trailing:
-                        Icon(Icons.delete_forever_outlined, color: bSecondary),
-                  )),
-              Container(
-                  margin:
-                      const EdgeInsets.only(left: 15, right: 15, bottom: 15),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 7,
-                        offset: const Offset(1, 3),
-                      )
-                    ],
-                  ),
-                  child: ListTile(
-                    onTap: () {
-                      // _showDetailFileModal();
-                    },
-                    title: Text(
-                      'Zakia Fhadillah',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    subtitle: Text('Surabaya',
-                        maxLines: 1, overflow: TextOverflow.ellipsis),
-                    leading: Icon(Icons.face, color: bSecondary),
-                    trailing:
-                        Icon(Icons.delete_forever_outlined, color: bSecondary),
-                  )),
-            ])),
-            SliverList(delegate: SliverChildListDelegate([])),
-          ]),
+      body: RefreshIndicator(
+        backgroundColor: Colors.white,
+        color: Colors.blue.shade700,
+        displacement: 20,
+        onRefresh: () => _refresh(),
+        child: CustomScrollView(
+            controller: _scrollController,
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverList(
+                  delegate: SliverChildListDelegate([
+                BlocBuilder<AccountCubit, AccountState>(
+                  builder: (context, state) {
+                    if (state.status == AccountStatusCubit.success) {
+                      return ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.only(top: 15),
+                        itemCount: state.hasReachMax
+                            ? state.accounts!.length
+                            : state.accounts!.length + 1,
+                        itemBuilder: (context, index) {
+                          if (index < state.accounts!.length) {
+                            return Container(
+                                margin: const EdgeInsets.only(
+                                    left: 15, right: 15, bottom: 15),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 7,
+                                      offset: const Offset(1, 3),
+                                    )
+                                  ],
+                                ),
+                                child: ListTile(
+                                  onTap: () {
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: (builder) {
+                                      return AccountUpdateScreen(
+                                          account: state.accounts![index]);
+                                    })).then((value) {
+                                      if (value == true) {
+                                        _refresh();
+                                      }
+                                    });
+                                  },
+                                  title: Text(
+                                    state.accounts![index].name ?? '',
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  subtitle: Text(
+                                      state.accounts![index].address ?? '',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis),
+                                  leading:
+                                      const Icon(Icons.face, color: bSecondary),
+                                  trailing: IconButton(
+                                    onPressed: () => _showDeleteModal(
+                                        state.accounts![index]),
+                                    icon: const Icon(
+                                        Icons.delete_forever_outlined,
+                                        color: bSecondary),
+                                  ),
+                                ));
+                          } else {
+                            return Container(
+                              padding: const EdgeInsets.all(15.0),
+                              alignment: Alignment.center,
+                              child: const CircularProgressIndicator(
+                                color: bInfo,
+                              ),
+                            );
+                          }
+                        },
+                      );
+                    } else {
+                      return Container(
+                        padding: const EdgeInsets.all(15.0),
+                        alignment: Alignment.topCenter,
+                        child: const CircularProgressIndicator(
+                          color: bInfo,
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ])),
+              SliverList(delegate: SliverChildListDelegate([])),
+            ]),
+      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {},
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (builder) {
+            return const AccountCreateScreen();
+          })).then((value) {
+            if (value == true) {
+              _refresh();
+            }
+          });
+        },
         backgroundColor: bInfo,
         child: const Icon(Icons.group_add),
       ),
+    );
+  }
+
+  // ignore: unused_element
+  Future<void> _showDeleteModal(AccountModel account) {
+    return showModalBottomSheet<void>(
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        return Padding(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    topRight: Radius.circular(15))),
+            child: Wrap(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Text(
+                      'Peringatan!',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      'Apakah kamu yakin ingin menghapus ${account.name}?',
+                      style: const TextStyle(),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.grey.shade400,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18.0),
+                                ),
+                              ),
+                              child: const Text('Batal',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: bInfo,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                              ),
+                              child: const Text(
+                                'Hapus',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                                delete(account);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

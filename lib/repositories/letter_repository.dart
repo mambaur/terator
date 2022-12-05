@@ -22,7 +22,7 @@ class LetterRepository {
     try {
       // Setup pagination
       limit ??= 10;
-      int offset = (limit * ((page ?? 0) + 1)) - limit;
+      int offset = (limit * (page ?? 1)) - limit;
 
       Database db = await dbInstance.init;
       final data = await db.rawQuery(
@@ -34,8 +34,9 @@ class LetterRepository {
         for (var i = 0; i < data.length; i++) {
           LetterModel letterModel = LetterModel(
             id: int.parse(data[i]['id'].toString()),
-            accountId: int.parse(data[i]['account_id'].toString()),
+            accountId: int.parse((data[i]['account_id'] ?? 1).toString()),
             name: data[i]['name'].toString(),
+            title: data[i]['title'].toString(),
             html: data[i]['html'].toString(),
             withSignature: data[i]['with_signature'].toString(),
             createdAt: data[i]['created_at'].toString(),

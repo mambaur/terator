@@ -22,7 +22,7 @@ class AccountRepository {
     try {
       // Setup pagination
       limit ??= 10;
-      int offset = (limit * ((page ?? 0) + 1)) - limit;
+      int offset = (limit * (page ?? 1)) - limit;
 
       Database db = await dbInstance.init;
       final data = await db.rawQuery(

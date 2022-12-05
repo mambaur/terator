@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,7 +26,7 @@ class LetterEditorScreen extends StatefulWidget {
 class _LetterEditorScreenState extends State<LetterEditorScreen> {
   final LetterRepository _letterRepo = LetterRepository();
   final HtmlEditorController controller = HtmlEditorController();
-  final titleController = TextEditingController();
+  final _titleController = TextEditingController();
 
   bool withSignature = false;
 
@@ -41,18 +42,29 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
     await store(htmlData);
     // ignore: use_build_context_synchronously
     LoadingOverlay.hide(context);
+    // ignore: use_build_context_synchronously
+    Navigator.pop(context);
+
+    CoolAlert.show(
+      backgroundColor: Colors.white,
+      context: context,
+      type: CoolAlertType.success,
+      title: "Sukses!!!",
+      text: "Surat kamu berhasil di generate dan di download!",
+    );
   }
 
   Future store(String html) async {
-    await _letterRepo.insert({
+    final response = await _letterRepo.insert({
       "account_id": widget.account.id,
       "name": "Surat Izin Sekolah",
-      "title": titleController.text,
+      "title": _titleController.text,
       "html": html,
       "with_signature": withSignature ? 1 : 0,
       "created_at": DateSetting.timestamp(),
       "updated_at": DateSetting.timestamp()
     });
+    print("Responsee " + response.toString());
   }
 
   Future<String?> get _localPath async {
@@ -86,47 +98,135 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Editor"),
+        title: Text("Surat Izin Sekolah"),
+        centerTitle: true,
+        foregroundColor: bDark,
+        backgroundColor: Colors.white,
+        elevation: 0,
       ),
       // insert element for ttd
-      body: Column(
-        children: [
-          Expanded(
-            child: HtmlEditor(
-              controller: controller,
-              callbacks: Callbacks(onImageUpload: (file) {
-                print(file.base64);
-              }, onInit: () {
-                // String text =
-                //     LetterData.html('surat_izin_sekolah', image: image64);
-                String text = LetterData.html('surat_izin_sekolah',
-                    image:
-                        "<div style='margin-top:10px;margin-bottom:10px;text-align: right;'><img width='50px' src='$image64'></div>");
-                controller.setText(text);
-              }),
-              htmlToolbarOptions: HtmlToolbarOptions(),
-              htmlEditorOptions: HtmlEditorOptions(
-                hint: "Your text here...",
-                //initalText: "text content initial, if any",
-              ),
-              otherOptions: OtherOptions(
-                height: MediaQuery.of(context).size.height,
-              ),
-            ),
-          ),
-        ],
+      body: HtmlEditor(
+        controller: controller,
+        callbacks: Callbacks(onInit: () {
+          // String text =
+          //     LetterData.html('surat_izin_sekolah', image: image64);
+          String text = LetterData.html('surat_izin_sekolah',
+              image:
+                  "<div style='margin-top:10px;margin-bottom:10px;text-align: right;'><img width='50px' src='$image64'></div>");
+          controller.setText(text);
+        }),
+        htmlToolbarOptions: const HtmlToolbarOptions(),
+        htmlEditorOptions: const HtmlEditorOptions(
+          hint: "Tulis surat disini...",
+          //initalText: "text content initial, if any",
+        ),
+        otherOptions: OtherOptions(
+          height: MediaQuery.of(context).size.height,
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          String data = await controller.getText();
-          Clipboard.setData(ClipboardData(text: data)).then((_) {
-            Fluttertoast.showToast(msg: 'Html berhasil disalin.');
-          });
-          convert(data, "Test 4");
+          _showSubmitModal();
         },
         backgroundColor: bInfo,
         child: const Icon(Icons.save),
       ),
+    );
+  }
+
+  // ignore: unused_element
+  Future<void> _showSubmitModal() {
+    return showModalBottomSheet<void>(
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        return Padding(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    topRight: Radius.circular(15))),
+            child: Wrap(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Text(
+                      'Nama File!',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      'Beri nama file yang akan kamu generate',
+                      style: const TextStyle(),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    TextFormField(
+                      controller: _titleController,
+                      decoration: const InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: bSecondary),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: bInfo),
+                          ),
+                          labelStyle: TextStyle(color: bSecondary),
+                          labelText: 'Nama File'),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: bInfo,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                              ),
+                              child: const Text(
+                                'Simpan & Download',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              onPressed: () async {
+                                if (_titleController.text == '') {
+                                  Fluttertoast.showToast(
+                                      msg: "Nama file tidak boleh kosong");
+                                  return;
+                                }
+                                Navigator.pop(context);
+
+                                String data = await controller.getText();
+                                // Clipboard.setData(ClipboardData(text: data))
+                                //     .then((_) {
+                                //   Fluttertoast.showToast(
+                                //       msg: 'Html berhasil disalin.');
+                                // });
+                                convert(data, _titleController.text);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
