@@ -1,11 +1,21 @@
-class DateSetting {}
+import 'package:intl/intl.dart';
 
-List<String> monthId = [
-  "Januari",
-  "Februari",
-  "Maret",
-  "April",
-  "Mei",
-  "Juni",
-  "Juli"
-];
+class DateSetting {
+  /// DateFormat now in string
+  ///
+  /// Output : 2022-05-06 12:30:19
+  static String timestamp() {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd kk:mm:ss').format(now);
+    return formattedDate;
+  }
+
+  /// DateFormat now in string
+  ///
+  /// Output : 2022-05-06
+  static String commonDate() {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+    return formattedDate;
+  }
+}

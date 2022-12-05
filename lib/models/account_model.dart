@@ -57,4 +57,12 @@ class AccountModel {
       updatedAt: json['updated_at'],
     );
   }
+
+  // Map<String, dynamic> toMap() {
+  //   return {
+  //     "id": id,
+  //     "name": name,
+  //     "place_and_date_of_birth": placeAndDateOfBirth,
+  //   };
+  // }
 }

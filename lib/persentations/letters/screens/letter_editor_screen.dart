@@ -1,35 +1,58 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
-import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:terator/core/date_setting.dart';
+import 'package:terator/core/loading_overlay.dart';
+import 'package:terator/core/styles.dart';
 import 'package:terator/data/letter_data.dart';
+import 'package:terator/models/account_model.dart';
+import 'package:terator/repositories/letter_repository.dart';
 
 class LetterEditorScreen extends StatefulWidget {
-  const LetterEditorScreen({super.key});
+  final AccountModel account;
+  const LetterEditorScreen({super.key, required this.account});
 
   @override
   State<LetterEditorScreen> createState() => _LetterEditorScreenState();
 }
 
 class _LetterEditorScreenState extends State<LetterEditorScreen> {
-  HtmlEditorController controller = HtmlEditorController();
+  final LetterRepository _letterRepo = LetterRepository();
+  final HtmlEditorController controller = HtmlEditorController();
+  final titleController = TextEditingController();
+
+  bool withSignature = false;
 
   convert(String htmlData, String name) async {
+    LoadingOverlay.show(context);
     var targetPath = await _localPath;
     var targetFileName = name;
     var html = '<div style="margin: 50px">$htmlData</div>';
 
     var generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
         html, targetPath!, targetFileName);
-    print(generatedPdfFile);
-    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    //   content: Text(generatedPdfFile.toString()),
-    // ));
+    if (kDebugMode) print(generatedPdfFile);
+    await store(htmlData);
+    // ignore: use_build_context_synchronously
+    LoadingOverlay.hide(context);
+  }
+
+  Future store(String html) async {
+    await _letterRepo.insert({
+      "account_id": widget.account.id,
+      "name": "Surat Izin Sekolah",
+      "title": titleController.text,
+      "html": html,
+      "with_signature": withSignature ? 1 : 0,
+      "created_at": DateSetting.timestamp(),
+      "updated_at": DateSetting.timestamp()
+    });
   }
 
   Future<String?> get _localPath async {
@@ -48,7 +71,7 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
         // directory = await getTemporaryDirectory();
         directory = await getExternalStorageDirectory();
       }
-    } catch (err, stack) {
+    } catch (err) {
       print("Can-not get download folder path");
     }
     return directory?.path;
@@ -62,49 +85,49 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Editor"),
-          actions: [
-            IconButton(
-                onPressed: () async {
-                  String data = await controller.getText();
-                  Clipboard.setData(ClipboardData(text: data)).then((_) {
-                    Fluttertoast.showToast(msg: 'Html berhasil disalin.');
-                  });
-                  convert(data, "Test 4");
-                },
-                icon: Icon(Icons.save))
-          ],
-        ),
-        // insert element for ttd
-        body: Column(
-          children: [
-            Expanded(
-              child: HtmlEditor(
-                controller: controller,
-                callbacks: Callbacks(onImageUpload: (file) {
-                  print(file.base64);
-                }, onInit: () {
-                  // String text =
-                  //     LetterData.html('surat_izin_sekolah', image: image64);
-                  String text = LetterData.html('surat_izin_sekolah',
-                      image:
-                          "<div style='margin-top:10px;margin-bottom:10px;text-align: right;'><img width='50px' src='$image64'></div>");
-                  controller.setText(text);
-                }),
-                htmlToolbarOptions: HtmlToolbarOptions(),
-                htmlEditorOptions: HtmlEditorOptions(
-                  hint: "Your text here...",
-                  //initalText: "text content initial, if any",
-                ),
-                otherOptions: OtherOptions(
-                  height: MediaQuery.of(context).size.height,
-                ),
+      appBar: AppBar(
+        title: Text("Editor"),
+      ),
+      // insert element for ttd
+      body: Column(
+        children: [
+          Expanded(
+            child: HtmlEditor(
+              controller: controller,
+              callbacks: Callbacks(onImageUpload: (file) {
+                print(file.base64);
+              }, onInit: () {
+                // String text =
+                //     LetterData.html('surat_izin_sekolah', image: image64);
+                String text = LetterData.html('surat_izin_sekolah',
+                    image:
+                        "<div style='margin-top:10px;margin-bottom:10px;text-align: right;'><img width='50px' src='$image64'></div>");
+                controller.setText(text);
+              }),
+              htmlToolbarOptions: HtmlToolbarOptions(),
+              htmlEditorOptions: HtmlEditorOptions(
+                hint: "Your text here...",
+                //initalText: "text content initial, if any",
+              ),
+              otherOptions: OtherOptions(
+                height: MediaQuery.of(context).size.height,
               ),
             ),
-          ],
-        ) // This trailing comma makes auto-formatting nicer for build methods.
-        );
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          String data = await controller.getText();
+          Clipboard.setData(ClipboardData(text: data)).then((_) {
+            Fluttertoast.showToast(msg: 'Html berhasil disalin.');
+          });
+          convert(data, "Test 4");
+        },
+        backgroundColor: bInfo,
+        child: const Icon(Icons.save),
+      ),
+    );
   }
 
   String image64 =

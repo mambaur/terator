@@ -34,6 +34,7 @@ class DatabaseInstance {
   final String letterId = 'id';
   final String letterAccountId = 'account_id';
   final String letterName = 'name';
+  final String letterTitle = 'title';
   final String letterHtml = 'html';
   final String letterWithSignature = 'with_signature';
   final String letterCreatedAt = 'created_at';
@@ -83,10 +84,11 @@ class DatabaseInstance {
     await db.execute('''
           CREATE TABLE $letterTable (
             $letterId INTEGER PRIMARY KEY,
-            $letterAccountId INTEGER PRIMARY KEY,
+            $letterAccountId INTEGER NULL,
             $letterName TEXT NULL,
+            $letterTitle TEXT NULL,
             $letterHtml TEXT NULL,
-            $letterWithSignature TEXT NULL,
+            $letterWithSignature INTEGER NULL,
             $letterCreatedAt TEXT NULL,
             $letterUpdatedAt TEXT NULL,
           )

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:terator/core/styles.dart';
+import 'package:terator/models/account_model.dart';
 import 'package:terator/persentations/letters/screens/letter_editor_screen.dart';
 
 class LetterScreen extends StatefulWidget {
@@ -52,7 +53,9 @@ class _LetterScreenState extends State<LetterScreen> {
                     onTap: () {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (builder) {
-                        return const LetterEditorScreen();
+                        return LetterEditorScreen(
+                          account: AccountModel(),
+                        );
                       }));
                     },
                     title: Text('Surat Izin Tidak Masuk'),
@@ -77,7 +80,9 @@ class _LetterScreenState extends State<LetterScreen> {
                     onTap: () {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (builder) {
-                        return const LetterEditorScreen();
+                        return LetterEditorScreen(
+                          account: AccountModel(),
+                        );
                       }));
                     },
                     title: Text('Surat Izin Orang Tua'),
