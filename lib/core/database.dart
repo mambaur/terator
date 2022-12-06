@@ -13,6 +13,7 @@ class DatabaseInstance {
   final String accountTable = 'accounts';
   final String accountId = 'id';
   final String accountName = 'name';
+  final String accountParentName = 'parent_name';
   final String accountPlaceAndDateOfBirth = 'place_and_date_of_birth';
   final String accountGender = 'gender'; // male, female
   final String accountReligion = 'religion';
@@ -62,6 +63,7 @@ class DatabaseInstance {
     await db.execute('''
           CREATE TABLE $accountTable (
             $accountId INTEGER PRIMARY KEY,
+            $accountParentName TEXT NULL,
             $accountName TEXT NULL,
             $accountPlaceAndDateOfBirth TEXT NULL,
             $accountGender TEXT NULL,

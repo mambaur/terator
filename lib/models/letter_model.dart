@@ -1,6 +1,6 @@
 class LetterModel {
-  int? id, accountId;
-  String? name, title, html, withSignature, createdAt, updatedAt;
+  int? id, accountId, withSignature;
+  String? name, title, html, createdAt, updatedAt;
 
   LetterModel(
       {this.id,

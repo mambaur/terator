@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:terator/core/styles.dart';
+import 'package:terator/data/letter_data.dart';
 import 'package:terator/persentations/letters/screens/letter_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -89,50 +90,57 @@ class _HomeScreenState extends State<HomeScreen> {
             ])),
             SliverList(
                 delegate: SliverChildListDelegate([
-              Container(
-                  margin:
-                      const EdgeInsets.only(left: 15, right: 15, bottom: 15),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 7,
-                        offset: const Offset(1, 3),
-                      )
-                    ],
-                  ),
-                  child: ListTile(
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (builder) {
-                        return const LetterScreen();
-                      }));
-                    },
-                    title: Text('Surat Izin Sekolah'),
-                    leading: Icon(Icons.description_outlined, color: bInfo),
-                    trailing: Icon(Icons.trending_flat, color: bSecondary),
-                  )),
-              Container(
-                  margin:
-                      const EdgeInsets.only(left: 15, right: 15, bottom: 15),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 7,
-                        offset: const Offset(1, 3),
-                      )
-                    ],
-                  ),
-                  child: ListTile(
-                    title: Text('Surat Lamaran Kerja'),
-                    leading: Icon(Icons.description_outlined, color: bInfo),
-                    trailing: Icon(Icons.trending_flat, color: bSecondary),
-                  )),
+              FutureBuilder<List<Map<String, dynamic>>>(
+                  future: LetterData.listLetters(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return ListView.separated(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                              margin: const EdgeInsets.only(
+                                  left: 15, right: 15, bottom: 15),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 7,
+                                    offset: const Offset(1, 3),
+                                  )
+                                ],
+                              ),
+                              child: ListTile(
+                                onTap: () {
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (builder) {
+                                    return LetterScreen(
+                                      letters: snapshot.data![index]["letters"],
+                                      title: snapshot.data![index]["title"],
+                                    );
+                                  }));
+                                },
+                                title: Text(snapshot.data![index]["title"]),
+                                leading: const Icon(Icons.description_outlined,
+                                    color: bInfo),
+                                trailing: const Icon(Icons.trending_flat,
+                                    color: bSecondary),
+                              ));
+                        },
+                        separatorBuilder: (context, index) {
+                          if (index == 2) {
+                            return const Divider();
+                          }
+                          return Container();
+                        },
+                      );
+                    } else {
+                      return Container();
+                    }
+                  }),
             ])),
             SliverList(delegate: SliverChildListDelegate([])),
           ]),

@@ -35,19 +35,51 @@ class AccountRepository {
           AccountModel accountModel = AccountModel(
             id: int.parse(data[i]['id'].toString()),
             name: data[i]['name'].toString(),
-            placeAndDateOfBirth: data[i]['place_and_date_of_birth'].toString(),
-            gender: data[i]['gender'].toString(),
-            religion: data[i]['religion'].toString(),
-            lastEducation: data[i]['last_education'].toString(),
-            educationClass: data[i]['education_class'].toString(),
-            educationInstitution: data[i]['education_institution'].toString(),
-            heightOrWeight: data[i]['height_or_weight'].toString(),
-            telephone: data[i]['telephone'].toString(),
-            email: data[i]['email'].toString(),
-            maritalStatus: data[i]['marital_status'].toString(),
-            address: data[i]['address'].toString(),
-            signatureImage: data[i]['signature_image'].toString(),
-            letterCityWritten: data[i]['letter_city_written'].toString(),
+            parentName: data[i]['parent_name'].toString() == "null"
+                ? null
+                : data[i]['parent_name'].toString(),
+            placeAndDateOfBirth:
+                data[i]['place_and_date_of_birth'].toString() == "null"
+                    ? null
+                    : data[i]['place_and_date_of_birth'].toString(),
+            gender: data[i]['gender'].toString() == "null"
+                ? null
+                : data[i]['gender'].toString(),
+            religion: data[i]['religion'].toString() == "null"
+                ? null
+                : data[i]['religion'].toString(),
+            lastEducation: data[i]['last_education'].toString() == "null"
+                ? null
+                : data[i]['last_education'].toString(),
+            educationClass: data[i]['education_class'].toString() == "null"
+                ? null
+                : data[i]['education_class'].toString(),
+            educationInstitution:
+                data[i]['education_institution'].toString() == "null"
+                    ? null
+                    : data[i]['education_institution'].toString(),
+            heightOrWeight: data[i]['height_or_weight'].toString() == "null"
+                ? null
+                : data[i]['height_or_weight'].toString(),
+            telephone: data[i]['telephone'].toString() == "null"
+                ? null
+                : data[i]['telephone'].toString(),
+            email: data[i]['email'].toString() == "null"
+                ? null
+                : data[i]['email'].toString(),
+            maritalStatus: data[i]['marital_status'].toString() == "null"
+                ? null
+                : data[i]['marital_status'].toString(),
+            address: data[i]['address'].toString() == "null"
+                ? null
+                : data[i]['address'].toString(),
+            signatureImage: data[i]['signature_image'].toString() == "null"
+                ? null
+                : data[i]['signature_image'].toString(),
+            letterCityWritten:
+                data[i]['letter_city_written'].toString() == "null"
+                    ? null
+                    : data[i]['letter_city_written'].toString(),
             createdAt: data[i]['created_at'].toString(),
             updatedAt: data[i]['updated_at'].toString(),
           );

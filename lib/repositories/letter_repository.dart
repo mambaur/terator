@@ -38,7 +38,7 @@ class LetterRepository {
             name: data[i]['name'].toString(),
             title: data[i]['title'].toString(),
             html: data[i]['html'].toString(),
-            withSignature: data[i]['with_signature'].toString(),
+            withSignature: int.parse(data[i]['with_signature'].toString()),
             createdAt: data[i]['created_at'].toString(),
             updatedAt: data[i]['updated_at'].toString(),
           );

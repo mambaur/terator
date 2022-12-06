@@ -1,6 +1,7 @@
 class AccountModel {
   int? id;
   String? name,
+      parentName,
       placeAndDateOfBirth,
       gender,
       religion,
@@ -20,6 +21,7 @@ class AccountModel {
   AccountModel(
       {this.id,
       this.name,
+      this.parentName,
       this.placeAndDateOfBirth,
       this.gender,
       this.religion,
@@ -40,6 +42,7 @@ class AccountModel {
     return AccountModel(
       id: json['id'],
       name: json['name'],
+      parentName: json['parent_name'],
       placeAndDateOfBirth: json['place_and_date_of_birth'],
       gender: json['gender'],
       religion: json['religion'],

@@ -18,6 +18,7 @@ class _AccountCreateScreenState extends State<AccountCreateScreen> {
   bool isReloadBack = false;
 
   final _nameController = TextEditingController();
+  final _parentNameController = TextEditingController();
   final _placeAndDateOfBirthController = TextEditingController();
   final _genderController = TextEditingController();
   final _religionController = TextEditingController();
@@ -37,12 +38,13 @@ class _AccountCreateScreenState extends State<AccountCreateScreen> {
     LoadingOverlay.show(context);
     await _accountRepo.insert({
       "name": _nameController.text,
+      "parent_name": _parentNameController.text,
       "place_and_date_of_birth": _placeAndDateOfBirthController.text,
       "gender": _genderController.text,
       "religion": _religionController.text,
       "last_education": _lastEducationController.text,
       "education_class": _educationClassController.text,
-      "education_institution": _educationClassController.text,
+      "education_institution": _educationInstitutionController.text,
       "height_or_weight": _heightOrWeightController.text,
       "telephone": _telephoneController.text,
       "email": _emailController.text,
@@ -215,6 +217,21 @@ class _AccountCreateScreenState extends State<AccountCreateScreen> {
                               ),
                               labelStyle: TextStyle(color: bSecondary),
                               labelText: 'Status Perkawinan'),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 15),
+                        child: TextFormField(
+                          controller: _parentNameController,
+                          decoration: const InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: bSecondary),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: bInfo),
+                              ),
+                              labelStyle: TextStyle(color: bSecondary),
+                              labelText: 'Nama Ortu/Wali'),
                         ),
                       ),
                     ],

@@ -5,7 +5,8 @@ import 'package:terator/persentations/home/screens/home_screen.dart';
 import 'package:terator/persentations/my_files/screens/my_file_screen.dart';
 
 class Navbar extends StatefulWidget {
-  const Navbar({super.key});
+  final int? selectedIndex;
+  const Navbar({super.key, this.selectedIndex});
 
   @override
   State<Navbar> createState() => _NavbarState();
@@ -38,6 +39,14 @@ class _NavbarState extends State<Navbar> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    if (widget.selectedIndex != null) {
+      _selectedIndex = widget.selectedIndex!;
+    }
+    super.initState();
   }
 
   @override
