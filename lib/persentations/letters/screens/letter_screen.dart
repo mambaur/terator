@@ -21,11 +21,6 @@ class _LetterScreenState extends State<LetterScreen> {
         centerTitle: true,
         foregroundColor: bDark,
         backgroundColor: Colors.white,
-        actions: [
-          IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.help_outline, color: bSecondary))
-        ],
       ),
       body: CustomScrollView(
           // controller: _scrollController,

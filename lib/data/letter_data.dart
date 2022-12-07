@@ -30,6 +30,27 @@ class LetterData {
           {"key": "surat_izin_sekolah", "title": "Surat Lamaran Kerja"},
         ]
       },
+      {
+        "id": 3,
+        "title": "Surat Kantor",
+        "letters": [
+          {"key": "surat_izin_sekolah", "title": "Surat Lamaran Kerja"},
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Surat Bisnis",
+        "letters": [
+          {"key": "surat_izin_sekolah", "title": "Surat Lamaran Kerja"},
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Surat Pekerjaan",
+        "letters": [
+          {"key": "surat_izin_sekolah", "title": "Surat Lamaran Kerja"},
+        ]
+      },
     ];
 
     if (q != '') {

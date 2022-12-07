@@ -12,6 +12,7 @@ import 'package:terator/core/loading_overlay.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/data/letter_data.dart';
 import 'package:terator/models/account_model.dart';
+import 'package:terator/persentations/navbar.dart';
 import 'package:terator/repositories/letter_repository.dart';
 
 class LetterEditorScreen extends StatefulWidget {
@@ -50,7 +51,17 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
     // ignore: use_build_context_synchronously
     LoadingOverlay.hide(context);
     // ignore: use_build_context_synchronously
-    Navigator.pop(context);
+    // Navigator.pop(context);
+
+    // ignore: use_build_context_synchronously
+    Navigator.pushAndRemoveUntil<void>(
+      context,
+      MaterialPageRoute<void>(
+          builder: (BuildContext context) => const Navbar(
+                selectedIndex: 1,
+              )),
+      ModalRoute.withName('/account-screen'),
+    );
 
     CoolAlert.show(
       backgroundColor: Colors.white,

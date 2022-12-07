@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/data/letter_data.dart';
 import 'package:terator/persentations/letters/screens/letter_screen.dart';
+import 'package:terator/persentations/navbar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -81,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   borderRadius: BorderRadius.circular(5),
                   child: CachedNetworkImage(
                       width: size.width,
-                      height: size.height * 0.17,
+                      height: size.height * 0.15,
                       imageUrl:
                           "https://static.vecteezy.com/system/resources/thumbnails/002/453/533/small_2x/big-sale-discount-banner-template-promotion-illustration-free-vector.jpg",
                       fit: BoxFit.cover),
@@ -132,7 +133,80 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                         separatorBuilder: (context, index) {
                           if (index == 2) {
-                            return const Divider();
+                            return Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                      margin: const EdgeInsets.only(
+                                          top: 20, left: 15, bottom: 25),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(10),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.1),
+                                            blurRadius: 7,
+                                            offset: const Offset(1, 3),
+                                          )
+                                        ],
+                                      ),
+                                      child: ListTile(
+                                        onTap: () {
+                                          Navigator.pushAndRemoveUntil<void>(
+                                            context,
+                                            MaterialPageRoute<void>(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        const Navbar(
+                                                          selectedIndex: 1,
+                                                        )),
+                                            ModalRoute.withName(
+                                                '/account-screen'),
+                                          );
+                                        },
+                                        title: const Text('File Saya'),
+                                        leading: const Text('📂'),
+                                      )),
+                                ),
+                                const SizedBox(width: 15),
+                                Expanded(
+                                  child: Container(
+                                      margin: const EdgeInsets.only(
+                                          top: 20, right: 15, bottom: 25),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(10),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.1),
+                                            blurRadius: 7,
+                                            offset: const Offset(1, 3),
+                                          )
+                                        ],
+                                      ),
+                                      child: ListTile(
+                                        onTap: () {
+                                          Navigator.pushAndRemoveUntil<void>(
+                                            context,
+                                            MaterialPageRoute<void>(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        const Navbar(
+                                                          selectedIndex: 2,
+                                                        )),
+                                            ModalRoute.withName(
+                                                '/account-screen'),
+                                          );
+                                        },
+                                        title: const Text('Akun'),
+                                        leading: const Text('⚙️'),
+                                      )),
+                                )
+                              ],
+                            );
+                            // return const Divider();
                           }
                           return Container();
                         },

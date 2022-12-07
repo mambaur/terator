@@ -75,6 +75,29 @@ class _AccountScreenState extends State<AccountScreen> {
                 BlocBuilder<AccountCubit, AccountState>(
                   builder: (context, state) {
                     if (state.status == AccountStatusCubit.success) {
+                      if (state.accounts!.isEmpty) {
+                        return SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.7,
+                          child: Center(
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.7,
+                                      child: Image.asset(
+                                          "assets/img/account-empty.png")),
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
+                                  const Text(
+                                    'Yah, data akun kamu masih kosong :(',
+                                    textAlign: TextAlign.center,
+                                  )
+                                ]),
+                          ),
+                        );
+                      }
                       return ListView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,

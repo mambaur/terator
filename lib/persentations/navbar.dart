@@ -3,6 +3,7 @@ import 'package:terator/core/styles.dart';
 import 'package:terator/persentations/account/screens/account_screen.dart';
 import 'package:terator/persentations/home/screens/home_screen.dart';
 import 'package:terator/persentations/my_files/screens/my_file_screen.dart';
+import 'package:terator/persentations/settings/screens/setting_screen.dart';
 
 class Navbar extends StatefulWidget {
   final int? selectedIndex;
@@ -58,8 +59,12 @@ class _NavbarState extends State<Navbar> {
         backgroundColor: Colors.white,
         actions: [
           IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.help_outline, color: bSecondary))
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (builder) {
+                  return const SettingScreen();
+                }));
+              },
+              icon: const Icon(Icons.settings, color: bSecondary))
         ],
       ),
       body: Center(

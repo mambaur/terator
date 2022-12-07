@@ -5,6 +5,7 @@ import 'package:terator/core/styles.dart';
 import 'package:terator/models/letter_model.dart';
 import 'package:terator/persentations/my_files/cubits/file_cubit/file_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:terator/persentations/my_files/screens/my_file_edit_screen.dart';
 import 'package:terator/repositories/letter_repository.dart';
 
 class MyFileScreen extends StatefulWidget {
@@ -71,6 +72,30 @@ class _MyFileScreenState extends State<MyFileScreen> {
                 BlocBuilder<FileCubit, FileState>(
                   builder: (context, state) {
                     if (state.status == FileStatusCubit.success) {
+                      if (state.letters!.isEmpty) {
+                        return SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.7,
+                          child: Center(
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.7,
+                                      child: Image.asset(
+                                          "assets/img/file-empty.png")),
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
+                                  const Text(
+                                    'File kamu masih kosong, generate surat sekarang!',
+                                    textAlign: TextAlign.center,
+                                  )
+                                ]),
+                          ),
+                        );
+                      }
                       return ListView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
@@ -172,10 +197,28 @@ class _MyFileScreenState extends State<MyFileScreen> {
                       height: 20,
                     ),
                     ListTile(
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (builder) {
+                          return MyFileEditScreen(letter: letter);
+                        })).then((value) {
+                          if (value == true) {
+                            _refresh();
+                          }
+                        });
+                      },
+                      title: Text('Edit Surat'),
+                      leading: Icon(
+                        Icons.edit,
+                        color: bInfo,
+                      ),
+                    ),
+                    ListTile(
                       title: Text('Berbagi'),
                       leading: Icon(
                         Icons.share,
-                        color: bInfo,
+                        color: bSuccess,
                       ),
                     ),
                     ListTile(

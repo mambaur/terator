@@ -1,10 +1,9 @@
 import 'dart:io';
 
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:terator/core/date_setting.dart';
@@ -25,6 +24,7 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
   final LetterRepository _letterRepo = LetterRepository();
   final HtmlEditorController controller = HtmlEditorController();
   final titleController = TextEditingController();
+  bool isRefreshBack = false;
 
   bool withSignature = false;
 
@@ -38,8 +38,19 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
         html, targetPath!, targetFileName);
     if (kDebugMode) print(generatedPdfFile);
     await update(htmlData);
+    isRefreshBack = true;
     // ignore: use_build_context_synchronously
     LoadingOverlay.hide(context);
+    // ignore: use_build_context_synchronously
+    Navigator.pop(context, isRefreshBack);
+
+    CoolAlert.show(
+      backgroundColor: Colors.white,
+      context: context,
+      type: CoolAlertType.success,
+      title: "Sukses!!!",
+      text: "Surat kamu berhasil di Update dan di download!",
+    );
   }
 
   Future update(String html) async {
@@ -67,7 +78,7 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
         directory = await getExternalStorageDirectory();
       }
     } catch (err) {
-      print("Can-not get download folder path");
+      if (kDebugMode) print("Can-not get download folder path");
     }
     return directory?.path;
   }
@@ -81,7 +92,16 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Editor"),
+        title: Text(widget.letter.title ?? ''),
+        centerTitle: true,
+        foregroundColor: bDark,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context, isRefreshBack);
+            },
+            icon: const Icon(Icons.arrow_back)),
+        elevation: 0,
       ),
       // insert element for ttd
       body: Column(
@@ -89,13 +109,11 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
           Expanded(
             child: HtmlEditor(
               controller: controller,
-              callbacks: Callbacks(onImageUpload: (file) {
-                // print(file.base64);
-              }, onInit: () {
+              callbacks: Callbacks(onInit: () {
                 controller.setText(widget.letter.html ?? '');
               }),
-              htmlToolbarOptions: HtmlToolbarOptions(),
-              htmlEditorOptions: HtmlEditorOptions(
+              htmlToolbarOptions: const HtmlToolbarOptions(),
+              htmlEditorOptions: const HtmlEditorOptions(
                 hint: "Your text here...",
                 //initalText: "text content initial, if any",
               ),
@@ -109,10 +127,10 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           String data = await controller.getText();
-          Clipboard.setData(ClipboardData(text: data)).then((_) {
-            Fluttertoast.showToast(msg: 'Html berhasil disalin.');
-          });
-          convert(data, "Test 4");
+          // Clipboard.setData(ClipboardData(text: data)).then((_) {
+          //   Fluttertoast.showToast(msg: 'Html berhasil disalin.');
+          // });
+          convert(data, widget.letter.title ?? '');
         },
         backgroundColor: bInfo,
         child: const Icon(Icons.save),
