@@ -13,6 +13,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final _searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -45,11 +46,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Expanded(
                         child: TextField(
-                          // controller: _searchController,
+                          controller: _searchController,
                           textInputAction: TextInputAction.search,
                           onSubmitted: (value) {
-                            // context.read<SearchWordProvider>().q = value;
-                            // _refresh();
+                            setState(() {});
+                          },
+                          onChanged: (value) {
+                            setState(() {});
                           },
                           decoration: InputDecoration(
                               isDense: true,
@@ -92,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
             SliverList(
                 delegate: SliverChildListDelegate([
               FutureBuilder<List<Map<String, dynamic>>>(
-                  future: LetterData.listLetters(),
+                  future: LetterData.listLetters(q: _searchController.text),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       return ListView.separated(

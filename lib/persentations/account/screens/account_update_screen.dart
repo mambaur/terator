@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_signature_view/flutter_signature_view.dart';
 import 'package:terator/core/date_setting.dart';
 import 'package:terator/core/loading_overlay.dart';
 import 'package:terator/core/styles.dart';
@@ -18,6 +22,12 @@ class _AccountUpdateScreenState extends State<AccountUpdateScreen> {
   final AccountRepository _accountRepo = AccountRepository();
   final _formKey = GlobalKey<FormState>();
   bool isReloadBack = false;
+  String? signatureText;
+
+  final double _currentSliderValue = 5;
+  Color penColor = Colors.black;
+  double strokeWith = 3.0;
+  StrokeCap strokeCap = StrokeCap.round;
 
   final _nameController = TextEditingController();
   final _parentNameController = TextEditingController();
@@ -38,6 +48,14 @@ class _AccountUpdateScreenState extends State<AccountUpdateScreen> {
     if (!_formKey.currentState!.validate()) return null;
 
     LoadingOverlay.show(context);
+    String? image;
+
+    if (!_signatureView.isEmpty) {
+      Uint8List? data = await _signatureView.exportBytes();
+      String base64Image = base64.encode(data!);
+      image = base64Image;
+      // image = 'data:image/png;base64,$base64Image';
+    }
     await _accountRepo.update({
       "id": widget.account.id,
       "name": _nameController.text,
@@ -53,6 +71,8 @@ class _AccountUpdateScreenState extends State<AccountUpdateScreen> {
       "email": _emailController.text,
       "marital_status": _maritalStatusController.text,
       "address": _addressController.text,
+      "signature_image": image ??
+          (signatureText != null ? widget.account.signatureImage : null),
       "letter_city_written": _letterCityWrittenController.text,
       // "created_at": DateSetting.timestamp(),
       "updated_at": DateSetting.timestamp()
@@ -91,10 +111,31 @@ class _AccountUpdateScreenState extends State<AccountUpdateScreen> {
     _letterCityWrittenController.text = widget.account.letterCityWritten ?? '';
   }
 
+  late SignatureView _signatureView;
+
+  void refreshCanvas() {
+    _signatureView = SignatureView(
+      backgroundColor: Colors.transparent,
+      penStyle: Paint()
+        ..color = penColor
+        ..strokeCap = strokeCap
+        ..strokeWidth = _currentSliderValue,
+      // onSigned: (data) {
+      //   print("On change $data");
+      // },
+    );
+    _signatureView.createState();
+  }
+
   @override
   void initState() {
     initData();
+    signatureText = widget.account.signatureImage;
+    // Clipboard.setData(ClipboardData(text: signatureText)).then((_) {
+    //   Fluttertoast.showToast(msg: 'Html berhasil disalin.');
+    // });
     super.initState();
+    refreshCanvas();
   }
 
   @override
@@ -487,16 +528,42 @@ class _AccountUpdateScreenState extends State<AccountUpdateScreen> {
                       ),
                       Container(
                         margin: const EdgeInsets.only(bottom: 15),
-                        child: TextFormField(
-                          decoration: const InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: bSecondary),
+                        width: MediaQuery.of(context).size.width,
+                        // height: 200,
+                        height: MediaQuery.of(context).size.width - 30,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.grey),
+                        ),
+                        child: Stack(
+                          children: [
+                            _signatureView,
+                            signatureText != null
+                                ? Container(
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    alignment: Alignment.center,
+                                    child: Image.memory(const Base64Decoder()
+                                        .convert(signatureText ?? '')),
+                                    // child: Image.network(signatureText ?? ''),
+                                  )
+                                : Container(),
+                            Container(
+                              alignment: Alignment.topRight,
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.cancel,
+                                  color: bDanger,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    signatureText = null;
+                                  });
+                                  _signatureView.clear();
+                                },
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: bInfo),
-                              ),
-                              labelStyle: TextStyle(color: bSecondary),
-                              labelText: 'No. Telp'),
+                            ),
+                          ],
                         ),
                       ),
                     ],

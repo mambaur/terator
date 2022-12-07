@@ -1,5 +1,11 @@
+import 'dart:convert';
+
 import 'package:cool_alert/cool_alert.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_signature_view/flutter_signature_view.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:terator/core/date_setting.dart';
 import 'package:terator/core/loading_overlay.dart';
 import 'package:terator/core/styles.dart';
@@ -16,6 +22,10 @@ class _AccountCreateScreenState extends State<AccountCreateScreen> {
   final AccountRepository _accountRepo = AccountRepository();
   final _formKey = GlobalKey<FormState>();
   bool isReloadBack = false;
+  final double _currentSliderValue = 5;
+  Color penColor = Colors.black;
+  double strokeWith = 3.0;
+  StrokeCap strokeCap = StrokeCap.round;
 
   final _nameController = TextEditingController();
   final _parentNameController = TextEditingController();
@@ -34,8 +44,17 @@ class _AccountCreateScreenState extends State<AccountCreateScreen> {
 
   Future submit() async {
     if (!_formKey.currentState!.validate()) return null;
-
+    // ignore: use_build_context_synchronously
     LoadingOverlay.show(context);
+    String? image;
+
+    if (!_signatureView.isEmpty) {
+      Uint8List? data = await _signatureView.exportBytes();
+      String base64Image = base64.encode(data!);
+      image = base64Image;
+      // image = 'data:image/png;base64,$base64Image';
+    }
+
     await _accountRepo.insert({
       "name": _nameController.text,
       "parent_name": _parentNameController.text,
@@ -50,6 +69,7 @@ class _AccountCreateScreenState extends State<AccountCreateScreen> {
       "email": _emailController.text,
       "marital_status": _maritalStatusController.text,
       "address": _addressController.text,
+      "signature_image": image,
       "letter_city_written": _letterCityWrittenController.text,
       "created_at": DateSetting.timestamp(),
       "updated_at": DateSetting.timestamp()
@@ -67,6 +87,28 @@ class _AccountCreateScreenState extends State<AccountCreateScreen> {
       title: "Sukses!!!",
       text: "Akun berhasil ditambahkan!",
     );
+  }
+
+  late SignatureView _signatureView;
+
+  void refreshCanvas() {
+    _signatureView = SignatureView(
+      backgroundColor: Colors.transparent,
+      penStyle: Paint()
+        ..color = penColor
+        ..strokeCap = strokeCap
+        ..strokeWidth = _currentSliderValue,
+      // onSigned: (data) {
+      //   print("On change $data");
+      // },
+    );
+    _signatureView.createState();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    refreshCanvas();
   }
 
   @override
@@ -459,16 +501,29 @@ class _AccountCreateScreenState extends State<AccountCreateScreen> {
                       ),
                       Container(
                         margin: const EdgeInsets.only(bottom: 15),
-                        child: TextFormField(
-                          decoration: const InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: bSecondary),
+                        width: MediaQuery.of(context).size.width,
+                        // height: 200,
+                        height: MediaQuery.of(context).size.width - 30,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.grey),
+                        ),
+                        child: Stack(
+                          children: [
+                            _signatureView,
+                            Container(
+                              alignment: Alignment.topRight,
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.cancel,
+                                  color: bDanger,
+                                ),
+                                onPressed: () {
+                                  _signatureView.clear();
+                                },
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: bInfo),
-                              ),
-                              labelStyle: TextStyle(color: bSecondary),
-                              labelText: 'No. Telp'),
+                            )
+                          ],
                         ),
                       ),
                     ],

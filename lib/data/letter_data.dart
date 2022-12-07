@@ -54,7 +54,9 @@ class LetterData {
     ];
 
     if (q != '') {
-      result = result.where((e) => e["title"].contains(q)).toList();
+      result = result
+          .where((e) => (e["title"]).toLowerCase().contains(q.toLowerCase()))
+          .toList();
     }
 
     return result;

@@ -25,6 +25,7 @@ dependencies:
   bloc: ^8.1.0
   cool_alert: ^1.1.0
   url_launcher: ^6.1.7
+  flutter_signature_view: ^2.0.0
   
   cupertino_icons: ^1.0.2
 
