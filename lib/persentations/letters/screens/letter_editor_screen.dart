@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cool_alert/cool_alert.dart';
+import 'package:document_file_save_plus/document_file_save_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
@@ -8,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:terator/core/date_setting.dart';
+import 'package:terator/core/generator.dart';
 import 'package:terator/core/loading_overlay.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/data/letter_data.dart';
@@ -46,12 +48,16 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
 
     var generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
         html, targetPath!, targetFileName);
-    if (kDebugMode) print(generatedPdfFile);
+
+    // if (kDebugMode) print(generatedPdfFile.readAsBytes());
+
+    Uint8List fileByte = await generatedPdfFile.readAsBytes();
+    await DocumentFileSavePlus.saveFile(fileByte,
+        "${getRandomString(5)}_$targetFileName.pdf", "appliation/pdf");
+
     await store(htmlData);
     // ignore: use_build_context_synchronously
     LoadingOverlay.hide(context);
-    // ignore: use_build_context_synchronously
-    // Navigator.pop(context);
 
     // ignore: use_build_context_synchronously
     Navigator.pushAndRemoveUntil<void>(
@@ -98,8 +104,8 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
         //   directory = await getExternalStorageDirectory();
         // }
 
-        // directory = await getTemporaryDirectory();
-        directory = await getExternalStorageDirectory();
+        directory = await getTemporaryDirectory();
+        // directory = await getExternalStorageDirectory();
       }
     } catch (err) {
       if (kDebugMode) print("Can-not get download folder path");
@@ -131,9 +137,10 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
               image: widget.withSignature
                   ? "<div style='margin-top:10px;margin-bottom:10px;text-align: right;'><img style='height:70px;' src='data:image/png;base64,${widget.account.signatureImage}'></div>"
                   : null);
-          controller.setText(text);
+          controller.setText("$text<br><br><br>");
         }),
-        htmlToolbarOptions: const HtmlToolbarOptions(),
+        htmlToolbarOptions:
+            const HtmlToolbarOptions(toolbarPosition: ToolbarPosition.custom),
         htmlEditorOptions: const HtmlEditorOptions(
           hint: "Tulis surat disini...",
           //initalText: "text content initial, if any",

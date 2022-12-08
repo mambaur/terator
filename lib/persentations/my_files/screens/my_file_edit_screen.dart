@@ -1,12 +1,14 @@
 import 'dart:io';
 
 import 'package:cool_alert/cool_alert.dart';
+import 'package:document_file_save_plus/document_file_save_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:terator/core/date_setting.dart';
+import 'package:terator/core/generator.dart';
 import 'package:terator/core/loading_overlay.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/models/letter_model.dart';
@@ -36,7 +38,12 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
 
     var generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
         html, targetPath!, targetFileName);
-    if (kDebugMode) print(generatedPdfFile);
+
+    Uint8List fileByte = await generatedPdfFile.readAsBytes();
+    await DocumentFileSavePlus.saveFile(fileByte,
+        "${getRandomString(5)}_$targetFileName.pdf", "appliation/pdf");
+
+    // if (kDebugMode) print(generatedPdfFile);
     await update(htmlData);
     isRefreshBack = true;
     // ignore: use_build_context_synchronously
@@ -67,13 +74,6 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
       if (Platform.isIOS) {
         directory = await getApplicationSupportDirectory();
       } else {
-        // if platform is android
-
-        // directory = Directory('/storage/emulated/0/Download');
-        // if (!await directory.exists()) {
-        //   directory = await getExternalStorageDirectory();
-        // }
-
         // directory = await getTemporaryDirectory();
         directory = await getExternalStorageDirectory();
       }
@@ -110,9 +110,11 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
             child: HtmlEditor(
               controller: controller,
               callbacks: Callbacks(onInit: () {
-                controller.setText(widget.letter.html ?? '');
+                String text = widget.letter.html ?? '';
+                controller.setText("$text<br><br><br>");
               }),
-              htmlToolbarOptions: const HtmlToolbarOptions(),
+              htmlToolbarOptions: const HtmlToolbarOptions(
+                  toolbarPosition: ToolbarPosition.custom),
               htmlEditorOptions: const HtmlEditorOptions(
                 hint: "Your text here...",
                 //initalText: "text content initial, if any",

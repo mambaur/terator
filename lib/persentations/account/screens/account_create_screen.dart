@@ -503,7 +503,7 @@ class _AccountCreateScreenState extends State<AccountCreateScreen> {
                         margin: const EdgeInsets.only(bottom: 15),
                         width: MediaQuery.of(context).size.width,
                         // height: 200,
-                        height: MediaQuery.of(context).size.width - 30,
+                        height: MediaQuery.of(context).size.width - 60,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(color: Colors.grey),

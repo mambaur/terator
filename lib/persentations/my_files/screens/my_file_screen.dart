@@ -1,5 +1,13 @@
+import 'dart:io';
+
 import 'package:cool_alert/cool_alert.dart';
+import 'package:document_file_save_plus/document_file_save_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:terator/core/generator.dart';
 import 'package:terator/core/loading_overlay.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/models/letter_model.dart';
@@ -18,6 +26,65 @@ class MyFileScreen extends StatefulWidget {
 class _MyFileScreenState extends State<MyFileScreen> {
   final LetterRepository _letterRepo = LetterRepository();
   final ScrollController _scrollController = ScrollController();
+
+  convert(String htmlData, String name) async {
+    LoadingOverlay.show(context);
+    var targetPath = await _localPath;
+    var targetFileName = name;
+    var html = '<div style="margin: 50px">$htmlData</div>';
+
+    var generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
+        html, targetPath!, targetFileName);
+
+    Uint8List fileByte = await generatedPdfFile.readAsBytes();
+    await DocumentFileSavePlus.saveFile(fileByte,
+        "${getRandomString(5)}_$targetFileName.pdf", "appliation/pdf");
+
+    // ignore: use_build_context_synchronously
+    LoadingOverlay.hide(context);
+    // ignore: use_build_context_synchronously
+    Navigator.pop(context);
+
+    CoolAlert.show(
+      backgroundColor: Colors.white,
+      context: context,
+      type: CoolAlertType.success,
+      title: "Sukses!!!",
+      text: "Surat kamu berhasil di download!",
+    );
+  }
+
+  Future<void> shareFile(String htmlData, String name) async {
+    LoadingOverlay.show(context);
+    var targetPath = await _localPath;
+    var targetFileName = name;
+    var html = '<div style="margin: 50px">$htmlData</div>';
+
+    var generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
+        html, targetPath!, "${getRandomString(5)}_$targetFileName");
+
+    // Uint8List fileByte = await generatedPdfFile.readAsBytes();
+    // ignore: use_build_context_synchronously
+    LoadingOverlay.hide(context);
+    // ignore: use_build_context_synchronously
+    Navigator.pop(context);
+    Share.shareFiles([generatedPdfFile.path], text: 'Share $name');
+  }
+
+  Future<String?> get _localPath async {
+    Directory? directory;
+    try {
+      if (Platform.isIOS) {
+        directory = await getApplicationSupportDirectory();
+      } else {
+        // directory = await getTemporaryDirectory();
+        directory = await getExternalStorageDirectory();
+      }
+    } catch (err) {
+      if (kDebugMode) print("Can-not get download folder path");
+    }
+    return directory?.path;
+  }
 
   void onScroll() {
     double maxScroll = _scrollController.position.maxScrollExtent;
@@ -128,10 +195,20 @@ class _MyFileScreenState extends State<MyFileScreen> {
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  subtitle: Text(
-                                      state.letters![index].createdAt ?? '',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(state.letters![index].name ?? '',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis),
+                                      Text(
+                                          state.letters![index].createdAt ?? '',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(fontSize: 10)),
+                                    ],
+                                  ),
                                   leading: const Icon(Icons.picture_as_pdf,
                                       color: bSecondary),
                                   trailing: const Icon(
@@ -215,15 +292,21 @@ class _MyFileScreenState extends State<MyFileScreen> {
                       ),
                     ),
                     ListTile(
-                      title: Text('Berbagi'),
-                      leading: Icon(
+                      onTap: () {
+                        shareFile(letter.html ?? '', letter.title ?? '');
+                      },
+                      title: const Text('Berbagi'),
+                      leading: const Icon(
                         Icons.share,
                         color: bSuccess,
                       ),
                     ),
                     ListTile(
-                      title: Text('Download'),
-                      leading: Icon(
+                      onTap: () {
+                        convert(letter.html ?? '', letter.title ?? '');
+                      },
+                      title: const Text('Download'),
+                      leading: const Icon(
                         Icons.download,
                         color: bSecondary,
                       ),
