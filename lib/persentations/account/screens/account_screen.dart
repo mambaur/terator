@@ -1,7 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:cool_alert/cool_alert.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:terator/core/loading_overlay.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/models/account_model.dart';
@@ -10,6 +12,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:terator/persentations/account/screens/account_create_screen.dart';
 import 'package:terator/persentations/account/screens/account_update_screen.dart';
 import 'package:terator/repositories/account_repository.dart';
+
+enum StatusAd { initial, loaded }
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -21,6 +25,21 @@ class AccountScreen extends StatefulWidget {
 class _AccountScreenState extends State<AccountScreen> {
   final ScrollController _scrollController = ScrollController();
   final AccountRepository _accountRepo = AccountRepository();
+  BannerAd? myBanner;
+
+  BannerAdListener listener() => BannerAdListener(
+        // Called when an ad is successfully received.
+        onAdLoaded: (Ad ad) {
+          if (kDebugMode) {
+            print('Ad Loaded.');
+          }
+          setState(() {
+            statusAd = StatusAd.loaded;
+          });
+        },
+      );
+
+  StatusAd statusAd = StatusAd.initial;
 
   void onScroll() {
     double maxScroll = _scrollController.position.maxScrollExtent;
@@ -53,9 +72,25 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   void initState() {
     context.read<AccountCubit>().getAccounts(isInit: true);
+    myBanner = BannerAd(
+      // test banner
+      adUnitId: '/6499/example/banner',
+
+      // adUnitId: 'ca-app-pub-2465007971338713/8992395637',
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: listener(),
+    );
+    myBanner!.load();
 
     _scrollController.addListener(onScroll);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    myBanner!.dispose();
+    super.dispose();
   }
 
   @override
@@ -70,6 +105,19 @@ class _AccountScreenState extends State<AccountScreen> {
             controller: _scrollController,
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
+              SliverList(
+                  delegate: SliverChildListDelegate([
+                statusAd == StatusAd.loaded
+                    ? Container(
+                        margin:
+                            const EdgeInsets.only(left: 15, right: 15, top: 15),
+                        alignment: Alignment.center,
+                        width: myBanner!.size.width.toDouble(),
+                        height: myBanner!.size.height.toDouble(),
+                        child: AdWidget(ad: myBanner!),
+                      )
+                    : Container(),
+              ])),
               SliverList(
                   delegate: SliverChildListDelegate([
                 BlocBuilder<AccountCubit, AccountState>(

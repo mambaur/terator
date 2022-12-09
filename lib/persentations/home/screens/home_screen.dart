@@ -1,9 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/data/letter_data.dart';
 import 'package:terator/persentations/letters/screens/letter_screen.dart';
 import 'package:terator/persentations/navbar.dart';
+
+enum StatusAd { initial, loaded }
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +18,43 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _searchController = TextEditingController();
+  BannerAd? myBanner;
+
+  BannerAdListener listener() => BannerAdListener(
+        // Called when an ad is successfully received.
+        onAdLoaded: (Ad ad) {
+          if (kDebugMode) {
+            print('Ad Loaded.');
+          }
+          setState(() {
+            statusAd = StatusAd.loaded;
+          });
+        },
+      );
+
+  StatusAd statusAd = StatusAd.initial;
+
+  @override
+  void initState() {
+    myBanner = BannerAd(
+      // test banner
+      adUnitId: '/6499/example/banner',
+
+      // adUnitId: 'ca-app-pub-2465007971338713/8992395637',
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: listener(),
+    );
+    myBanner!.load();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    myBanner!.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -22,6 +63,19 @@ class _HomeScreenState extends State<HomeScreen> {
           // controller: _scrollController,
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
+            SliverList(
+                delegate: SliverChildListDelegate([
+              statusAd == StatusAd.loaded
+                  ? Container(
+                      margin:
+                          const EdgeInsets.only(left: 15, right: 15, top: 15),
+                      alignment: Alignment.center,
+                      width: myBanner!.size.width.toDouble(),
+                      height: myBanner!.size.height.toDouble(),
+                      child: AdWidget(ad: myBanner!),
+                    )
+                  : Container(),
+            ])),
             SliverList(
                 delegate: SliverChildListDelegate([
               Container(
@@ -219,7 +273,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     }
                   }),
             ])),
-            SliverList(delegate: SliverChildListDelegate([])),
           ]),
     );
   }

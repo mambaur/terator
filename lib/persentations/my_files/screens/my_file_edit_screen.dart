@@ -5,6 +5,7 @@ import 'package:document_file_save_plus/document_file_save_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:terator/core/date_setting.dart';
@@ -27,10 +28,13 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
   final HtmlEditorController controller = HtmlEditorController();
   final titleController = TextEditingController();
   bool isRefreshBack = false;
+  RewardedInterstitialAd? myRerwardedAd;
 
   bool withSignature = false;
 
   convert(String htmlData, String name) async {
+    await showRewardAd();
+    // ignore: use_build_context_synchronously
     LoadingOverlay.show(context);
     var targetPath = await _localPath;
     var targetFileName = name;
@@ -83,8 +87,34 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
     return directory?.path;
   }
 
+  Future<void> showRewardAd() async {
+    if (myRerwardedAd != null) {
+      myRerwardedAd!.fullScreenContentCallback =
+          FullScreenContentCallback(onAdDismissedFullScreenContent: (ad) {
+        ad.dispose();
+        _createRewardedAd();
+      }, onAdFailedToShowFullScreenContent: (ad, error) {
+        ad.dispose();
+        _createRewardedAd();
+      });
+
+      myRerwardedAd!.show(onUserEarnedReward: (ad, reward) {});
+    }
+  }
+
+  void _createRewardedAd() {
+    RewardedInterstitialAd.load(
+        // adUnitId: "ca-app-pub-2465007971338713/5704134732", // production
+        adUnitId: "/21775744923/example/rewarded_interstitial", // test
+        request: const AdRequest(),
+        rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
+            onAdLoaded: (ad) => setState(() => myRerwardedAd = ad),
+            onAdFailedToLoad: (_) => setState(() => myRerwardedAd = null)));
+  }
+
   @override
   void initState() {
+    _createRewardedAd();
     super.initState();
   }
 

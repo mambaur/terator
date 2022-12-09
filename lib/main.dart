@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:terator/persentations/account/account_cubits/cubit/account_cubit.dart';
 import 'package:terator/persentations/my_files/cubits/file_cubit/file_cubit.dart';
@@ -12,7 +13,7 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
   ));
-  WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   await initializeDateFormatting('id_ID', null);
   runApp(const MyApp());
 }

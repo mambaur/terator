@@ -28,6 +28,7 @@ dependencies:
   flutter_signature_view: ^2.0.0
   document_file_save_plus: ^1.0.9
   share_plus: ^4.0.9
+  google_mobile_ads: ^2.3.0
   
   cupertino_icons: ^1.0.2
 

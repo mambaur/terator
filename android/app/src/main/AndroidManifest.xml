@@ -11,6 +11,11 @@
         android:name="${applicationName}"
         android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher">
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-2465007971338713~4516581111"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

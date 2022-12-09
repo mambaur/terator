@@ -23,7 +23,38 @@ class _AboutScreenState extends State<AboutScreen> {
       body: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
-            SliverList(delegate: SliverChildListDelegate([])),
+            SliverList(
+                delegate: SliverChildListDelegate([
+              Container(
+                margin: const EdgeInsets.all(15),
+                child: Column(
+                  children: const [
+                    Text(
+                      'Terator adalah aplikasi yang membantu kamu membuat surat sesuai kebutuhan dengan cepat dan mudah hanya dengan satu klik saja.',
+                      textAlign: TextAlign.justify,
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Text(
+                        'Kamu juga dapat menambahkan tanda tangan digital di surat dengan elegan.',
+                        textAlign: TextAlign.justify),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Text(
+                        'Terator juga dapat membuat surat untuk orang lain, karena tersedia multiple akun yang dapat kamu masukkan.',
+                        textAlign: TextAlign.justify),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Text(
+                        'Download dan bagikan surat kamu ke semua orang sekarang juga!.',
+                        textAlign: TextAlign.justify),
+                  ],
+                ),
+              )
+            ])),
             SliverList(delegate: SliverChildListDelegate([])),
           ]),
     );

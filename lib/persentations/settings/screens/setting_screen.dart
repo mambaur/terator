@@ -1,7 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/persentations/settings/screens/about_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+enum StatusAd { initial, loaded }
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -15,12 +19,48 @@ class _SettingScreenState extends State<SettingScreen> {
       'https://play.google.com/store/apps/dev?id=8918426189046119136';
   final String _urlApp =
       'https://play.google.com/store/apps/details?id=com.caraguna.terator';
+  BannerAd? myBanner;
+
+  BannerAdListener listener() => BannerAdListener(
+        // Called when an ad is successfully received.
+        onAdLoaded: (Ad ad) {
+          if (kDebugMode) {
+            print('Ad Loaded.');
+          }
+          setState(() {
+            statusAd = StatusAd.loaded;
+          });
+        },
+      );
+
+  StatusAd statusAd = StatusAd.initial;
 
   Future<void> _launchUrl(String url) async {
     if (!await launchUrl(Uri.parse(url),
         mode: LaunchMode.externalApplication)) {
       throw 'Could not launch $url';
     }
+  }
+
+  @override
+  void initState() {
+    myBanner = BannerAd(
+      // test banner
+      adUnitId: '/6499/example/banner',
+
+      // adUnitId: 'ca-app-pub-2465007971338713/8992395637',
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: listener(),
+    );
+    myBanner!.load();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    myBanner!.dispose();
+    super.dispose();
   }
 
   @override
@@ -37,6 +77,19 @@ class _SettingScreenState extends State<SettingScreen> {
       body: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
+            SliverList(
+                delegate: SliverChildListDelegate([
+              statusAd == StatusAd.loaded
+                  ? Container(
+                      margin: const EdgeInsets.only(
+                          left: 15, right: 15, top: 15, bottom: 15),
+                      alignment: Alignment.center,
+                      width: myBanner!.size.width.toDouble(),
+                      height: myBanner!.size.height.toDouble(),
+                      child: AdWidget(ad: myBanner!),
+                    )
+                  : Container(),
+            ])),
             SliverList(
                 delegate: SliverChildListDelegate([
               ListTile(
