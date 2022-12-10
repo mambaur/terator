@@ -29,6 +29,7 @@ dependencies:
   document_file_save_plus: ^1.0.9
   share_plus: ^4.0.9
   google_mobile_ads: ^2.3.0
+  in_app_update: ^4.0.1
   
   cupertino_icons: ^1.0.2
 
@@ -44,6 +45,8 @@ flutter:
     - assets/img/empty.png
     - assets/img/file-empty.png
     - assets/img/account-empty.png
+    - assets/img/banner.jpg
+    - assets/img/terator_logo.png
   
   # fonts:
   #   - family: Schyler

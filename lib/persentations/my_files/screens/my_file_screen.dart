@@ -5,6 +5,8 @@ import 'package:document_file_save_plus/document_file_save_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:terator/core/generator.dart';
@@ -15,6 +17,8 @@ import 'package:terator/persentations/my_files/cubits/file_cubit/file_cubit.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:terator/persentations/my_files/screens/my_file_edit_screen.dart';
 import 'package:terator/repositories/letter_repository.dart';
+
+enum StatusAd { initial, loaded }
 
 class MyFileScreen extends StatefulWidget {
   const MyFileScreen({super.key});
@@ -114,12 +118,54 @@ class _MyFileScreenState extends State<MyFileScreen> {
     );
   }
 
+  DateFormat format = DateFormat("yyyy-MM-dd hh:mm:ss");
+  String diffHumanDate(String date) {
+    // print(format.parse(date));
+
+    String dateDiffHuman =
+        DateFormat("d MMMM yyyy hh:mm:ss", "id_ID").format(format.parse(date));
+    return dateDiffHuman;
+  }
+
+  BannerAd? myBanner;
+
+  BannerAdListener listener() => BannerAdListener(
+        // Called when an ad is successfully received.
+        onAdLoaded: (Ad ad) {
+          if (kDebugMode) {
+            print('Ad Loaded.');
+          }
+          setState(() {
+            statusAd = StatusAd.loaded;
+          });
+        },
+      );
+
+  StatusAd statusAd = StatusAd.initial;
+
   @override
   void initState() {
     context.read<FileCubit>().getFiles(isInit: true);
 
+    myBanner = BannerAd(
+      // test banner
+      adUnitId: '/6499/example/banner',
+
+      // adUnitId: 'ca-app-pub-2465007971338713/8992395637',
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: listener(),
+    );
+    myBanner!.load();
+
     _scrollController.addListener(onScroll);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    myBanner!.dispose();
+    super.dispose();
   }
 
   @override
@@ -134,6 +180,19 @@ class _MyFileScreenState extends State<MyFileScreen> {
             controller: _scrollController,
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
+              SliverList(
+                  delegate: SliverChildListDelegate([
+                statusAd == StatusAd.loaded
+                    ? Container(
+                        margin:
+                            const EdgeInsets.only(left: 15, right: 15, top: 15),
+                        alignment: Alignment.center,
+                        width: myBanner!.size.width.toDouble(),
+                        height: myBanner!.size.height.toDouble(),
+                        child: AdWidget(ad: myBanner!),
+                      )
+                    : Container(),
+              ])),
               SliverList(
                   delegate: SliverChildListDelegate([
                 BlocBuilder<FileCubit, FileState>(
@@ -175,6 +234,8 @@ class _MyFileScreenState extends State<MyFileScreen> {
                             return Container(
                                 margin: const EdgeInsets.only(
                                     left: 15, right: 15, bottom: 15),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 7),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(10),
@@ -203,10 +264,17 @@ class _MyFileScreenState extends State<MyFileScreen> {
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis),
                                       Text(
-                                          state.letters![index].createdAt ?? '',
+                                          diffHumanDate(
+                                              state.letters![index].createdAt ??
+                                                  ''),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: const TextStyle(fontSize: 10)),
+                                      // Text(
+                                      //     state.letters![index].createdAt ?? '',
+                                      //     maxLines: 1,
+                                      //     overflow: TextOverflow.ellipsis,
+                                      //     style: const TextStyle(fontSize: 10)),
                                     ],
                                   ),
                                   leading: const Icon(Icons.picture_as_pdf,
@@ -268,7 +336,14 @@ class _MyFileScreenState extends State<MyFileScreen> {
                     Text(
                       '📃 ${letter.title}',
                       style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.w500),
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      letter.name ?? '',
+                      style: const TextStyle(color: Colors.grey),
                     ),
                     const SizedBox(
                       height: 20,
@@ -285,8 +360,8 @@ class _MyFileScreenState extends State<MyFileScreen> {
                           }
                         });
                       },
-                      title: Text('Edit Surat'),
-                      leading: Icon(
+                      title: const Text('Edit Surat'),
+                      leading: const Icon(
                         Icons.edit,
                         color: bInfo,
                       ),
@@ -316,8 +391,8 @@ class _MyFileScreenState extends State<MyFileScreen> {
                         Navigator.pop(context);
                         _showDeleteDialog(letter);
                       },
-                      title: Text('Hapus'),
-                      leading: Icon(
+                      title: const Text('Hapus'),
+                      leading: const Icon(
                         Icons.delete,
                         color: bDanger,
                       ),

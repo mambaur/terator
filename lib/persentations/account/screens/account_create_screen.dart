@@ -1,11 +1,9 @@
 import 'dart:convert';
 
 import 'package:cool_alert/cool_alert.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_signature_view/flutter_signature_view.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:terator/core/date_setting.dart';
 import 'package:terator/core/loading_overlay.dart';
 import 'package:terator/core/styles.dart';

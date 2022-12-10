@@ -22,16 +22,20 @@ class _NavbarState extends State<Navbar> {
   ];
 
   final List<Widget> _titleOptions = <Widget>[
-    const Text(
-      '🏡 Terator',
-      style: TextStyle(color: bDark),
+    // const Text(
+    //   '🏡 Terator',
+    //   style: TextStyle(color: bDark),
+    // ),
+    Image.asset(
+      'assets/img/terator_logo.png',
+      height: 45,
     ),
     const Text(
       '📂 File Saya',
       style: TextStyle(color: bDark),
     ),
     const Text(
-      '⚙️ Akun Surat',
+      '👦 Akun Surat',
       style: TextStyle(color: bDark),
     ),
   ];

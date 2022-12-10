@@ -96,6 +96,9 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
       }, onAdFailedToShowFullScreenContent: (ad, error) {
         ad.dispose();
         _createRewardedAd();
+      }, onAdWillDismissFullScreenContent: (ad) {
+        ad.dispose();
+        _createRewardedAd();
       });
 
       myRerwardedAd!.show(onUserEarnedReward: (ad, reward) {});
