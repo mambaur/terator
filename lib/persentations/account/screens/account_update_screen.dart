@@ -34,6 +34,10 @@ class _AccountUpdateScreenState extends State<AccountUpdateScreen> {
   final _placeAndDateOfBirthController = TextEditingController();
   final _genderController = TextEditingController();
   final _religionController = TextEditingController();
+  final _educationNumberController = TextEditingController();
+  final _educationFacultyController = TextEditingController();
+  final _educationStudyProgramController = TextEditingController();
+  final _educationAddressController = TextEditingController();
   final _lastEducationController = TextEditingController();
   final _educationClassController = TextEditingController();
   final _educationInstitutionController = TextEditingController();
@@ -65,6 +69,10 @@ class _AccountUpdateScreenState extends State<AccountUpdateScreen> {
       "religion": _religionController.text,
       "last_education": _lastEducationController.text,
       "education_class": _educationClassController.text,
+      "education_number": _educationNumberController.text,
+      "education_faculty": _educationFacultyController.text,
+      "education_study_program": _educationStudyProgramController.text,
+      "education_address": _educationAddressController.text,
       "education_institution": _educationInstitutionController.text,
       "height_or_weight": _heightOrWeightController.text,
       "telephone": _telephoneController.text,
@@ -100,7 +108,12 @@ class _AccountUpdateScreenState extends State<AccountUpdateScreen> {
     _genderController.text = widget.account.gender ?? '';
     _religionController.text = widget.account.religion ?? '';
     _lastEducationController.text = widget.account.lastEducation ?? '';
+    _educationNumberController.text = widget.account.educationNumber ?? '';
     _educationClassController.text = widget.account.educationClass ?? '';
+    _educationFacultyController.text = widget.account.educationFaculty ?? '';
+    _educationStudyProgramController.text =
+        widget.account.educationStudyProgram ?? '';
+    _educationAddressController.text = widget.account.educationAddress ?? '';
     _educationInstitutionController.text =
         widget.account.educationInstitution ?? '';
     _heightOrWeightController.text = widget.account.heightOrWeight ?? '';
@@ -332,6 +345,21 @@ class _AccountUpdateScreenState extends State<AccountUpdateScreen> {
                       Container(
                         margin: const EdgeInsets.only(bottom: 15),
                         child: TextFormField(
+                          controller: _educationNumberController,
+                          decoration: const InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: bSecondary),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: bInfo),
+                              ),
+                              labelStyle: TextStyle(color: bSecondary),
+                              labelText: 'NIS/NIM/No Pelajar'),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 15),
+                        child: TextFormField(
                           controller: _lastEducationController,
                           decoration: const InputDecoration(
                               enabledBorder: OutlineInputBorder(
@@ -372,6 +400,51 @@ class _AccountUpdateScreenState extends State<AccountUpdateScreen> {
                               ),
                               labelStyle: TextStyle(color: bSecondary),
                               labelText: 'Institusi/Sekolah/Kampus'),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 15),
+                        child: TextFormField(
+                          controller: _educationFacultyController,
+                          decoration: const InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: bSecondary),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: bInfo),
+                              ),
+                              labelStyle: TextStyle(color: bSecondary),
+                              labelText: 'Fakultas'),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 15),
+                        child: TextFormField(
+                          controller: _educationStudyProgramController,
+                          decoration: const InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: bSecondary),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: bInfo),
+                              ),
+                              labelStyle: TextStyle(color: bSecondary),
+                              labelText: 'Program Studi'),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 15),
+                        child: TextFormField(
+                          controller: _educationAddressController,
+                          decoration: const InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: bSecondary),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: bInfo),
+                              ),
+                              labelStyle: TextStyle(color: bSecondary),
+                              labelText: 'Alamat Institusi/Sekolah/Kampus'),
                         ),
                       ),
                     ],

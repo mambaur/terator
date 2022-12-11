@@ -70,7 +70,7 @@ class _LetterChooseAccountScreenState extends State<LetterChooseAccountScreen> {
                           left: 15, right: 15, bottom: 15),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(5),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.1),

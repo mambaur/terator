@@ -37,9 +37,10 @@ class _LetterScreenState extends State<LetterScreen> {
                   return Container(
                       margin: const EdgeInsets.only(
                           left: 15, right: 15, bottom: 15),
+                      padding: const EdgeInsets.symmetric(vertical: 5),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(5),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.1),
@@ -59,6 +60,7 @@ class _LetterScreenState extends State<LetterScreen> {
                           }));
                         },
                         title: Text(widget.letters[index]["title"]),
+                        subtitle: Text(widget.letters[index]["subtitle"]),
                         leading: const Icon(Icons.description_outlined,
                             color: bInfo),
                         trailing:

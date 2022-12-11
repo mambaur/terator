@@ -32,6 +32,10 @@ class _AccountCreateScreenState extends State<AccountCreateScreen> {
   final _religionController = TextEditingController();
   final _lastEducationController = TextEditingController();
   final _educationClassController = TextEditingController();
+  final _educationNumberController = TextEditingController();
+  final _educationFacultyController = TextEditingController();
+  final _educationStudyProgramController = TextEditingController();
+  final _educationAddressController = TextEditingController();
   final _educationInstitutionController = TextEditingController();
   final _heightOrWeightController = TextEditingController();
   final _telephoneController = TextEditingController();
@@ -60,6 +64,10 @@ class _AccountCreateScreenState extends State<AccountCreateScreen> {
       "gender": _genderController.text,
       "religion": _religionController.text,
       "last_education": _lastEducationController.text,
+      "education_number": _educationNumberController.text,
+      "education_faculty": _educationFacultyController.text,
+      "education_study_program": _educationStudyProgramController.text,
+      "education_address": _educationAddressController.text,
       "education_class": _educationClassController.text,
       "education_institution": _educationInstitutionController.text,
       "height_or_weight": _heightOrWeightController.text,
@@ -303,6 +311,21 @@ class _AccountCreateScreenState extends State<AccountCreateScreen> {
                       Container(
                         margin: const EdgeInsets.only(bottom: 15),
                         child: TextFormField(
+                          controller: _educationNumberController,
+                          decoration: const InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: bSecondary),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: bInfo),
+                              ),
+                              labelStyle: TextStyle(color: bSecondary),
+                              labelText: 'NIS/NIM/No Pelajar'),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 15),
+                        child: TextFormField(
                           controller: _lastEducationController,
                           decoration: const InputDecoration(
                               enabledBorder: OutlineInputBorder(
@@ -343,6 +366,51 @@ class _AccountCreateScreenState extends State<AccountCreateScreen> {
                               ),
                               labelStyle: TextStyle(color: bSecondary),
                               labelText: 'Institusi/Sekolah/Kampus'),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 15),
+                        child: TextFormField(
+                          controller: _educationFacultyController,
+                          decoration: const InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: bSecondary),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: bInfo),
+                              ),
+                              labelStyle: TextStyle(color: bSecondary),
+                              labelText: 'Fakultas'),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 15),
+                        child: TextFormField(
+                          controller: _educationStudyProgramController,
+                          decoration: const InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: bSecondary),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: bInfo),
+                              ),
+                              labelStyle: TextStyle(color: bSecondary),
+                              labelText: 'Program Studi'),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 15),
+                        child: TextFormField(
+                          controller: _educationAddressController,
+                          decoration: const InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: bSecondary),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: bInfo),
+                              ),
+                              labelStyle: TextStyle(color: bSecondary),
+                              labelText: 'Alamat Institusi/Sekolah/Kampus'),
                         ),
                       ),
                     ],

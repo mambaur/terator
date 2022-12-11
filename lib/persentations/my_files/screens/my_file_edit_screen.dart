@@ -122,6 +122,12 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
   }
 
   @override
+  void dispose() {
+    LoadingOverlay.show(context);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

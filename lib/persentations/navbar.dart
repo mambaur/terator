@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/persentations/account/screens/account_screen.dart';
 import 'package:terator/persentations/home/screens/home_screen.dart';
@@ -14,6 +15,7 @@ class Navbar extends StatefulWidget {
 }
 
 class _NavbarState extends State<Navbar> {
+  DateTime preBackpress = DateTime.now();
   int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
@@ -56,54 +58,68 @@ class _NavbarState extends State<Navbar> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        title: _titleOptions.elementAt(_selectedIndex),
-        backgroundColor: Colors.white,
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (builder) {
-                  return const SettingScreen();
-                }));
-              },
-              icon: const Icon(Icons.settings, color: bSecondary))
-        ],
-      ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        type: BottomNavigationBarType.fixed,
-        selectedFontSize: 12,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: EdgeInsets.only(bottom: 3),
-              child: Icon(Icons.other_houses_outlined),
+    return WillPopScope(
+      onWillPop: () async {
+        final timegap = DateTime.now().difference(preBackpress);
+        final cantExit = timegap >= const Duration(seconds: 2);
+        preBackpress = DateTime.now();
+        if (cantExit) {
+          //show snackbar
+          Fluttertoast.showToast(msg: 'Tekan tombol kembali lagi untuk keluar');
+          return false;
+        } else {
+          return true;
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          title: _titleOptions.elementAt(_selectedIndex),
+          backgroundColor: Colors.white,
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (builder) {
+                    return const SettingScreen();
+                  }));
+                },
+                icon: const Icon(Icons.settings, color: bSecondary))
+          ],
+        ),
+        body: Center(
+          child: _widgetOptions.elementAt(_selectedIndex),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.white,
+          type: BottomNavigationBarType.fixed,
+          selectedFontSize: 12,
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Padding(
+                padding: EdgeInsets.only(bottom: 3),
+                child: Icon(Icons.other_houses_outlined),
+              ),
+              label: 'Beranda',
             ),
-            label: 'Beranda',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: EdgeInsets.only(bottom: 3),
-              child: Icon(Icons.schedule),
+            BottomNavigationBarItem(
+              icon: Padding(
+                padding: EdgeInsets.only(bottom: 3),
+                child: Icon(Icons.schedule),
+              ),
+              label: 'File Saya',
             ),
-            label: 'File Saya',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: EdgeInsets.only(bottom: 3),
-              child: Icon(Icons.contact_page_outlined),
+            BottomNavigationBarItem(
+              icon: Padding(
+                padding: EdgeInsets.only(bottom: 3),
+                child: Icon(Icons.contact_page_outlined),
+              ),
+              label: 'Akun',
             ),
-            label: 'Akun',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: bInfo,
-        onTap: _onItemTapped,
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: bInfo,
+          onTap: _onItemTapped,
+        ),
       ),
     );
   }

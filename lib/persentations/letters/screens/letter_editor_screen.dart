@@ -4,6 +4,7 @@ import 'package:cool_alert/cool_alert.dart';
 import 'package:document_file_save_plus/document_file_save_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -152,6 +153,12 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
   }
 
   @override
+  void dispose() {
+    LoadingOverlay.show(context);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -168,12 +175,13 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
           String text = LetterData.html(widget.keyLetter,
               account: widget.account,
               image: widget.withSignature
-                  ? "<div style='margin-top:10px;margin-bottom:10px;text-align: right;'><img style='height:70px;' src='data:image/png;base64,${widget.account.signatureImage}'></div>"
+                  ? "<div style='margin-top:10px;margin-bottom:10px;text-align: center;'><img style='height:70px;' src='data:image/png;base64,${widget.account.signatureImage}'></div>"
                   : null);
           controller.setText("$text<br><br><br>");
         }),
-        htmlToolbarOptions:
-            const HtmlToolbarOptions(toolbarPosition: ToolbarPosition.custom),
+        htmlToolbarOptions: const HtmlToolbarOptions(),
+        // htmlToolbarOptions:
+        //     const HtmlToolbarOptions(toolbarPosition: ToolbarPosition.custom),
         htmlEditorOptions: const HtmlEditorOptions(
           hint: "Tulis surat disini...",
           //initalText: "text content initial, if any",
@@ -184,6 +192,10 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
+          String data = await controller.getText();
+          Clipboard.setData(ClipboardData(text: data)).then((_) {
+            Fluttertoast.showToast(msg: 'Html berhasil disalin.');
+          });
           _showSubmitModal();
         },
         backgroundColor: bInfo,

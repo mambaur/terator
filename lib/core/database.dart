@@ -18,8 +18,12 @@ class DatabaseInstance {
   final String accountGender = 'gender'; // male, female
   final String accountReligion = 'religion';
   final String accountLastEducation = 'last_education';
+  final String accountEducationNumber = 'education_number';
   final String accountEducationClass = 'education_class';
   final String accountEducationInstitution = 'education_institution';
+  final String accountEducationFaculty = 'education_faculty';
+  final String accountEducationStudyProgram = 'education_study_program';
+  final String accountEducationAddress = 'education_address';
   final String accountHeightOrWeight = 'height_or_weight'; // 30/23
   final String accountTelephone = 'telephone';
   final String accountEmail = 'email';
@@ -69,8 +73,12 @@ class DatabaseInstance {
             $accountGender TEXT NULL,
             $accountReligion TEXT NULL,
             $accountLastEducation TEXT NULL,
+            $accountEducationNumber TEXT NULL,
             $accountEducationClass TEXT NULL,
             $accountEducationInstitution TEXT NULL,
+            $accountEducationFaculty TEXT NULL,
+            $accountEducationStudyProgram TEXT NULL,
+            $accountEducationAddress TEXT NULL,
             $accountHeightOrWeight TEXT NULL,
             $accountTelephone TEXT NULL,
             $accountEmail TEXT NULL,

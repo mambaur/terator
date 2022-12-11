@@ -19,6 +19,7 @@ class _SettingScreenState extends State<SettingScreen> {
       'https://play.google.com/store/apps/dev?id=8918426189046119136';
   final String _urlApp =
       'https://play.google.com/store/apps/details?id=com.caraguna.terator';
+  final String _feedbackUrl = 'https://forms.gle/nnKfnzXRATp5N8Zg9';
   BannerAd? myBanner;
 
   BannerAdListener listener() => BannerAdListener(
@@ -97,6 +98,15 @@ class _SettingScreenState extends State<SettingScreen> {
                 title: const Text('Aplikasi Lainnya'),
                 leading: const Icon(
                   Icons.shop_outlined,
+                  color: bInfo,
+                ),
+                trailing: const Icon(Icons.chevron_right),
+              ),
+              ListTile(
+                onTap: () => _launchUrl(_feedbackUrl),
+                title: const Text('Berikan Kritik & Saran'),
+                leading: const Icon(
+                  Icons.feedback_outlined,
                   color: bInfo,
                 ),
                 trailing: const Icon(Icons.chevron_right),

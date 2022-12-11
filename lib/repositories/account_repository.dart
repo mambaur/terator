@@ -48,9 +48,22 @@ class AccountRepository {
             religion: data[i]['religion'].toString() == "null"
                 ? null
                 : data[i]['religion'].toString(),
+            educationNumber: data[i]['education_number'].toString() == "null"
+                ? null
+                : data[i]['education_number'].toString(),
             lastEducation: data[i]['last_education'].toString() == "null"
                 ? null
                 : data[i]['last_education'].toString(),
+            educationFaculty: data[i]['education_faculty'].toString() == "null"
+                ? null
+                : data[i]['education_faculty'].toString(),
+            educationStudyProgram:
+                data[i]['education_study_program'].toString() == "null"
+                    ? null
+                    : data[i]['education_study_program'].toString(),
+            educationAddress: data[i]['education_address'].toString() == "null"
+                ? null
+                : data[i]['education_address'].toString(),
             educationClass: data[i]['education_class'].toString() == "null"
                 ? null
                 : data[i]['education_class'].toString(),
