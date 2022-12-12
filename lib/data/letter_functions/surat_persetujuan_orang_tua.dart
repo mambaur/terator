@@ -2,10 +2,10 @@ import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
 
-String suratPermohonanBeaSiswa(
+String suratPersetujuanOrangTua(
     LetterModel? letter, String? img, AccountModel? account) {
-  String dateNow =
-      DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
+  // String dateNow =
+  //     DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
@@ -13,37 +13,41 @@ String suratPermohonanBeaSiswa(
       '<p style="text-align: right; "><br></p><p style="text-align: right; "><br></p>';
 
   String html = """
-    <p style="text-align: right; ">$dateNow</p>
+    <p style="text-align: center;">
+      <b>SURAT PERSETUJUAN ORANG TUA / WALI</b>
+    </p>
+    <p><br></p>
+    <p style="text-align: justify; ">
+      Yang bertanda tangan dibawah ini:
+    </p>
     <p>
       <table border="0" style="width:100%">
 				<tbody>
 					<tr>
-						<td style="white-space: nowrap">Perihal</td>
+						<td style="white-space: nowrap">Nama Orang tua / Wali</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%">Permohonan Beasiswa</td>
+						<td style="width: 100%">${account?.parentName ?? ''}</td>
 					</tr>
-          <tr>
-						<td style="white-space: nowrap">Lampiran</td>
+					<tr>
+						<td style="white-space: nowrap">Tempat / Tgl. Lahir Orang tua / Wali</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%">1 Berkas</td>
+						<td style="width: 100%"></td>
+					</tr>
+					<tr>
+						<td style="white-space: nowrap">Nomor Telepon Orang tua / Wali</td>
+						<td>:&nbsp</td>
+						<td style="width: 100%"></td>
+					</tr>
+					<tr>
+						<td style="white-space: nowrap">Alamat</td>
+						<td>:&nbsp</td>
+						<td style="width: 100%"></td>
 					</tr>
 				</tbody>
 			</table>
     </p>
-    <p><br></p>
-    <p>
-      Kepada Yth.
-      <br>
-      Kepala ${account?.educationInstitution ?? ''}
-      <br>
-      ${account?.educationAddress ?? ''}
-    </p>
-    <p><br></p>
     <p style="text-align: justify; ">
-      Dengan Hormat,
-    </p>
-    <p style="text-align: justify; ">
-      Bersamaan adanya informasi Beasiswa <b>...(Nama Beasiswa)</b>, saya yang bertanda tangan di bawah ini:
+      Yang merupakan orang tua / wali dari:
     </p>
     <p>
       <table border="0" style="width:100%">
@@ -53,20 +57,10 @@ String suratPermohonanBeaSiswa(
 						<td>:&nbsp</td>
 						<td style="width: 100%">${account?.name ?? ''}</td>
 					</tr>
-          <tr>
-						<td style="white-space: nowrap">NIS</td>
-						<td>:&nbsp</td>
-						<td style="width: 100%">${account?.educationNumber ?? ''}</td>
-					</tr>
-          <tr>
+					<tr>
 						<td style="white-space: nowrap">Tempat / Tgl. Lahir</td>
 						<td>:&nbsp</td>
 						<td style="width: 100%">${account?.placeAndDateOfBirth ?? ''}</td>
-					</tr>
-          <tr>
-						<td style="white-space: nowrap">Sekolah Asal</td>
-						<td>:&nbsp</td>
-						<td style="width: 100%">${account?.educationInstitution ?? ''}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Kelas</td>
@@ -82,18 +76,10 @@ String suratPermohonanBeaSiswa(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini, saya ingin mengajukan permohonan untuk program Beasiswa. Sebagai pertimbangan, saya lampirkan berkas yang dibutuhkan:
-    </p>
-    <p>
-      <ul>
-        <li>Fotokopi KTP</li>
-        <li>Fotokopi KTM</li>
-        <li>Transkrip Nilai</li>
-        <li>Pas Foto 4 x 6</li>
-      </ul>
+      Menerangkan bahwa saya memberikan izin kepada anak saya untuk mengikuti <b>... (Kegiatan)</b> dengan menerapkan protokol kesehatan, seperti menggunakan masker dan mengatur jarak, dan bersedia mengikuti jadwal kegiatan yang sudah diatur oleh pihak panitia atau sekolah.
     </p>
     <p style="text-align: justify; ">
-      Demikian surat permohonan yang saya ajukan dengan semestinya. Terima kasih atas perhatian dan bantuannya.
+      Demikian surat pernyataan ini saya buat dengan sadar dan tanpa paksaan dari pihak manapun dan semoga bisa dimanfaatkan dengan sebagaimana mestinya.
     </p>
     <p><br></p>
     <table>
@@ -104,13 +90,11 @@ String suratPermohonanBeaSiswa(
             <p>
               <span style="white-space: nowrap">${account?.letterCityWritten ?? ''}, $dateNow2</span>
               <br>
-              <span style="white-space: nowrap">Hormat saya,</span>
+              <span style="white-space: nowrap">Orang tua / Wali,</span>
             </p>
             $image
             <p>
-              <span style="white-space: nowrap">${account?.name ?? ''}</span>
-              <br>
-              <span style="white-space: nowrap">${account?.educationNumber ?? ''}</span>
+              <span style="white-space: nowrap">${account?.parentName ?? ''}</span>
             </p>
           </td>
         </tr>
