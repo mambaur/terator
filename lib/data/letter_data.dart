@@ -13,6 +13,10 @@ import 'package:terator/data/letter_functions/sekolah/surat_permohonan_beasiswa.
 import 'package:terator/data/letter_functions/sekolah/surat_permohonan_pindah_sekolah.dart';
 import 'package:terator/data/letter_functions/sekolah/surat_pernyataan_tidak_menerima_beasiswa.dart';
 import 'package:terator/data/letter_functions/sekolah/surat_persetujuan_orang_tua.dart';
+import 'package:terator/data/letter_functions/umum/surat_permohonan_maaf.dart';
+import 'package:terator/data/letter_functions/umum/surat_pernyataan_belum_menikah.dart';
+import 'package:terator/data/letter_functions/umum/surat_pernyataan_cerai.dart';
+import 'package:terator/data/letter_functions/umum/surat_pernyataan_keluarga_tentang_kematian.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
 
@@ -118,7 +122,16 @@ class LetterData {
         "id": 5,
         "title": "Surat Umum",
         "letters": [
-          {"key": "surat_izin_sekolah", "title": "Surat Lamaran Kerja"},
+          {
+            "key": "surat_pernyataan_belum_menikah",
+            "title": "Surat Pernyataan Belum Menikah"
+          },
+          {"key": "surat_pernyataan_cerai", "title": "Surat Pernyataan Cerai"},
+          {
+            "key": "surat_pernyataan_keluarga_tentang_kematian",
+            "title": "Surat Pernyataan Keluarga Tentang Kematian"
+          },
+          {"key": "surat_permohonan_maaf", "title": "Surat Permohonan Maaf"},
         ]
       },
     ];
@@ -192,6 +205,22 @@ List<Map<String, dynamic>> letterDataMap(String? image,
     {
       "key": "surat_lamaran_pekerjaan",
       "html": suratLamaranPekerjaan(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_belum_menikah",
+      "html": suratPernyataanBelumMenikah(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_cerai",
+      "html": suratPernyataanCerai(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_keluarga_tentang_kematian",
+      "html": suratPernyataanKeluargaTentangKematian(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_maaf",
+      "html": suratPermohonanMaaf(letter, image, account)
     },
   ];
 }
