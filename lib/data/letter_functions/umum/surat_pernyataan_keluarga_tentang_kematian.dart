@@ -183,23 +183,21 @@ String suratPernyataanKeluargaTentangKematian(
           <td style="vertical-align:top;text-align:center;">
             <p>
               <br>
-              <br>
               <span style="white-space: nowrap">Saksi 1</span>
             </p>
             <p style="text-align: right; "><br></p><p style="text-align: right; "><br></p>
             <p>
-              <span style="white-space: nowrap">... (Nama Saksi 1)</span>
+              <span style="white-space: nowrap">...</span>
             </p>
           </td>
           <td style="vertical-align:top;text-align:center;">
             <p>
               <br>
-              <br>
               <span style="white-space: nowrap">Saksi 2</span>
             </p>
             <p style="text-align: right; "><br></p><p style="text-align: right; "><br></p>
             <p>
-              <span style="white-space: nowrap">... (Nama Saksi 2)</span>
+              <span style="white-space: nowrap">...</span>
             </p>
           </td>
           <td style="vertical-align:top;text-align:center;">

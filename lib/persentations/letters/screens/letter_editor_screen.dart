@@ -10,6 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:terator/core/date_setting.dart';
 import 'package:terator/core/generator.dart';
 import 'package:terator/core/loading_overlay.dart';
@@ -44,7 +45,6 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
   bool withSignature = false;
 
   convert(String htmlData, String name) async {
-    await showRewardAd();
     // ignore: use_build_context_synchronously
     LoadingOverlay.show(context);
     var targetPath = await _localPath;
@@ -81,6 +81,8 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
       title: "Sukses!!!",
       text: "Surat kamu berhasil di generate dan di download!",
     );
+
+    await showRewardAd();
   }
 
   Future store(String html) async {
@@ -138,23 +140,34 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
 
   void _createRewardedAd() {
     RewardedInterstitialAd.load(
-        // adUnitId: "ca-app-pub-2465007971338713/5704134732", // production
-        adUnitId: "/21775744923/example/rewarded_interstitial", // test
+        adUnitId: "ca-app-pub-2465007971338713/5704134732", // production
+        // adUnitId: "/21775744923/example/rewarded_interstitial", // test
         request: const AdRequest(),
         rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
             onAdLoaded: (ad) => setState(() => myRerwardedAd = ad),
             onAdFailedToLoad: (_) => setState(() => myRerwardedAd = null)));
   }
 
+  Future<void> requestStoragePermission() async {
+    PermissionStatus status = await Permission.storage.request();
+    if (status.isDenied == true) {
+      Fluttertoast.showToast(
+          msg:
+              'Mohon terima akses penyimpanan, agar surat kamu bisa di generate!');
+      await Permission.contacts.request();
+    }
+  }
+
   @override
   void initState() {
     _createRewardedAd();
+    requestStoragePermission();
     super.initState();
   }
 
   @override
   void dispose() {
-    LoadingOverlay.show(context);
+    LoadingOverlay.hide(context);
     super.dispose();
   }
 
@@ -175,13 +188,13 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
           String text = LetterData.html(widget.keyLetter,
               account: widget.account,
               image: widget.withSignature
-                  ? "<div style='margin-top:10px;margin-bottom:10px;text-align: center;'><img style='height:70px;' src='data:image/png;base64,${widget.account.signatureImage}'></div>"
+                  ? "<div style='margin-top:10px;margin-bottom:10px;text-align: center;'><img style='width:50%;' src='data:image/png;base64,${widget.account.signatureImage}'></div>"
                   : null);
           controller.setText("$text<br><br><br>");
         }),
-        htmlToolbarOptions: const HtmlToolbarOptions(),
-        // htmlToolbarOptions:
-        //     const HtmlToolbarOptions(toolbarPosition: ToolbarPosition.custom),
+        // htmlToolbarOptions: const HtmlToolbarOptions(),
+        htmlToolbarOptions:
+            const HtmlToolbarOptions(toolbarPosition: ToolbarPosition.custom),
         htmlEditorOptions: const HtmlEditorOptions(
           hint: "Tulis surat disini...",
           //initalText: "text content initial, if any",
@@ -192,10 +205,10 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          String data = await controller.getText();
-          Clipboard.setData(ClipboardData(text: data)).then((_) {
-            Fluttertoast.showToast(msg: 'Html berhasil disalin.');
-          });
+          // String data = await controller.getText();
+          // Clipboard.setData(ClipboardData(text: data)).then((_) {
+          //   Fluttertoast.showToast(msg: 'Html berhasil disalin.');
+          // });
           _showSubmitModal();
         },
         backgroundColor: bInfo,

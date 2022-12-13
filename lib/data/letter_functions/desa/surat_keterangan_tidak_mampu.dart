@@ -2,7 +2,7 @@ import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
 
-String suratPermohonanPindahSekolah(
+String suratKeteranganTidakMampu(
     LetterModel? letter, String? img, AccountModel? account) {
   // String dateNow =
   //     DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
@@ -13,23 +13,12 @@ String suratPermohonanPindahSekolah(
       '<p style="text-align: right; "><br></p><p style="text-align: right; "><br></p>';
 
   String html = """
-    <p style="text-align: justify; ">
-      Perihal: Permohonan Pindah Sekolah
-    </p>
-    <p><br></p>
-    <p>
-      Kepada Yth.
-      <br>
-      Kepala ${account?.educationInstitution ?? ''}
-      <br>
-      Di Tempat
+    <p style="text-align: center;">
+      <b>SURAT KETERANGAN TIDAK MAMPU</b>
     </p>
     <p><br></p>
     <p style="text-align: justify; ">
-      Dengan Hormat,
-    </p>
-    <p style="text-align: justify; ">
-      Sehubungan dengan surat ini, saya selaku wali murid/orang tua dari:
+      Yang bertanda tangan di bawah ini Kepala Kelurahan <b>... (Alamat)</b> menerangkan bahwa :
     </p>
     <p>
       <table border="0" style="width:100%">
@@ -39,29 +28,45 @@ String suratPermohonanPindahSekolah(
 						<td>:&nbsp</td>
 						<td style="width: 100%">${account?.name ?? ''}</td>
 					</tr>
-          <tr>
+					<tr>
+						<td style="white-space: nowrap">Jenis Kelamin</td>
+						<td>:&nbsp</td>
+						<td style="width: 100%">${account?.gender ?? ''}</td>
+					</tr>
+					<tr>
 						<td style="white-space: nowrap">Tempat / Tgl. Lahir</td>
 						<td>:&nbsp</td>
 						<td style="width: 100%">${account?.placeAndDateOfBirth ?? ''}</td>
 					</tr>
-          <tr>
-						<td style="white-space: nowrap">Sekolah Asal</td>
+					<tr>
+						<td style="white-space: nowrap">Pekerjaan</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%">${account?.educationInstitution ?? ''}</td>
+						<td style="width: 100%">${account?.religion ?? ''}</td>
+					</tr>
+					<tr>
+						<td style="white-space: nowrap">Pekerjaan</td>
+						<td>:&nbsp</td>
+						<td style="width: 100%">${account?.religion ?? ''}</td>
 					</tr>
           <tr>
-						<td style="white-space: nowrap">Kelas</td>
+						<td style="white-space: nowrap">Alamat</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%">${account?.educationClass ?? ''}</td>
+						<td style="width: 100%">${account?.address ?? ''}</td>
 					</tr>
 				</tbody>
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Mengajukan permohonan pindah dari ${account?.educationInstitution ?? ''} ke <b>SMA Budi Mulia Jakarta</b>. Hal ini sehubungan dengan <b>pindah tugas kedua orang tua ke Jakarta</b>.
+      Warga tersebut diatas adalah benar penduduk <b>... (Alamat)</b> yang bertempat tinggal di alamat tersebut diatas.
     </p>
     <p style="text-align: justify; ">
-      Kami berharap pihak sekolah mempertimbangkan permohonan di atas. Terima kasih atas perhatiannya.
+      Berdasarkan Pengantar dari Ketua RT/RW setempat yang menurut sepengetahuan kami, bahwa benar yang bersangkutan tergolong orang yang tidak mampu/miskin.
+    </p>
+    <p style="text-align: justify; ">
+      Surat keterangan ini kami berikan atas permintaan yang bersangkutan untuk dipergunakan sebagai <b>... (Kebutuhan)</b>.
+    </p>
+    <p style="text-align: justify; ">
+      Demikian surat keterangan ini kami buat dengan sesungguhnya untuk dapat dipergunakan seperlunya.
     </p>
     <p><br></p>
     <table>
@@ -72,11 +77,11 @@ String suratPermohonanPindahSekolah(
             <p>
               <span style="white-space: nowrap">${account?.letterCityWritten ?? ''}, $dateNow2</span>
               <br>
-              <span style="white-space: nowrap">Hormat saya,</span>
+              <span style="white-space: nowrap">Kepala Kelurahan,</span>
             </p>
             $image
             <p>
-              <span style="white-space: nowrap">${account?.parentName ?? ''}</span>
+              <span style="white-space: nowrap">... (Nama Kepala Lurah)</span>
             </p>
           </td>
         </tr>

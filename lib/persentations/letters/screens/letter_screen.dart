@@ -60,7 +60,9 @@ class _LetterScreenState extends State<LetterScreen> {
                           }));
                         },
                         title: Text(widget.letters[index]["title"]),
-                        subtitle: Text(widget.letters[index]["subtitle"]),
+                        subtitle: widget.letters[index]["subtitle"] != null
+                            ? Text(widget.letters[index]["subtitle"])
+                            : null,
                         leading: const Icon(Icons.description_outlined,
                             color: bInfo),
                         trailing:

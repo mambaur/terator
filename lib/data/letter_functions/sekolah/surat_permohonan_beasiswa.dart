@@ -4,8 +4,8 @@ import 'package:terator/models/letter_model.dart';
 
 String suratPermohonanBeaSiswa(
     LetterModel? letter, String? img, AccountModel? account) {
-  String dateNow =
-      DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
+  // String dateNow =
+  //     DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
@@ -13,7 +13,6 @@ String suratPermohonanBeaSiswa(
       '<p style="text-align: right; "><br></p><p style="text-align: right; "><br></p>';
 
   String html = """
-    <p style="text-align: right; ">$dateNow</p>
     <p>
       <table border="0" style="width:100%">
 				<tbody>

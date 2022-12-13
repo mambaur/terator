@@ -149,9 +149,9 @@ class _MyFileScreenState extends State<MyFileScreen> {
 
     myBanner = BannerAd(
       // test banner
-      adUnitId: '/6499/example/banner',
+      // adUnitId: '/6499/example/banner',
 
-      // adUnitId: 'ca-app-pub-2465007971338713/8992395637',
+      adUnitId: 'ca-app-pub-2465007971338713/8992395637',
       size: AdSize.banner,
       request: const AdRequest(),
       listener: listener(),

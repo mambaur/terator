@@ -1,11 +1,12 @@
 import 'package:terator/data/letter_functions/bisnis/surat_keterangan_tempat_usaha.dart';
+import 'package:terator/data/letter_functions/desa/surat_keterangan_domisili.dart';
+import 'package:terator/data/letter_functions/desa/surat_keterangan_tidak_mampu.dart';
 import 'package:terator/data/letter_functions/pekerjaan/surat_izin_tidak_masuk_kerja.dart';
 import 'package:terator/data/letter_functions/pekerjaan/surat_lamaran_pekerjaan.dart';
 import 'package:terator/data/letter_functions/pekerjaan/surat_pengunduran_diri.dart';
 import 'package:terator/data/letter_functions/pekerjaan/surat_permohonan_izin_cuti_kerja.dart';
 import 'package:terator/data/letter_functions/pekerjaan/surat_permohonan_magang_kerja.dart';
 import 'package:terator/data/letter_functions/pekerjaan/surat_pernyataan_kesediaan_bekerja_penuh_waktu.dart';
-import 'package:terator/data/letter_functions/sekolah/surat_izin_kampus.dart';
 import 'package:terator/data/letter_functions/sekolah/surat_izin_tidak_masuk_sekolah.dart';
 import 'package:terator/data/letter_functions/sekolah/surat_keterangan_penghasilan_orang_tua.dart';
 import 'package:terator/data/letter_functions/sekolah/surat_perjanjian_tidak_mengulangi_kesalahan.dart';
@@ -105,7 +106,14 @@ class LetterData {
         "id": 3,
         "title": "Surat Desa",
         "letters": [
-          {"key": "surat_izin_sekolah", "title": "Surat Lamaran Kerja"},
+          {
+            "key": "surat_keterangan_tidak_mampu",
+            "title": "Surat Keterangan Tidak Mampu"
+          },
+          {
+            "key": "surat_keterangan_domisili",
+            "title": "Surat Keterangan Domisili"
+          },
         ]
       },
       {
@@ -136,12 +144,6 @@ class LetterData {
       },
     ];
 
-    if (q != '') {
-      result = result
-          .where((e) => (e["title"]).toLowerCase().contains(q.toLowerCase()))
-          .toList();
-    }
-
     return result;
   }
 }
@@ -149,78 +151,105 @@ class LetterData {
 List<Map<String, dynamic>> letterDataMap(String? image,
     {LetterModel? letter, AccountModel? account}) {
   return [
-    {"key": "surat_izin_kampus", "html": suratIzinKampus(letter, image)},
     {
       "key": "surat_izin_tidak_masuk_sekolah",
+      "title": "Surat Izin Tidak Masuk Sekolah",
       "html": suratIzinTidakMasukSekolah(letter, image, account)
     },
     {
       "key": "surat_permohonan_pindah_sekolah",
+      "title": "Surat Permohonan Pindah Sekolah",
       "html": suratPermohonanPindahSekolah(letter, image, account)
     },
     {
       "key": "surat_permohonan_beasiswa",
+      "title": "Surat Permohonan Beasiswa",
       "html": suratPermohonanBeaSiswa(letter, image, account)
     },
     {
       "key": "surat_pernyataan_tidak_menerima_beasiswa",
+      "title": "Surat Pernyataan Tidak Menerima Beasiswa",
       "html": suratPernyataanTidakMenerimaBeasiswa(letter, image, account)
     },
     {
       "key": "surat_keterangan_penghasilan_orang_tua",
+      "title": "Surat Keterangan Penghasilan Orang Tua",
       "html": suratKeteranganPenghasilanOrangTua(letter, image, account)
     },
     {
       "key": "surat_persetujuan_orang_tua",
+      "title": "Surat Persetujuan Orang Tua",
       "html": suratPersetujuanOrangTua(letter, image, account)
     },
     {
       "key": "surat_perjanjian_tidak_mengulangi_kesalahan",
+      "title": "Surat Perjanjian Tidak Mengulangi Kesalahan",
       "html": suratPerjanjianTidakMengulangiKesalahan(letter, image, account)
     },
     {
       "key": "surat_permohonan_magang_kerja",
+      "title": "Surat Permohonan Magang Kerja",
       "html": suratPermohonanMagangKerja(letter, image, account)
     },
     {
       "key": "surat_keterangan_tempat_usaha",
+      "title": "Surat Keterangan Tempat Usaha",
       "html": suratKeteranganTempatUsaha(letter, image, account)
     },
     {
       "key": "surat_izin_tidak_masuk_kerja",
+      "title": "Surat Izin Tidak Masuk Kerja",
       "html": suratIzinTidakMasukKerja(letter, image, account)
     },
     {
       "key": "surat_permohonan_izin_cuti_kerja",
+      "title": " Surat Permohonan Izin Cuti Kerja",
       "html": suratPermohonanIzinCutiKerja(letter, image, account)
     },
     {
       "key": "surat_pengunduran_diri",
+      "title": "Surat Pengunduran Diri",
       "html": suratPengunduranDiri(letter, image, account)
     },
     {
       "key": "surat_pernyataan_kesediaan_bekerja_paruh_waktu",
+      "title": " Surat Pernyataan Kesediaan Bekerja Paruh Waktu",
       "html": suratPernyataanKesediaanBekerjaPenuhWaktu(letter, image, account)
     },
     {
       "key": "surat_lamaran_pekerjaan",
+      "title": "Surat Lamaran Pekerjaan",
       "html": suratLamaranPekerjaan(letter, image, account)
     },
     {
       "key": "surat_pernyataan_belum_menikah",
+      "title": "Surat Pernyataan Belum Menikah",
       "html": suratPernyataanBelumMenikah(letter, image, account)
     },
     {
       "key": "surat_pernyataan_cerai",
+      "title": "Surat Pernyataan Cerai",
       "html": suratPernyataanCerai(letter, image, account)
     },
     {
       "key": "surat_pernyataan_keluarga_tentang_kematian",
+      "title": "Surat Pernyataan Keluarga Tentang Kematian",
       "html": suratPernyataanKeluargaTentangKematian(letter, image, account)
     },
     {
       "key": "surat_permohonan_maaf",
+      "title": "Surat Permohonan Maaf",
       "html": suratPermohonanMaaf(letter, image, account)
+    },
+    {
+      "key": "surat_keterangan_tidak_mampu",
+      "title": "Surat Keterangan Tidak Mampu",
+      "html": suratKeteranganTidakMampu(letter, image, account)
+    },
+    {
+      "key": "surat_keterangan_domisili",
+      "title": "Surat Keterangan Domisili",
+      "html": suratKeteranganDomisili(letter, image, account)
     },
   ];
 }

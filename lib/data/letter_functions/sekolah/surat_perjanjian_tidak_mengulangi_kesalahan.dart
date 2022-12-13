@@ -49,7 +49,7 @@ String suratPerjanjianTidakMengulangiKesalahan(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini saya berjanji untuk tidak mengulangi kesalahan yang telah saya perbuat yaitu <b>... (Kesalahan). Apabila dikemudian hari saya melakukan kesalahan yang sama, maka saya bersedia menerima sanksi dari pihak sekolah sesuai tata tertib yang berlaku.
+      Dengan ini saya berjanji untuk tidak mengulangi kesalahan yang telah saya perbuat yaitu <b>... (Kesalahan)</b>. Apabila dikemudian hari saya melakukan kesalahan yang sama, maka saya bersedia menerima sanksi dari pihak sekolah sesuai tata tertib yang berlaku.
     </p>
     <p style="text-align: justify; ">
       Demikian surat Perjanjian ini saya buat dengan sebenarnya tanpa paksaan dari manapun.

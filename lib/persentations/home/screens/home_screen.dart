@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/data/letter_data.dart';
+import 'package:terator/persentations/letters/screens/letter_choose_account_screen.dart';
 import 'package:terator/persentations/letters/screens/letter_screen.dart';
 import 'package:terator/persentations/navbar.dart';
 
@@ -17,8 +19,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _searchController = TextEditingController();
   BannerAd? myBanner;
+  List<Map<String, dynamic>> lettersData = letterDataMap(null);
+
+  List<Map<String, dynamic>> searchLetterData(String q) {
+    return lettersData
+        .where((e) => (e["title"]).toLowerCase().contains(q.toLowerCase()))
+        .toList();
+  }
 
   BannerAdListener listener() => BannerAdListener(
         // Called when an ad is successfully received.
@@ -55,13 +63,15 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  late Future<List<Map<String, dynamic>>> listLetters;
+
   @override
   void initState() {
     myBanner = BannerAd(
       // test banner
-      adUnitId: '/6499/example/banner',
+      // adUnitId: '/6499/example/banner',
 
-      // adUnitId: 'ca-app-pub-2465007971338713/8992395637',
+      adUnitId: 'ca-app-pub-2465007971338713/8992395637',
       size: AdSize.banner,
       request: const AdRequest(),
       listener: listener(),
@@ -69,6 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
     myBanner!.load();
     checkForUpdate();
     super.initState();
+    listLetters = LetterData.listLetters(q: '');
   }
 
   @override
@@ -103,39 +114,45 @@ class _HomeScreenState extends State<HomeScreen> {
                     // border: Border.all(
                     //     color: Style.hexToColor('#23074d')),
                     borderRadius: BorderRadius.circular(10)),
-                child: Container(
-                  margin: const EdgeInsets.only(left: 15, right: 15),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _searchController,
-                          textInputAction: TextInputAction.search,
-                          onSubmitted: (value) {
-                            setState(() {});
-                          },
-                          onChanged: (value) {
-                            setState(() {});
-                          },
-                          decoration: InputDecoration(
-                              isDense: true,
-                              border: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              errorBorder: InputBorder.none,
-                              disabledBorder: InputBorder.none,
-                              hintStyle: TextStyle(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  fontSize: 14),
-                              hintText: 'Cari template surat..'),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      const Icon(Icons.search, color: bSecondary)
-                    ],
+                child: TypeAheadField<Map<String, dynamic>>(
+                  textFieldConfiguration: TextFieldConfiguration(
+                    // autofocus: true,
+                    // style: DefaultTextStyle.of(context)
+                    //     .style
+                    //     .copyWith(fontStyle: FontStyle.italic),
+                    decoration: InputDecoration(
+                        isDense: true,
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        contentPadding: const EdgeInsets.all(15),
+                        hintStyle: TextStyle(
+                            color: Colors.grey.withOpacity(0.5), fontSize: 14),
+                        hintText: 'Cari template surat..'),
                   ),
+                  suggestionsBoxDecoration: SuggestionsBoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5)),
+                  suggestionsCallback: (pattern) async {
+                    return searchLetterData(pattern);
+                  },
+                  itemBuilder: (context, suggestion) {
+                    return ListTile(
+                      leading: const Icon(Icons.description_outlined),
+                      title: Text(suggestion['title']),
+                    );
+                  },
+                  onSuggestionSelected: (suggestion) {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (builder) {
+                      return LetterChooseAccountScreen(
+                        keyLetter: suggestion['key'],
+                        title: suggestion['title'],
+                      );
+                    }));
+                  },
                 ),
               ),
             ])),
@@ -222,21 +239,21 @@ class _HomeScreenState extends State<HomeScreen> {
             ])),
             SliverList(
                 delegate: SliverChildListDelegate([
-              statusAd == StatusAd.loaded
-                  ? Container(
-                      margin: const EdgeInsets.only(
-                          left: 15, right: 15, bottom: 15),
-                      alignment: Alignment.center,
-                      width: myBanner!.size.width.toDouble(),
-                      height: myBanner!.size.height.toDouble(),
-                      child: AdWidget(ad: myBanner!),
-                    )
-                  : Container(),
+              // statusAd == StatusAd.loaded
+              //     ? Container(
+              //         margin: const EdgeInsets.only(
+              //             left: 15, right: 15, bottom: 15),
+              //         alignment: Alignment.center,
+              //         width: myBanner!.size.width.toDouble(),
+              //         height: myBanner!.size.height.toDouble(),
+              //         child: AdWidget(ad: myBanner!),
+              //       )
+              //     : Container(),
             ])),
             SliverList(
                 delegate: SliverChildListDelegate([
               FutureBuilder<List<Map<String, dynamic>>>(
-                  future: LetterData.listLetters(q: _searchController.text),
+                  future: listLetters,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       return ListView.separated(
@@ -278,7 +295,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                         separatorBuilder: (context, index) {
                           if (index == 2) {
-                            return Container();
+                            return statusAd == StatusAd.loaded
+                                ? Container(
+                                    margin: const EdgeInsets.only(
+                                        left: 15, right: 15, bottom: 15),
+                                    alignment: Alignment.center,
+                                    width: myBanner!.size.width.toDouble(),
+                                    height: myBanner!.size.height.toDouble(),
+                                    child: AdWidget(ad: myBanner!),
+                                  )
+                                : Container();
                             // return const Divider();
                           }
                           return Container();
