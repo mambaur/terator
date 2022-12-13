@@ -203,7 +203,7 @@ List<Map<String, dynamic>> letterDataMap(String? image,
     },
     {
       "key": "surat_permohonan_izin_cuti_kerja",
-      "title": " Surat Permohonan Izin Cuti Kerja",
+      "title": "Surat Permohonan Izin Cuti Kerja",
       "html": suratPermohonanIzinCutiKerja(letter, image, account)
     },
     {
@@ -213,7 +213,7 @@ List<Map<String, dynamic>> letterDataMap(String? image,
     },
     {
       "key": "surat_pernyataan_kesediaan_bekerja_paruh_waktu",
-      "title": " Surat Pernyataan Kesediaan Bekerja Paruh Waktu",
+      "title": "Surat Pernyataan Kesediaan Bekerja Paruh Waktu",
       "html": suratPernyataanKesediaanBekerjaPenuhWaktu(letter, image, account)
     },
     {
