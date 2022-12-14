@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:cool_alert/cool_alert.dart';
 import 'package:document_file_save_plus/document_file_save_plus.dart';
-import 'package:file_saver/file_saver.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
