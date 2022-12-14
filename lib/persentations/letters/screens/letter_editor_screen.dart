@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cool_alert/cool_alert.dart';
 import 'package:document_file_save_plus/document_file_save_plus.dart';
+import 'package:file_saver/file_saver.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -45,42 +46,53 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
   bool withSignature = false;
 
   convert(String htmlData, String name) async {
-    // ignore: use_build_context_synchronously
-    LoadingOverlay.show(context);
-    var targetPath = await _localPath;
-    var targetFileName = name;
-    var html = '<div style="margin: 50px">$htmlData</div>';
+    try {
+      await requestStoragePermission();
+      // ignore: use_build_context_synchronously
+      LoadingOverlay.show(context);
+      var targetPath = await _localPath;
+      var targetFileName = name;
+      var html = '<div style="margin: 50px">$htmlData</div>';
 
-    var generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
-        html, targetPath!, targetFileName);
+      var generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
+          html, targetPath!, targetFileName);
 
-    // if (kDebugMode) print(generatedPdfFile.readAsBytes());
+      // if (kDebugMode) print(generatedPdfFile.readAsBytes());
 
-    Uint8List fileByte = await generatedPdfFile.readAsBytes();
-    await DocumentFileSavePlus.saveFile(fileByte,
-        "${getRandomString(5)}_$targetFileName.pdf", "appliation/pdf");
+      Uint8List fileByte = await generatedPdfFile.readAsBytes();
+      await DocumentFileSavePlus.saveFile(fileByte,
+          "${getRandomString(5)}_$targetFileName.pdf", "appliation/pdf");
 
-    await store(htmlData);
-    // ignore: use_build_context_synchronously
-    LoadingOverlay.hide(context);
+      await store(htmlData);
+      // ignore: use_build_context_synchronously
+      LoadingOverlay.hide(context);
 
-    // ignore: use_build_context_synchronously
-    Navigator.pushAndRemoveUntil<void>(
-      context,
-      MaterialPageRoute<void>(
-          builder: (BuildContext context) => const Navbar(
-                selectedIndex: 1,
-              )),
-      ModalRoute.withName('/account-screen'),
-    );
+      // ignore: use_build_context_synchronously
+      Navigator.pushAndRemoveUntil<void>(
+        context,
+        MaterialPageRoute<void>(
+            builder: (BuildContext context) => const Navbar(
+                  selectedIndex: 1,
+                )),
+        ModalRoute.withName('/account-screen'),
+      );
 
-    CoolAlert.show(
-      backgroundColor: Colors.white,
-      context: context,
-      type: CoolAlertType.success,
-      title: "Sukses!!!",
-      text: "Surat kamu berhasil di generate dan di download!",
-    );
+      CoolAlert.show(
+        backgroundColor: Colors.white,
+        context: context,
+        type: CoolAlertType.success,
+        title: "Sukses!!!",
+        text: "Surat kamu berhasil di generate dan di download!",
+      );
+    } catch (e, s) {
+      if (kDebugMode) print('error ' + e.toString());
+      // ignore: use_build_context_synchronously
+      LoadingOverlay.hide(context);
+      // Clipboard.setData(ClipboardData(text: '${e.toString()}\n${s.toString()}'))
+      //     .then((_) {
+      //   Fluttertoast.showToast(msg: 'Error telah disalin.');
+      // });
+    }
 
     await showRewardAd();
   }
@@ -150,18 +162,21 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
 
   Future<void> requestStoragePermission() async {
     PermissionStatus status = await Permission.storage.request();
-    if (status.isDenied == true) {
+    if (status.isDenied == true || status.isGranted != true) {
       Fluttertoast.showToast(
           msg:
               'Mohon terima akses penyimpanan, agar surat kamu bisa di generate!');
-      await Permission.contacts.request();
+      requestStoragePermission();
+    } else {
+      print('request storage approve');
     }
   }
 
   @override
   void initState() {
+    print('holla');
     _createRewardedAd();
-    requestStoragePermission();
+    // requestStoragePermission();
     super.initState();
   }
 
