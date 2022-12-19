@@ -53,6 +53,7 @@ class _AccountCreateScreenState extends State<AccountCreateScreen> {
     if (!_signatureView.isEmpty) {
       Uint8List? data = await _signatureView.exportBytes();
       String base64Image = base64.encode(data!);
+
       image = base64Image;
       // image = 'data:image/png;base64,$base64Image';
     }
@@ -567,9 +568,13 @@ class _AccountCreateScreenState extends State<AccountCreateScreen> {
                       ),
                       Container(
                         margin: const EdgeInsets.only(bottom: 15),
-                        width: MediaQuery.of(context).size.width,
+                        width: (MediaQuery.of(context).size.width - 60) >= 256
+                            ? 256
+                            : (MediaQuery.of(context).size.width - 60),
                         // height: 200,
-                        height: MediaQuery.of(context).size.width - 60,
+                        height: (MediaQuery.of(context).size.width - 60) >= 256
+                            ? 256
+                            : (MediaQuery.of(context).size.width - 60),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(color: Colors.grey),

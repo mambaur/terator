@@ -202,7 +202,7 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
           String text = LetterData.html(widget.keyLetter,
               account: widget.account,
               image: widget.withSignature
-                  ? "<div style='margin-top:10px;margin-bottom:10px;text-align: center;'><img style='width:50%;' src='data:image/png;base64,${widget.account.signatureImage}'></div>"
+                  ? "<div style='margin-top:10px;margin-bottom:10px;text-align: center;'><img style='width:100%;' src='data:image/png;base64,${widget.account.signatureImage}'></div>"
                   : null);
           controller.setText("$text<br><br><br>");
         }),

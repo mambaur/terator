@@ -601,9 +601,13 @@ class _AccountUpdateScreenState extends State<AccountUpdateScreen> {
                       ),
                       Container(
                         margin: const EdgeInsets.only(bottom: 15),
-                        width: MediaQuery.of(context).size.width,
+                        width: (MediaQuery.of(context).size.width - 60) >= 256
+                            ? 256
+                            : (MediaQuery.of(context).size.width - 60),
                         // height: 200,
-                        height: MediaQuery.of(context).size.width - 60,
+                        height: (MediaQuery.of(context).size.width - 60) >= 256
+                            ? 256
+                            : (MediaQuery.of(context).size.width - 60),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(color: Colors.grey),
