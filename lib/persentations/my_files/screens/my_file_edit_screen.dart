@@ -4,7 +4,6 @@ import 'package:cool_alert/cool_alert.dart';
 import 'package:document_file_save_plus/document_file_save_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -59,6 +58,7 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
       // ignore: use_build_context_synchronously
       Navigator.pop(context, isRefreshBack);
 
+      // ignore: use_build_context_synchronously
       CoolAlert.show(
         backgroundColor: Colors.white,
         context: context,
@@ -66,7 +66,7 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
         title: "Sukses!!!",
         text: "Surat kamu berhasil di Update dan di download!",
       );
-    } catch (e, s) {
+    } catch (e) {
       // ignore: use_build_context_synchronously
       LoadingOverlay.hide(context);
       if (kDebugMode) print(e.toString());
@@ -76,7 +76,7 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
       // });
     }
 
-    await showRewardAd();
+    // await showRewardAd();
   }
 
   Future update(String html) async {
@@ -102,33 +102,34 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
     return directory?.path;
   }
 
-  Future<void> showRewardAd() async {
-    if (myRerwardedAd != null) {
-      myRerwardedAd!.fullScreenContentCallback =
-          FullScreenContentCallback(onAdDismissedFullScreenContent: (ad) {
-        ad.dispose();
-        _createRewardedAd();
-      }, onAdFailedToShowFullScreenContent: (ad, error) {
-        ad.dispose();
-        _createRewardedAd();
-      }, onAdWillDismissFullScreenContent: (ad) {
-        ad.dispose();
-        _createRewardedAd();
-      });
+  // Future<void> showRewardAd() async {
+  //   if (myRerwardedAd != null) {
+  //     myRerwardedAd!.fullScreenContentCallback =
+  //         FullScreenContentCallback(onAdDismissedFullScreenContent: (ad) {
+  //       ad.dispose();
+  //       _createRewardedAd();
+  //     }, onAdFailedToShowFullScreenContent: (ad, error) {
+  //       ad.dispose();
+  //       _createRewardedAd();
+  //     }, onAdWillDismissFullScreenContent: (ad) {
+  //       ad.dispose();
+  //       _createRewardedAd();
+  //     });
 
-      myRerwardedAd!.show(onUserEarnedReward: (ad, reward) {});
-    }
-  }
+  //     myRerwardedAd!.show(onUserEarnedReward: (ad, reward) {});
+  //   }
+  // }
 
-  void _createRewardedAd() {
-    RewardedInterstitialAd.load(
-        adUnitId: "ca-app-pub-2465007971338713/5704134732", // production
-        // adUnitId: "/21775744923/example/rewarded_interstitial", // test
-        request: const AdRequest(),
-        rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
-            onAdLoaded: (ad) => setState(() => myRerwardedAd = ad),
-            onAdFailedToLoad: (_) => setState(() => myRerwardedAd = null)));
-  }
+  // void _createRewardedAd() {
+  //   RewardedInterstitialAd.load(
+  //       adUnitId: kDebugMode
+  //           ? "/21775744923/example/rewarded_interstitial"
+  //           : "ca-app-pub-2465007971338713/5704134732", // production
+  //       request: const AdRequest(),
+  //       rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
+  //           onAdLoaded: (ad) => setState(() => myRerwardedAd = ad),
+  //           onAdFailedToLoad: (_) => setState(() => myRerwardedAd = null)));
+  // }
 
   Future<void> requestStoragePermission() async {
     PermissionStatus status = await Permission.storage.request();
@@ -138,14 +139,13 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
               'Mohon terima akses penyimpanan, agar surat kamu bisa di generate!');
       requestStoragePermission();
     } else {
-      print('request storage approve');
+      debugPrint('request storage approve');
     }
   }
 
   @override
   void initState() {
-    _createRewardedAd();
-    // requestStoragePermission();
+    // _createRewardedAd();
     super.initState();
   }
 

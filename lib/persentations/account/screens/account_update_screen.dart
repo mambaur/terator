@@ -91,6 +91,7 @@ class _AccountUpdateScreenState extends State<AccountUpdateScreen> {
     isReloadBack = true;
     // ignore: use_build_context_synchronously
     Navigator.pop(context, isReloadBack);
+    // ignore: use_build_context_synchronously
     CoolAlert.show(
       backgroundColor: Colors.white,
       context: context,

@@ -49,6 +49,7 @@ class _MyFileScreenState extends State<MyFileScreen> {
     // ignore: use_build_context_synchronously
     Navigator.pop(context);
 
+    // ignore: use_build_context_synchronously
     CoolAlert.show(
       backgroundColor: Colors.white,
       context: context,
@@ -109,6 +110,7 @@ class _MyFileScreenState extends State<MyFileScreen> {
     _refresh();
     // ignore: use_build_context_synchronously
     LoadingOverlay.hide(context);
+    // ignore: use_build_context_synchronously
     CoolAlert.show(
       backgroundColor: Colors.white,
       context: context,

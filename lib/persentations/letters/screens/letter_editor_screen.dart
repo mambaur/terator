@@ -76,6 +76,7 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
         ModalRoute.withName('/account-screen'),
       );
 
+      // ignore: use_build_context_synchronously
       CoolAlert.show(
         backgroundColor: Colors.white,
         context: context,
@@ -83,8 +84,8 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
         title: "Sukses!!!",
         text: "Surat kamu berhasil di generate dan di download!",
       );
-    } catch (e, s) {
-      if (kDebugMode) print('error ' + e.toString());
+    } catch (e) {
+      if (kDebugMode) print('error $e');
       // ignore: use_build_context_synchronously
       LoadingOverlay.hide(context);
       // Clipboard.setData(ClipboardData(text: '${e.toString()}\n${s.toString()}'))
@@ -93,7 +94,7 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
       // });
     }
 
-    await showRewardAd();
+    // await showRewardAd();
   }
 
   Future store(String html) async {
@@ -131,33 +132,23 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
     return directory?.path;
   }
 
-  Future<void> showRewardAd() async {
-    if (myRerwardedAd != null) {
-      myRerwardedAd!.fullScreenContentCallback =
-          FullScreenContentCallback(onAdDismissedFullScreenContent: (ad) {
-        ad.dispose();
-        _createRewardedAd();
-      }, onAdFailedToShowFullScreenContent: (ad, error) {
-        ad.dispose();
-        _createRewardedAd();
-      }, onAdWillDismissFullScreenContent: (ad) {
-        ad.dispose();
-        _createRewardedAd();
-      });
+  // Future<void> showRewardAd() async {
+  //   if (myRerwardedAd != null) {
+  //     myRerwardedAd!.fullScreenContentCallback =
+  //         FullScreenContentCallback(onAdDismissedFullScreenContent: (ad) {
+  //       ad.dispose();
+  //       _createRewardedAd();
+  //     }, onAdFailedToShowFullScreenContent: (ad, error) {
+  //       ad.dispose();
+  //       _createRewardedAd();
+  //     }, onAdWillDismissFullScreenContent: (ad) {
+  //       ad.dispose();
+  //       _createRewardedAd();
+  //     });
 
-      myRerwardedAd!.show(onUserEarnedReward: (ad, reward) {});
-    }
-  }
-
-  void _createRewardedAd() {
-    RewardedInterstitialAd.load(
-        adUnitId: "ca-app-pub-2465007971338713/5704134732", // production
-        // adUnitId: "/21775744923/example/rewarded_interstitial", // test
-        request: const AdRequest(),
-        rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
-            onAdLoaded: (ad) => setState(() => myRerwardedAd = ad),
-            onAdFailedToLoad: (_) => setState(() => myRerwardedAd = null)));
-  }
+  //     myRerwardedAd!.show(onUserEarnedReward: (ad, reward) {});
+  //   }
+  // }
 
   Future<void> requestStoragePermission() async {
     PermissionStatus status = await Permission.storage.request();
@@ -167,15 +158,13 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
               'Mohon terima akses penyimpanan, agar surat kamu bisa di generate!');
       requestStoragePermission();
     } else {
-      print('request storage approve');
+      debugPrint('request storage approve');
     }
   }
 
   @override
   void initState() {
-    print('holla');
-    _createRewardedAd();
-    // requestStoragePermission();
+    // _createRewardedAd();
     super.initState();
   }
 
