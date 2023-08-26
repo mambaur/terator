@@ -2,7 +2,7 @@ name: terator
 description: Template Surat Generator.
 
 publish_to: 'none'
-version: 1.0.2+4
+version: 1.0.2+5
 
 environment:
   sdk: '>=2.18.2 <3.0.0'
@@ -13,12 +13,12 @@ dependencies:
   flutter_html_to_pdf: ^0.7.0
   path_provider: ^2.0.11
   permission_handler: ^10.2.0
-  html_editor_enhanced: ^2.5.0
+  html_editor_enhanced: ^2.5.1
   fluttertoast: ^8.1.1
   loading_animation_widget: ^1.2.0+3
   overlay_loading_progress: ^1.0.0
   cached_network_image: ^3.2.3
-  google_fonts: ^3.0.1
+  google_fonts: ^5.1.0
   intl: ^0.17.0
   sqflite: ^2.2.1
   flutter_bloc: ^8.1.1
@@ -31,6 +31,7 @@ dependencies:
   google_mobile_ads: ^2.3.0
   in_app_update: ^4.0.1
   flutter_typeahead: ^4.1.1
+  numberpicker: ^2.1.2
   
   cupertino_icons: ^1.0.2
 
