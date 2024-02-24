@@ -138,6 +138,9 @@ class _LetterChooseAccountScreenState extends State<LetterChooseAccountScreen> {
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
+                    const SizedBox(
+                      height: 5,
+                    ),
                     const Text(
                       'Apakah kamu ingin menggunakan tanda tangan?',
                       style:
@@ -158,9 +161,12 @@ class _LetterChooseAccountScreenState extends State<LetterChooseAccountScreen> {
                                   borderRadius: BorderRadius.circular(18.0),
                                 ),
                               ),
-                              child: const Text('Tidak',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 10.0),
+                                child: Text('Tidak',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                              ),
                               onPressed: () {
                                 Navigator.pop(context);
                                 Navigator.push(context,
@@ -186,9 +192,12 @@ class _LetterChooseAccountScreenState extends State<LetterChooseAccountScreen> {
                                   borderRadius: BorderRadius.circular(20.0),
                                 ),
                               ),
-                              child: const Text('Iya',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 10.0),
+                                child: Text('Iya',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                              ),
                               onPressed: () {
                                 Navigator.pop(context);
                                 Navigator.push(context,

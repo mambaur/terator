@@ -7,6 +7,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:terator/persentations/account/account_cubits/cubit/account_cubit.dart';
 import 'package:terator/persentations/my_files/cubits/file_cubit/file_cubit.dart';
 import 'package:terator/persentations/navbar.dart';
+import 'package:upgrader/upgrader.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,11 +35,16 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Terator',
         theme: ThemeData(
+            useMaterial3: false,
             primarySwatch: Colors.blue,
             textTheme:
                 GoogleFonts.notoSansTextTheme(Theme.of(context).textTheme)),
         debugShowCheckedModeBanner: false,
-        home: const Navbar(),
+        home: UpgradeAlert(
+            showIgnore: false,
+            showLater: false,
+            showReleaseNotes: false,
+            child: const Navbar()),
       ),
     );
   }

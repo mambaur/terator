@@ -2,7 +2,7 @@ name: terator
 description: Template Surat Generator.
 
 publish_to: 'none'
-version: 1.0.2+5
+version: 1.1.0+6
 
 environment:
   sdk: '>=2.18.2 <3.0.0'
@@ -12,33 +12,34 @@ dependencies:
   delta_to_html: ^0.2.1
   flutter_html_to_pdf: ^0.7.0
   path_provider: ^2.0.11
-  permission_handler: ^10.2.0
+  permission_handler: ^11.3.0
   html_editor_enhanced: ^2.5.1
   fluttertoast: ^8.1.1
   loading_animation_widget: ^1.2.0+3
   overlay_loading_progress: ^1.0.0
   cached_network_image: ^3.2.3
-  google_fonts: ^5.1.0
-  intl: ^0.17.0
+  google_fonts: ^6.1.0
+  intl: ^0.19.0
   sqflite: ^2.2.1
   flutter_bloc: ^8.1.1
   bloc: ^8.1.0
-  cool_alert: ^1.1.0
+  cool_alert: ^2.0.1
   url_launcher: ^6.1.7
   flutter_signature_view: ^2.0.0
-  document_file_save_plus: ^1.0.9
-  share_plus: ^4.0.9
-  google_mobile_ads: ^2.3.0
-  in_app_update: ^4.0.1
-  flutter_typeahead: ^4.1.1
+  document_file_save_plus: ^2.0.0
+  share_plus: ^7.2.2
+  google_mobile_ads: ^4.0.0
+  # in_app_update: ^4.0.1
+  flutter_typeahead: ^5.0.1
   numberpicker: ^2.1.2
+  upgrader: ^9.0.0
   
   cupertino_icons: ^1.0.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
 flutter:
   uses-material-design: true
 
@@ -49,6 +50,12 @@ flutter:
     - assets/img/account-empty.png
     - assets/img/banner.jpg
     - assets/img/terator_logo.png
+    - assets/icons/business.png
+    - assets/icons/common.png
+    - assets/icons/faq.png
+    - assets/icons/school.png
+    - assets/icons/village.png
+    - assets/icons/work.png
   
   # fonts:
   #   - family: Schyler

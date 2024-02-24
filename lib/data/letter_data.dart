@@ -32,7 +32,7 @@ class LetterData {
     return data[0]['html'];
   }
 
-  static Future<List<Map<String, dynamic>>> listLetters({String q = ''}) async {
+  static List<Map<String, dynamic>> listLetters({String q = ''}) {
     List<Map<String, dynamic>> result = [
       {
         "id": 1,

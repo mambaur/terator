@@ -59,7 +59,7 @@ class _AccountScreenState extends State<AccountScreen> {
     LoadingOverlay.show(context);
     await _accountRepo.delete(account.id!);
     _refresh();
-    LoadingOverlay.hide(context);
+    LoadingOverlay.hide();
     CoolAlert.show(
       backgroundColor: Colors.white,
       context: context,
@@ -72,16 +72,19 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   void initState() {
     context.read<AccountCubit>().getAccounts(isInit: true);
-    myBanner = BannerAd(
-      // test banner
-      // adUnitId: '/6499/example/banner',
 
-      adUnitId: 'ca-app-pub-2465007971338713/8992395637',
-      size: AdSize.banner,
-      request: const AdRequest(),
-      listener: listener(),
-    );
-    myBanner!.load();
+    if (!kDebugMode) {
+      myBanner = BannerAd(
+        // test banner
+        // adUnitId: '/6499/example/banner',
+
+        adUnitId: 'ca-app-pub-2465007971338713/8992395637',
+        size: AdSize.banner,
+        request: const AdRequest(),
+        listener: listener(),
+      );
+      myBanner!.load();
+    }
 
     _scrollController.addListener(onScroll);
     super.initState();
@@ -96,6 +99,7 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade200,
       body: RefreshIndicator(
         backgroundColor: Colors.white,
         color: Colors.blue.shade700,
@@ -132,14 +136,14 @@ class _AccountScreenState extends State<AccountScreen> {
                                 children: [
                                   SizedBox(
                                       width: MediaQuery.of(context).size.width *
-                                          0.7,
+                                          0.4,
                                       child: Image.asset(
                                           "assets/img/account-empty.png")),
                                   const SizedBox(
                                     height: 15,
                                   ),
                                   const Text(
-                                    'Yah, data akun kamu masih kosong :(',
+                                    'Yah, data akun kamu\nmasih kosong :(',
                                     textAlign: TextAlign.center,
                                   )
                                 ]),
@@ -161,13 +165,13 @@ class _AccountScreenState extends State<AccountScreen> {
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(5),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 7,
-                                      offset: const Offset(1, 3),
-                                    )
-                                  ],
+                                  // boxShadow: [
+                                  //   BoxShadow(
+                                  //     color: Colors.black.withOpacity(0.1),
+                                  //     blurRadius: 7,
+                                  //     offset: const Offset(1, 3),
+                                  //   )
+                                  // ],
                                 ),
                                 child: ListTile(
                                   onTap: () {
@@ -187,7 +191,9 @@ class _AccountScreenState extends State<AccountScreen> {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   subtitle: Text(
-                                      state.accounts![index].address ?? '',
+                                      state.accounts![index].address ??
+                                          state.accounts![index].telephone ??
+                                          '',
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis),
                                   leading:
@@ -195,8 +201,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                   trailing: IconButton(
                                     onPressed: () => _showDeleteModal(
                                         state.accounts![index]),
-                                    icon: const Icon(
-                                        Icons.delete_forever_outlined,
+                                    icon: const Icon(Icons.close,
                                         color: bSecondary),
                                   ),
                                 ));
@@ -212,11 +217,12 @@ class _AccountScreenState extends State<AccountScreen> {
                         },
                       );
                     } else {
-                      return Container(
-                        padding: const EdgeInsets.all(15.0),
-                        alignment: Alignment.topCenter,
-                        child: const CircularProgressIndicator(
-                          color: bInfo,
+                      return SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.7,
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            color: bInfo,
+                          ),
                         ),
                       );
                     }

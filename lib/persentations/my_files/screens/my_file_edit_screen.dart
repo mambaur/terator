@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:cool_alert/cool_alert.dart';
@@ -37,7 +39,6 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
   convert(String htmlData, String name) async {
     try {
       await requestStoragePermission();
-      // ignore: use_build_context_synchronously
       LoadingOverlay.show(context);
 
       var targetPath = await _localPath;
@@ -47,18 +48,15 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
           html, targetPath!, targetFileName);
 
       Uint8List fileByte = await generatedPdfFile.readAsBytes();
-      await DocumentFileSavePlus.saveFile(fileByte,
+      await DocumentFileSavePlus().saveFile(fileByte,
           "${getRandomString(5)}_$targetFileName.pdf", "appliation/pdf");
 
       // if (kDebugMode) print(generatedPdfFile);
       await update(htmlData);
       isRefreshBack = true;
-      // ignore: use_build_context_synchronously
-      LoadingOverlay.hide(context);
-      // ignore: use_build_context_synchronously
+      LoadingOverlay.hide();
       Navigator.pop(context, isRefreshBack);
 
-      // ignore: use_build_context_synchronously
       CoolAlert.show(
         backgroundColor: Colors.white,
         context: context,
@@ -67,8 +65,7 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
         text: "Surat kamu berhasil di Update dan di download!",
       );
     } catch (e) {
-      // ignore: use_build_context_synchronously
-      LoadingOverlay.hide(context);
+      LoadingOverlay.hide();
       if (kDebugMode) print(e.toString());
       // Clipboard.setData(ClipboardData(text: '${e.toString()}\n${s.toString()}'))
       //     .then((_) {
@@ -151,7 +148,7 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
 
   @override
   void dispose() {
-    LoadingOverlay.hide(context);
+    LoadingOverlay.hide();
     super.dispose();
   }
 

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:cool_alert/cool_alert.dart';
@@ -41,15 +43,12 @@ class _MyFileScreenState extends State<MyFileScreen> {
         html, targetPath!, targetFileName);
 
     Uint8List fileByte = await generatedPdfFile.readAsBytes();
-    await DocumentFileSavePlus.saveFile(fileByte,
+    await DocumentFileSavePlus().saveFile(fileByte,
         "${getRandomString(5)}_$targetFileName.pdf", "appliation/pdf");
 
-    // ignore: use_build_context_synchronously
-    LoadingOverlay.hide(context);
-    // ignore: use_build_context_synchronously
+    LoadingOverlay.hide();
     Navigator.pop(context);
 
-    // ignore: use_build_context_synchronously
     CoolAlert.show(
       backgroundColor: Colors.white,
       context: context,
@@ -69,11 +68,9 @@ class _MyFileScreenState extends State<MyFileScreen> {
         html, targetPath!, "${getRandomString(5)}_$targetFileName");
 
     // Uint8List fileByte = await generatedPdfFile.readAsBytes();
-    // ignore: use_build_context_synchronously
-    LoadingOverlay.hide(context);
-    // ignore: use_build_context_synchronously
+    LoadingOverlay.hide();
     Navigator.pop(context);
-    Share.shareFiles([generatedPdfFile.path], text: 'Share $name');
+    Share.shareXFiles([XFile(generatedPdfFile.path)], text: 'Share $name');
   }
 
   Future<String?> get _localPath async {
@@ -108,9 +105,7 @@ class _MyFileScreenState extends State<MyFileScreen> {
     LoadingOverlay.show(context);
     await _letterRepo.delete(letter.id!);
     _refresh();
-    // ignore: use_build_context_synchronously
-    LoadingOverlay.hide(context);
-    // ignore: use_build_context_synchronously
+    LoadingOverlay.hide();
     CoolAlert.show(
       backgroundColor: Colors.white,
       context: context,
@@ -149,16 +144,18 @@ class _MyFileScreenState extends State<MyFileScreen> {
   void initState() {
     context.read<FileCubit>().getFiles(isInit: true);
 
-    myBanner = BannerAd(
-      // test banner
-      // adUnitId: '/6499/example/banner',
+    if (!kDebugMode) {
+      myBanner = BannerAd(
+        // test banner
+        // adUnitId: '/6499/example/banner',
 
-      adUnitId: 'ca-app-pub-2465007971338713/8992395637',
-      size: AdSize.banner,
-      request: const AdRequest(),
-      listener: listener(),
-    );
-    myBanner!.load();
+        adUnitId: 'ca-app-pub-2465007971338713/8992395637',
+        size: AdSize.banner,
+        request: const AdRequest(),
+        listener: listener(),
+      );
+      myBanner!.load();
+    }
 
     _scrollController.addListener(onScroll);
     super.initState();
@@ -173,6 +170,7 @@ class _MyFileScreenState extends State<MyFileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade200,
       body: RefreshIndicator(
         backgroundColor: Colors.white,
         color: Colors.blue.shade700,
@@ -210,14 +208,14 @@ class _MyFileScreenState extends State<MyFileScreen> {
                                 children: [
                                   SizedBox(
                                       width: MediaQuery.of(context).size.width *
-                                          0.7,
+                                          0.4,
                                       child: Image.asset(
                                           "assets/img/file-empty.png")),
                                   const SizedBox(
                                     height: 15,
                                   ),
                                   const Text(
-                                    'File kamu masih kosong, generate surat sekarang!',
+                                    'File kamu masih kosong, generate\nsurat sekarang!',
                                     textAlign: TextAlign.center,
                                   )
                                 ]),
@@ -241,13 +239,13 @@ class _MyFileScreenState extends State<MyFileScreen> {
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(10),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 7,
-                                      offset: const Offset(1, 3),
-                                    )
-                                  ],
+                                  // boxShadow: [
+                                  //   BoxShadow(
+                                  //     color: Colors.black.withOpacity(0.1),
+                                  //     blurRadius: 7,
+                                  //     offset: const Offset(1, 3),
+                                  //   )
+                                  // ],
                                 ),
                                 child: ListTile(
                                   onTap: () {
@@ -297,11 +295,12 @@ class _MyFileScreenState extends State<MyFileScreen> {
                         },
                       );
                     } else {
-                      return Container(
-                        padding: const EdgeInsets.all(15.0),
-                        alignment: Alignment.topCenter,
-                        child: const CircularProgressIndicator(
-                          color: bInfo,
+                      return SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.7,
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            color: bInfo,
+                          ),
                         ),
                       );
                     }

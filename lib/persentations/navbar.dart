@@ -21,6 +21,7 @@ class _NavbarState extends State<Navbar> {
     HomeScreen(),
     MyFileScreen(),
     AccountScreen(),
+    SettingScreen(),
   ];
 
   final List<Widget> _titleOptions = <Widget>[
@@ -38,6 +39,10 @@ class _NavbarState extends State<Navbar> {
     ),
     const Text(
       '👦 Akun Surat',
+      style: TextStyle(color: bDark),
+    ),
+    const Text(
+      '⚙ Pengaturan',
       style: TextStyle(color: bDark),
     ),
   ];
@@ -58,17 +63,15 @@ class _NavbarState extends State<Navbar> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      onPopInvoked: (value) async {
         final timegap = DateTime.now().difference(preBackpress);
         final cantExit = timegap >= const Duration(seconds: 2);
         preBackpress = DateTime.now();
         if (cantExit) {
           //show snackbar
           Fluttertoast.showToast(msg: 'Tekan tombol kembali lagi untuk keluar');
-          return false;
-        } else {
-          return true;
+          return;
         }
       },
       child: Scaffold(
@@ -83,42 +86,57 @@ class _NavbarState extends State<Navbar> {
                     return const SettingScreen();
                   }));
                 },
-                icon: const Icon(Icons.settings, color: bSecondary))
+                icon: const Icon(Icons.help_outline, color: bSecondary))
           ],
         ),
         body: Center(
           child: _widgetOptions.elementAt(_selectedIndex),
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.white,
-          type: BottomNavigationBarType.fixed,
-          selectedFontSize: 12,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Padding(
-                padding: EdgeInsets.only(bottom: 3),
-                child: Icon(Icons.other_houses_outlined),
+        bottomNavigationBar: Container(
+          color: Colors.white,
+          height: 75,
+          // padding: const EdgeInsets.symmetric(vertical: 10),
+          child: BottomNavigationBar(
+            backgroundColor: Colors.white,
+            type: BottomNavigationBarType.fixed,
+            selectedFontSize: 12,
+            iconSize: 28,
+            // unselectedLabelStyle: TextStyle(color: Colors.black),
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.only(bottom: 5, top: 5),
+                  child: Icon(Icons.dashboard_outlined),
+                ),
+                label: 'Beranda',
               ),
-              label: 'Beranda',
-            ),
-            BottomNavigationBarItem(
-              icon: Padding(
-                padding: EdgeInsets.only(bottom: 3),
-                child: Icon(Icons.schedule),
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.only(bottom: 5, top: 5),
+                  child: Icon(Icons.schedule),
+                ),
+                label: 'File Saya',
               ),
-              label: 'File Saya',
-            ),
-            BottomNavigationBarItem(
-              icon: Padding(
-                padding: EdgeInsets.only(bottom: 3),
-                child: Icon(Icons.contact_page_outlined),
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.only(bottom: 5, top: 5),
+                  child: Icon(Icons.contact_page_outlined),
+                ),
+                label: 'Akun',
               ),
-              label: 'Akun',
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: bInfo,
-          onTap: _onItemTapped,
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.only(bottom: 5, top: 5),
+                  child: Icon(Icons.settings_outlined),
+                ),
+                label: 'Pengaturan',
+              ),
+            ],
+            currentIndex: _selectedIndex,
+            selectedItemColor: bInfo,
+            unselectedItemColor: Colors.grey.shade900,
+            onTap: _onItemTapped,
+          ),
         ),
       ),
     );

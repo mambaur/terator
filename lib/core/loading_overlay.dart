@@ -14,7 +14,7 @@ class LoadingOverlay {
     );
   }
 
-  static hide(BuildContext context) {
-    return OverlayLoadingProgress.stop(context);
+  static hide() {
+    return OverlayLoadingProgress.stop();
   }
 }

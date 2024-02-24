@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:cool_alert/cool_alert.dart';
@@ -86,12 +88,9 @@ class _AccountUpdateScreenState extends State<AccountUpdateScreen> {
       "updated_at": DateSetting.timestamp()
     });
 
-    // ignore: use_build_context_synchronously
-    LoadingOverlay.hide(context);
+    LoadingOverlay.hide();
     isReloadBack = true;
-    // ignore: use_build_context_synchronously
     Navigator.pop(context, isReloadBack);
-    // ignore: use_build_context_synchronously
     CoolAlert.show(
       backgroundColor: Colors.white,
       context: context,
@@ -598,7 +597,8 @@ class _AccountUpdateScreenState extends State<AccountUpdateScreen> {
                       const ListTile(
                         contentPadding: EdgeInsets.all(0),
                         title: Text('Tanda Tangan'),
-                        subtitle: Text('Tambahkan tanda tanganmu dibawah ini'),
+                        subtitle:
+                            Text('Tambahkan tanda tangan akun dibawah ini'),
                       ),
                       Container(
                         margin: const EdgeInsets.only(bottom: 15),

@@ -65,7 +65,7 @@ String suratLamaranPekerjaan(
 						<td>:&nbsp</td>
 						<td style="width: 100%">${account?.telephone ?? ''}</td>
 					</tr>
-          tr>
+          <tr>
 						<td style="white-space: nowrap">Alamat</td>
 						<td>:&nbsp</td>
 						<td style="width: 100%">${account?.address ?? ''}</td>

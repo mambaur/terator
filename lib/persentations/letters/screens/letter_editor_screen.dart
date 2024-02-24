@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:cool_alert/cool_alert.dart';
@@ -47,7 +49,6 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
   convert(String htmlData, String name) async {
     try {
       await requestStoragePermission();
-      // ignore: use_build_context_synchronously
       LoadingOverlay.show(context);
       var targetPath = await _localPath;
       var targetFileName = name;
@@ -59,14 +60,12 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
       // if (kDebugMode) print(generatedPdfFile.readAsBytes());
 
       Uint8List fileByte = await generatedPdfFile.readAsBytes();
-      await DocumentFileSavePlus.saveFile(fileByte,
+      await DocumentFileSavePlus().saveFile(fileByte,
           "${getRandomString(5)}_$targetFileName.pdf", "appliation/pdf");
 
       await store(htmlData);
-      // ignore: use_build_context_synchronously
-      LoadingOverlay.hide(context);
+      LoadingOverlay.hide();
 
-      // ignore: use_build_context_synchronously
       Navigator.pushAndRemoveUntil<void>(
         context,
         MaterialPageRoute<void>(
@@ -76,7 +75,6 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
         ModalRoute.withName('/account-screen'),
       );
 
-      // ignore: use_build_context_synchronously
       CoolAlert.show(
         backgroundColor: Colors.white,
         context: context,
@@ -86,8 +84,7 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
       );
     } catch (e) {
       if (kDebugMode) print('error $e');
-      // ignore: use_build_context_synchronously
-      LoadingOverlay.hide(context);
+      LoadingOverlay.hide();
       // Clipboard.setData(ClipboardData(text: '${e.toString()}\n${s.toString()}'))
       //     .then((_) {
       //   Fluttertoast.showToast(msg: 'Error telah disalin.');
@@ -170,7 +167,7 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
 
   @override
   void dispose() {
-    LoadingOverlay.hide(context);
+    LoadingOverlay.hide();
     super.dispose();
   }
 

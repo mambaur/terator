@@ -1,13 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:in_app_update/in_app_update.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/data/letter_data.dart';
 import 'package:terator/persentations/letters/screens/letter_choose_account_screen.dart';
 import 'package:terator/persentations/letters/screens/letter_screen.dart';
-import 'package:terator/persentations/navbar.dart';
 
 enum StatusAd { initial, loaded }
 
@@ -42,49 +42,31 @@ class _HomeScreenState extends State<HomeScreen> {
 
   StatusAd statusAd = StatusAd.initial;
 
-  // AppUpdateInfo? _updateInfo;
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> checkForUpdate() async {
-    InAppUpdate.checkForUpdate().then((info) {
-      if (info.updateAvailability == UpdateAvailability.updateAvailable) {
-        InAppUpdate.startFlexibleUpdate().then((_) {
-          InAppUpdate.completeFlexibleUpdate().then((_) {
-            // showSnack("Success!");
-          }).catchError((e) {
-            if (kDebugMode) print(e.toString());
-          });
-        }).catchError((e) {
-          if (kDebugMode) print(e.toString());
-        });
-      }
-    }).catchError((e) {
-      if (kDebugMode) print(e.toString());
-    });
-  }
-
-  late Future<List<Map<String, dynamic>>> listLetters;
+  List<Map<String, dynamic>> listLetters = [];
 
   @override
   void initState() {
-    myBanner = BannerAd(
-      // test banner
-      // adUnitId: '/6499/example/banner',
+    if (!kDebugMode) {
+      myBanner = BannerAd(
+        adUnitId: kDebugMode
+            ? '/6499/example/banner'
+            : 'ca-app-pub-2465007971338713/8992395637',
+        size: AdSize.banner,
+        request: const AdRequest(),
+        listener: listener(),
+      );
+      myBanner!.load();
+    }
 
-      adUnitId: 'ca-app-pub-2465007971338713/8992395637',
-      size: AdSize.banner,
-      request: const AdRequest(),
-      listener: listener(),
-    );
-    myBanner!.load();
-    checkForUpdate();
-    super.initState();
     listLetters = LetterData.listLetters(q: '');
+    super.initState();
   }
 
   @override
   void dispose() {
-    myBanner!.dispose();
+    if (myBanner != null) {
+      myBanner!.dispose();
+    }
     super.dispose();
   }
 
@@ -92,6 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.grey.shade200,
       body: CustomScrollView(
           // controller: _scrollController,
           physics: const AlwaysScrollableScrollPhysics(),
@@ -99,221 +82,422 @@ class _HomeScreenState extends State<HomeScreen> {
             SliverList(
                 delegate: SliverChildListDelegate([
               Container(
-                margin: const EdgeInsets.only(left: 15, top: 15, right: 15),
-                height: 50,
-                alignment: Alignment.centerLeft,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        blurRadius: 7,
-                        offset: const Offset(1, 3),
+                color: Colors.white,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin:
+                          const EdgeInsets.only(top: 10, left: 15, right: 15),
+                      child: const Text(
+                        'Hai, Selamat Datang!',
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 15),
+                      child: const Text(
+                        'Di Template Surat Generator',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ),
+                    Container(
+                      margin:
+                          const EdgeInsets.only(left: 15, top: 15, right: 15),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      height: 55,
+                      alignment: Alignment.centerLeft,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TypeAheadField<Map<String, dynamic>>(
+                              builder: (context, controller, focusNode) {
+                                return TextField(
+                                    controller: controller,
+                                    focusNode: focusNode,
+                                    autofocus: false,
+                                    decoration: InputDecoration(
+                                        isDense: true,
+                                        border: InputBorder.none,
+                                        focusedBorder: InputBorder.none,
+                                        enabledBorder: InputBorder.none,
+                                        errorBorder: InputBorder.none,
+                                        disabledBorder: InputBorder.none,
+                                        // contentPadding: const EdgeInsets.all(15),
+                                        hintStyle: TextStyle(
+                                            color: Colors.grey.withOpacity(0.5),
+                                            fontSize: 14),
+                                        hintText:
+                                            'Lagi cari template surat apa..'));
+                              },
+                              suggestionsCallback: (pattern) async {
+                                return searchLetterData(pattern);
+                              },
+                              itemBuilder: (context, suggestion) {
+                                return ListTile(
+                                  leading:
+                                      const Icon(Icons.description_outlined),
+                                  title: Text(suggestion['title']),
+                                );
+                              },
+                              onSelected: (suggestion) {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (builder) {
+                                  return LetterChooseAccountScreen(
+                                    keyLetter: suggestion['key'],
+                                    title: suggestion['title'],
+                                  );
+                                }));
+                              },
+                            ),
+                          ),
+                          const Icon(
+                            Icons.search,
+                            color: Colors.grey,
+                          )
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 20),
+                      // width: size.width,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5),
+                        child: Image.asset('assets/img/banner.jpg',
+                            width: size.width,
+                            // height: size.height * 0.12,
+                            fit: BoxFit.cover),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ])),
+            // SliverList(
+            //     delegate: SliverChildListDelegate([
+            //   statusAd == StatusAd.loaded
+            //       ? Container(
+            //           margin: const EdgeInsets.only(
+            //               left: 15, right: 15, bottom: 15),
+            //           alignment: Alignment.center,
+            //           width: myBanner!.size.width.toDouble(),
+            //           height: myBanner!.size.height.toDouble(),
+            //           child: AdWidget(ad: myBanner!),
+            //         )
+            //       : const SizedBox(),
+            //   Container(
+            //     margin:
+            //         const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+            //     // width: size.width,
+            //     child: ClipRRect(
+            //       borderRadius: BorderRadius.circular(5),
+            //       child: Image.asset('assets/img/banner.jpg',
+            //           width: size.width,
+            //           // height: size.height * 0.12,
+            //           fit: BoxFit.cover),
+            //     ),
+            //   ),
+            // ])),
+            SliverList(
+                delegate: SliverChildListDelegate([
+              GridView.count(
+                physics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.only(
+                    left: 15, right: 15, bottom: 25, top: 25),
+                shrinkWrap: true,
+                crossAxisSpacing: 15,
+                mainAxisSpacing: 15,
+                crossAxisCount: 4,
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (builder) {
+                        return LetterScreen(
+                          letters: listLetters[0]["letters"],
+                          title: listLetters[0]["title"],
+                        );
+                      }));
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                              child: Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: Image.asset('assets/icons/school.png'),
+                          )),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          const Text(
+                            'Sekolah',
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (builder) {
+                        return LetterScreen(
+                          letters: listLetters[1]["letters"],
+                          title: listLetters[1]["title"],
+                        );
+                      }));
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                              child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Image.asset('assets/icons/work.png'),
+                          )),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          const Text(
+                            'Pekerjaan',
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (builder) {
+                        return LetterScreen(
+                          letters: listLetters[2]["letters"],
+                          title: listLetters[2]["title"],
+                        );
+                      }));
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                              child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Image.asset('assets/icons/village.png'),
+                          )),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          const Text(
+                            'Desa',
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (builder) {
+                        return LetterScreen(
+                          letters: listLetters[3]["letters"],
+                          title: listLetters[3]["title"],
+                        );
+                      }));
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                              child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Image.asset('assets/icons/business.png'),
+                          )),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          const Text(
+                            'Bisnis',
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (builder) {
+                        return LetterScreen(
+                          letters: listLetters[4]["letters"],
+                          title: listLetters[4]["title"],
+                        );
+                      }));
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                              child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Image.asset('assets/icons/common.png'),
+                          )),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          const Text(
+                            'Umum',
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                            child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Image.asset('assets/icons/faq.png'),
+                        )),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        const Text(
+                          'FAQ',
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                            child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Image.asset('assets/icons/faq.png'),
+                        )),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        const Text(
+                          'FAQ',
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                            child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Image.asset('assets/icons/faq.png'),
+                        )),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        const Text(
+                          'FAQ',
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              GestureDetector(
+                onTap: () {
+                  // launchUrl(
+                  //     Uri.parse("https://www.youtube.com/watch?v=0023umP7Rn0"),
+                  //     mode: LaunchMode.externalApplication);
+                },
+                child: Container(
+                  margin:
+                      const EdgeInsets.only(bottom: 15, left: 15, right: 15),
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Row(
+                    children: [
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Lihat Tutorial",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 14)),
+                            Text("Bikin surat hanya dalam 1 menit",
+                                style: TextStyle(color: Colors.grey)),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(15),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(18),
+                            color: bInfo),
+                        child: const Icon(Icons.play_arrow_rounded,
+                            color: Colors.white, size: 20),
                       )
                     ],
-                    // border: Border.all(
-                    //     color: Style.hexToColor('#23074d')),
-                    borderRadius: BorderRadius.circular(10)),
-                child: TypeAheadField<Map<String, dynamic>>(
-                  textFieldConfiguration: TextFieldConfiguration(
-                    // autofocus: true,
-                    // style: DefaultTextStyle.of(context)
-                    //     .style
-                    //     .copyWith(fontStyle: FontStyle.italic),
-                    decoration: InputDecoration(
-                        isDense: true,
-                        border: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        errorBorder: InputBorder.none,
-                        disabledBorder: InputBorder.none,
-                        contentPadding: const EdgeInsets.all(15),
-                        hintStyle: TextStyle(
-                            color: Colors.grey.withOpacity(0.5), fontSize: 14),
-                        hintText: 'Cari template surat..'),
                   ),
-                  suggestionsBoxDecoration: SuggestionsBoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(5)),
-                  suggestionsCallback: (pattern) async {
-                    return searchLetterData(pattern);
-                  },
-                  itemBuilder: (context, suggestion) {
-                    return ListTile(
-                      leading: const Icon(Icons.description_outlined),
-                      title: Text(suggestion['title']),
-                    );
-                  },
-                  onSuggestionSelected: (suggestion) {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (builder) {
-                      return LetterChooseAccountScreen(
-                        keyLetter: suggestion['key'],
-                        title: suggestion['title'],
-                      );
-                    }));
-                  },
                 ),
               ),
-            ])),
-            SliverList(
-                delegate: SliverChildListDelegate([
-              Container(
-                margin: const EdgeInsets.all(15),
-                // width: size.width,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(5),
-                  child: Image.asset('assets/img/banner.jpg',
-                      width: size.width,
-                      // height: size.height * 0.12,
-                      fit: BoxFit.cover),
-                ),
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                        margin:
-                            const EdgeInsets.only(top: 5, left: 15, bottom: 25),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 7,
-                              offset: const Offset(1, 3),
-                            )
-                          ],
-                        ),
-                        child: ListTile(
-                          onTap: () {
-                            Navigator.pushAndRemoveUntil<void>(
-                              context,
-                              MaterialPageRoute<void>(
-                                  builder: (BuildContext context) =>
-                                      const Navbar(
-                                        selectedIndex: 1,
-                                      )),
-                              ModalRoute.withName('/account-screen'),
-                            );
-                          },
-                          title: const Text('File Saya'),
-                          leading: const Text('📂'),
-                        )),
-                  ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: Container(
-                        margin: const EdgeInsets.only(
-                            top: 5, right: 15, bottom: 25),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 7,
-                              offset: const Offset(1, 3),
-                            )
-                          ],
-                        ),
-                        child: ListTile(
-                          onTap: () {
-                            Navigator.pushAndRemoveUntil<void>(
-                              context,
-                              MaterialPageRoute<void>(
-                                  builder: (BuildContext context) =>
-                                      const Navbar(
-                                        selectedIndex: 2,
-                                      )),
-                              ModalRoute.withName('/account-screen'),
-                            );
-                          },
-                          title: const Text('Akun'),
-                          leading: const Text('👦'),
-                        )),
-                  )
-                ],
-              )
-            ])),
-            SliverList(
-                delegate: SliverChildListDelegate([
-              // statusAd == StatusAd.loaded
-              //     ? Container(
-              //         margin: const EdgeInsets.only(
-              //             left: 15, right: 15, bottom: 15),
-              //         alignment: Alignment.center,
-              //         width: myBanner!.size.width.toDouble(),
-              //         height: myBanner!.size.height.toDouble(),
-              //         child: AdWidget(ad: myBanner!),
-              //       )
-              //     : Container(),
-            ])),
-            SliverList(
-                delegate: SliverChildListDelegate([
-              FutureBuilder<List<Map<String, dynamic>>>(
-                  future: listLetters,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return ListView.separated(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: snapshot.data!.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                              margin: const EdgeInsets.only(
-                                  left: 15, right: 15, bottom: 15),
-                              padding: const EdgeInsets.symmetric(vertical: 5),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(5),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
-                                    blurRadius: 7,
-                                    offset: const Offset(1, 3),
-                                  )
-                                ],
-                              ),
-                              child: ListTile(
-                                onTap: () {
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (builder) {
-                                    return LetterScreen(
-                                      letters: snapshot.data![index]["letters"],
-                                      title: snapshot.data![index]["title"],
-                                    );
-                                  }));
-                                },
-                                title: Text(snapshot.data![index]["title"]),
-                                leading: const Icon(Icons.description_outlined,
-                                    color: bInfo),
-                                trailing: const Icon(Icons.trending_flat,
-                                    color: bSecondary),
-                              ));
-                        },
-                        separatorBuilder: (context, index) {
-                          if (index == 2) {
-                            return statusAd == StatusAd.loaded
-                                ? Container(
-                                    margin: const EdgeInsets.only(
-                                        left: 15, right: 15, bottom: 15),
-                                    alignment: Alignment.center,
-                                    width: myBanner!.size.width.toDouble(),
-                                    height: myBanner!.size.height.toDouble(),
-                                    child: AdWidget(ad: myBanner!),
-                                  )
-                                : Container();
-                            // return const Divider();
-                          }
-                          return Container();
-                        },
-                      );
-                    } else {
-                      return Container();
-                    }
-                  }),
             ])),
           ]),
     );

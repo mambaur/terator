@@ -46,16 +46,18 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   void initState() {
-    myBanner = BannerAd(
-      // test banner
-      // adUnitId: '/6499/example/banner',
+    if (!kDebugMode) {
+      myBanner = BannerAd(
+        // test banner
+        // adUnitId: '/6499/example/banner',
 
-      adUnitId: 'ca-app-pub-2465007971338713/8992395637',
-      size: AdSize.banner,
-      request: const AdRequest(),
-      listener: listener(),
-    );
-    myBanner!.load();
+        adUnitId: 'ca-app-pub-2465007971338713/8992395637',
+        size: AdSize.banner,
+        request: const AdRequest(),
+        listener: listener(),
+      );
+      myBanner!.load();
+    }
     super.initState();
   }
 
@@ -68,14 +70,15 @@ class _SettingScreenState extends State<SettingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Pengaturan'),
-        centerTitle: true,
-        foregroundColor: bDark,
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
-      backgroundColor: Colors.white,
+      // appBar: AppBar(
+      //   title: const Text('Pengaturan'),
+      //   centerTitle: true,
+      //   foregroundColor: bDark,
+      //   backgroundColor: Colors.white,
+      //   elevation: 0,
+      // ),
+      // backgroundColor: Colors.white,
+      backgroundColor: Colors.grey.shade200,
       body: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
@@ -90,70 +93,93 @@ class _SettingScreenState extends State<SettingScreen> {
                       height: myBanner!.size.height.toDouble(),
                       child: AdWidget(ad: myBanner!),
                     )
-                  : Container(),
+                  : const SizedBox(),
             ])),
             SliverList(
                 delegate: SliverChildListDelegate([
-              ListTile(
-                onTap: () => _launchUrl(_urlDeveloper),
-                title: const Text('Aplikasi Lainnya'),
-                leading: const Icon(
-                  Icons.shop_outlined,
-                  color: bInfo,
+              Container(
+                margin: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10)),
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    ListTile(
+                      onTap: () => _launchUrl(_urlDeveloper),
+                      title: const Text('Aplikasi Lainnya'),
+                      leading: const Icon(
+                        Icons.shop_outlined,
+                        color: bInfo,
+                      ),
+                      trailing: const Icon(Icons.chevron_right),
+                    ),
+                    const Divider(),
+                    ListTile(
+                      onTap: () => _launchUrl(_feedbackUrl),
+                      title: const Text('Berikan Kritik & Saran'),
+                      leading: const Icon(
+                        Icons.feedback_outlined,
+                        color: bInfo,
+                      ),
+                      trailing: const Icon(Icons.chevron_right),
+                    ),
+                    const Divider(),
+                    ListTile(
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (builder) {
+                          return const AboutScreen();
+                        }));
+                      },
+                      title: const Text('Tentang Aplikasi'),
+                      leading: const Icon(
+                        Icons.info_outline,
+                        color: bInfo,
+                      ),
+                      trailing: const Icon(Icons.chevron_right),
+                    ),
+                    const Divider(),
+                    ListTile(
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (builder) {
+                          return const DisclaimerScreen();
+                        }));
+                      },
+                      title: const Text('Disclaimer'),
+                      leading: const Icon(
+                        Icons.front_hand_outlined,
+                        color: bInfo,
+                      ),
+                      trailing: const Icon(Icons.chevron_right),
+                    ),
+                    const Divider(),
+                    ListTile(
+                      onTap: () => _launchUrl(_urlApp),
+                      title: const Text('Cek Update'),
+                      leading: const Icon(
+                        Icons.update,
+                        color: bInfo,
+                      ),
+                      trailing: const Icon(Icons.chevron_right),
+                    ),
+                    const Divider(),
+                    const ListTile(
+                      title: Text('Versi 1.0.0'),
+                      leading: Icon(
+                        Icons.smartphone,
+                        color: bInfo,
+                      ),
+                      trailing: Icon(Icons.chevron_right),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    )
+                  ],
                 ),
-                trailing: const Icon(Icons.chevron_right),
-              ),
-              ListTile(
-                onTap: () => _launchUrl(_feedbackUrl),
-                title: const Text('Berikan Kritik & Saran'),
-                leading: const Icon(
-                  Icons.feedback_outlined,
-                  color: bInfo,
-                ),
-                trailing: const Icon(Icons.chevron_right),
-              ),
-              ListTile(
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (builder) {
-                    return const AboutScreen();
-                  }));
-                },
-                title: const Text('Tentang Aplikasi'),
-                leading: const Icon(
-                  Icons.info_outline,
-                  color: bInfo,
-                ),
-                trailing: const Icon(Icons.chevron_right),
-              ),
-              ListTile(
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (builder) {
-                    return const DisclaimerScreen();
-                  }));
-                },
-                title: const Text('Disclaimer'),
-                leading: const Icon(
-                  Icons.front_hand_outlined,
-                  color: bInfo,
-                ),
-                trailing: const Icon(Icons.chevron_right),
-              ),
-              ListTile(
-                onTap: () => _launchUrl(_urlApp),
-                title: const Text('Cek Update'),
-                leading: const Icon(
-                  Icons.update,
-                  color: bInfo,
-                ),
-                trailing: const Icon(Icons.chevron_right),
-              ),
-              const ListTile(
-                title: Text('Versi 1.0.0'),
-                leading: Icon(
-                  Icons.smartphone,
-                  color: bInfo,
-                ),
-                trailing: Icon(Icons.chevron_right),
               ),
             ])),
             SliverList(delegate: SliverChildListDelegate([])),
