@@ -39,14 +39,14 @@ String suratKeteranganTidakMampu(
 						<td style="width: 100%">${account?.placeAndDateOfBirth ?? ''}</td>
 					</tr>
 					<tr>
-						<td style="white-space: nowrap">Pekerjaan</td>
+						<td style="white-space: nowrap">Agama</td>
 						<td>:&nbsp</td>
 						<td style="width: 100%">${account?.religion ?? ''}</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap">Pekerjaan</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%">${account?.religion ?? ''}</td>
+						<td style="width: 100%"></td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Alamat</td>
@@ -81,7 +81,7 @@ String suratKeteranganTidakMampu(
             </p>
             $image
             <p>
-              <span style="white-space: nowrap">... (Nama Kepala Lurah)</span>
+              <span style="white-space: nowrap"><b>... (Nama Kepala Lurah)</b></span>
             </p>
           </td>
         </tr>

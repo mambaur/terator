@@ -161,10 +161,10 @@ class _LetterChooseAccountScreenState extends State<LetterChooseAccountScreen> {
                     const SizedBox(
                       height: 5,
                     ),
-                    const Text(
-                      'Apakah kamu ingin menggunakan tanda tangan?',
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                    Text(
+                      'Apakah kamu ingin menggunakan tanda tangan ${account.name}?',
+                      style: const TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.w500),
                     ),
                     const SizedBox(
                       height: 20,

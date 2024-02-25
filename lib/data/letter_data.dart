@@ -85,7 +85,7 @@ class LetterData {
           },
           {
             "key": "surat_izin_tidak_masuk_kerja",
-            "title": "Surat Permohonan Magang Kerja"
+            "title": "Surat Izin Tidak Masuk Kerja"
           },
           {
             "key": "surat_permohonan_izin_cuti_kerja",

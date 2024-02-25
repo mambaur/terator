@@ -16,7 +16,7 @@ String suratIzinTidakMasukSekolah(
     <p>
       Kepada Yth.
       <br>
-      Kepala ${account?.educationInstitution ?? ''}
+      Kepala ${account?.educationInstitution != null && account?.educationInstitution != '' ? account?.educationInstitution : '<b>... (Nama Sekolah)</b>'}
       <br>
       Di Tempat
     </p>
@@ -43,7 +43,7 @@ String suratIzinTidakMasukSekolah(
 			</table>
     </p>
     <p>
-      Orange tua/Wali murid dari:
+      Orang tua/Wali murid dari:
     </p>
     <p>
       <table border="0" style="width:100%">

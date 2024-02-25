@@ -20,7 +20,7 @@ class _SettingScreenState extends State<SettingScreen> {
       'https://play.google.com/store/apps/dev?id=8918426189046119136';
   final String _urlApp =
       'https://play.google.com/store/apps/details?id=com.caraguna.terator';
-  final String _feedbackUrl = 'https://forms.gle/nnKfnzXRATp5N8Zg9';
+  final String _feedbackUrl = 'https://forms.gle/CXNMpwH6XottdEC58';
   BannerAd? myBanner;
 
   BannerAdListener listener() => BannerAdListener(

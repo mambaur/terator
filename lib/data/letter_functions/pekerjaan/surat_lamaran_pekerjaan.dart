@@ -20,9 +20,9 @@ String suratLamaranPekerjaan(
       <br>
       Bapak/Ibu Pimpinan
       <br>
-      ... (Nama Perusahaan)
+      <b>... (Nama Perusahaan)</b>
       <br>
-      ... (Alamat)
+      <b>... (Alamat)</b>
       <br>
     </p>
     <p><br></p>

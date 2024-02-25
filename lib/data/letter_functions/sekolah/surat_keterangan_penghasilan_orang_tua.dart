@@ -106,7 +106,7 @@ String suratKeteranganPenghasilanOrangTua(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Menyatakan bahwa saat ini, kami selaku orang tua/wali mempunyai penghasilan rata-rata sebesar <b> Rp ... </b>.
+      Menyatakan bahwa saat ini, kami selaku orang tua/wali mempunyai penghasilan rata-rata sebesar <b> Rp ... (Penghasilan)</b>.
     </p>
     <p style="text-align: justify; ">
       Demikian pernyataan ini kami buat dengan sebenar-benarnya dan penuh rasa tanggung jawab, dan apabila dikemudian hari ternyata pernyataan ini tidak benar/menyimpang dengan keadaan yang sebenarnya, kami bersedia menerima sanksi yang telah ditetapkan.

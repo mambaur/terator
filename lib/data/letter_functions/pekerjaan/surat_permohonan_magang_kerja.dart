@@ -36,9 +36,9 @@ String suratPermohonanMagangKerja(
       <br>
       Kepala Bagian HRD
       <br>
-      ... (Nama Instansi)
+      <b>... (Nama Instansi)</b>
       <br>
-      ... (Alamat)
+      <b>... (Alamat)</b>
       <br>
     </p>
     <p><br></p>
@@ -57,7 +57,7 @@ String suratPermohonanMagangKerja(
 						<td style="width: 100%">${account?.name ?? ''}</td>
 					</tr>
           <tr>
-						<td style="white-space: nowrap">NIS</td>
+						<td style="white-space: nowrap">NIS / NIM</td>
 						<td>:&nbsp</td>
 						<td style="width: 100%">${account?.educationNumber ?? ''}</td>
 					</tr>

@@ -110,7 +110,7 @@ String suratKeteranganDomisili(
             </p>
             <p style="text-align: right; "><br></p><p style="text-align: right; "><br></p>
             <p>
-              <span style="white-space: nowrap">... (Nama Ketua RT/RW)</span>
+              <span style="white-space: nowrap"><b>... (Nama Ketua RT/RW)</b></span>
             </p>
           </td>
         </tr>

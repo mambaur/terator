@@ -394,12 +394,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         Expanded(
                             child: Padding(
                           padding: const EdgeInsets.all(5.0),
-                          child: Image.asset('assets/icons/faq.png'),
+                          child: Image.asset('assets/icons/keuangan.png'),
                         )),
                         const SizedBox(
                           height: 8,
                         ),
-                        const Text('FAQ',
+                        const Text('Keuangan',
                             style: TextStyle(fontSize: 12, color: bDark))
                       ],
                     ),
@@ -416,12 +416,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         Expanded(
                             child: Padding(
                           padding: const EdgeInsets.all(5.0),
-                          child: Image.asset('assets/icons/faq.png'),
+                          child: Image.asset('assets/icons/pribadi.png'),
                         )),
                         const SizedBox(
                           height: 8,
                         ),
-                        const Text('FAQ',
+                        const Text('Pribadi',
                             style: TextStyle(fontSize: 12, color: bDark))
                       ],
                     ),
@@ -438,12 +438,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         Expanded(
                             child: Padding(
                           padding: const EdgeInsets.all(5.0),
-                          child: Image.asset('assets/icons/faq.png'),
+                          child: Image.asset('assets/icons/kesehatan.png'),
                         )),
                         const SizedBox(
                           height: 8,
                         ),
-                        const Text('FAQ',
+                        const Text('Kesehatan',
                             style: TextStyle(fontSize: 12, color: bDark))
                       ],
                     ),

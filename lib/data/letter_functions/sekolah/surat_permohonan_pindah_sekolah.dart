@@ -20,7 +20,7 @@ String suratPermohonanPindahSekolah(
     <p>
       Kepada Yth.
       <br>
-      Kepala ${account?.educationInstitution ?? 'Sekolah'}
+      Kepala ${account?.educationInstitution != null && account?.educationInstitution != '' ? account?.educationInstitution : '<b>... (Nama Sekolah)</b>'}
       <br>
       Di Tempat
     </p>
@@ -58,7 +58,7 @@ String suratPermohonanPindahSekolah(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Mengajukan permohonan pindah dari ${account?.educationInstitution ?? '(SMA Anda)'} ke <b>SMA Budi Mulia Jakarta</b>. Hal ini sehubungan dengan <b>pindah tugas kedua orang tua ke Jakarta</b>.
+      Mengajukan permohonan pindah dari ${account?.educationInstitution != null && account?.educationInstitution != '' ? account?.educationInstitution : '<b>... (Asal Sekolah)</b>'} ke <b>SMA Budi Mulia Jakarta</b>. Hal ini sehubungan dengan <b>pindah tugas kedua orang tua ke Jakarta</b>.
     </p>
     <p style="text-align: justify; ">
       Kami berharap pihak sekolah mempertimbangkan permohonan di atas. Terima kasih atas perhatiannya.

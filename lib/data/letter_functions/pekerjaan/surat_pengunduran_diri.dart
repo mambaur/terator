@@ -16,11 +16,11 @@ String suratPengunduranDiri(
     <p>
       Kepada Yth.
       <br>
-      Kepala Bagian ...
+      Kepala Bagian <b>... (Divisi)</b>
       <br>
-      ... (Nama Perusahaan)
+      <b>... (Nama Perusahaan)</b>
       <br>
-      ... (Alamat Perusahaan)
+      <b>... (Alamat Perusahaan)</b>
     </p>
     <p>
       Dengan Hormat,
@@ -54,36 +54,17 @@ String suratPengunduranDiri(
 				</tbody>
 			</table>
     </p>
-    <p>
-      Orange tua/Wali murid dari:
-    </p>
-    <p>
-      <table border="0" style="width:100%">
-				<tbody>
-					<tr>
-						<td style="white-space: nowrap">Nama</td>
-						<td>:&nbsp</td>
-						<td style="width: 100%">${account?.name ?? ''}</td>
-					</tr>
-          <tr>
-						<td style="white-space: nowrap">Kelas</td>
-						<td>:&nbsp</td>
-						<td style="width: 100%">${account?.educationClass ?? ''}</td>
-					</tr>
-				</tbody>
-			</table>
+    <p style="text-align: justify; ">
+      Melalui surat pernyataan ini, saya berniat untuk mengajukan permohonan pengunduran diri saya dari jabatan <b>... (Jabatan)</b> di perusahaan <b>... (Nama perusahaan)</b> terhitung mulai tanggal $dateNow2.
     </p>
     <p style="text-align: justify; ">
-      Melalui surat pernyataan ini, saya berniat untuk mengajukan permohonan pengunduran diri saya dari jabatan ... di perusahaan ... terhitung mulai tanggal $dateNow2.
-    </p>
-    <p style="text-align: justify; ">
-      Sebelumnya, saya dengan rasa syukur yang sebesar-besarnya berterima kasih kepada ... karena sudah memberikan saya kesempatan untuk dapat bekerja, belajar, dan berkembang di perusahaan ini
+      Sebelumnya, saya dengan rasa syukur yang sebesar-besarnya berterima kasih kepada <b>... (Pimpinan)</b> karena sudah memberikan saya kesempatan untuk dapat bekerja, belajar, dan berkembang di perusahaan ini
     </p>
     <p style="text-align: justify; ">
       Selain itu, saya juga ingin berterima kasih pada rekan-rekan kerja saya di sini yang telah berjuang bersama dalam mencapai target perusahaan.
     </p>
     <p style="text-align: justify; ">
-      Saya memohon maaf atas segala kesalahan dan kekurangan yang saya lakukan selama menjadi bagian dari ... Semoga perusahaan ini dapat terus berkembang dan semakin maju.
+      Saya memohon maaf atas segala kesalahan dan kekurangan yang saya lakukan selama menjadi bagian dari <b>... (Divisi)</b> Semoga perusahaan ini dapat terus berkembang dan semakin maju.
     </p>
     <p style="text-align: justify; ">
       Demikian surat pengunduran diri ini saya buat dengan kesadaran dan tanpa tekanan dari pihak manapun.

@@ -56,6 +56,9 @@ flutter:
     - assets/icons/school.png
     - assets/icons/village.png
     - assets/icons/work.png
+    - assets/icons/kesehatan.png
+    - assets/icons/pribadi.png
+    - assets/icons/keuangan.png
   
   # fonts:
   #   - family: Schyler

@@ -65,7 +65,7 @@ String suratPernyataanTidakMenerimaBeasiswa(
       Surat pernyataan ini saya buat dengan sebenar-benarnya dengan penuh kesadaran, tanpa paksaan dan tekanan dari pihak manapun. Saya bersedia menerima sanksi sesuai hukum yang berlaku apabila saya terbukti sedang menerima beasiswa dari sumber lain.
     </p>
     <p style="text-align: justify; ">
-      Demikian surat pernyataan ini saya buat untuk persyaratan permohonan Beasiswa ... (nama beasiswa).
+      Demikian surat pernyataan ini saya buat untuk persyaratan permohonan Beasiswa <b>... (nama beasiswa)</b>.
     </p>
     <p><br></p>
     <table>

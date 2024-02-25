@@ -33,7 +33,7 @@ String suratPermohonanBeaSiswa(
     <p>
       Kepada Yth.
       <br>
-      Kepala ${account?.educationInstitution ?? ''}
+      Kepala ${account?.educationInstitution != null && account?.educationInstitution != '' ? account?.educationInstitution : '<b>... (Nama Institusi)</b>'}
       <br>
       ${account?.educationAddress ?? ''}
     </p>
@@ -42,7 +42,7 @@ String suratPermohonanBeaSiswa(
       Dengan Hormat,
     </p>
     <p style="text-align: justify; ">
-      Bersamaan adanya informasi Beasiswa <b>...(Nama Beasiswa)</b>, saya yang bertanda tangan di bawah ini:
+      Bersamaan adanya informasi Beasiswa <b>... (Nama Beasiswa)</b>, saya yang bertanda tangan di bawah ini:
     </p>
     <p>
       <table border="0" style="width:100%">

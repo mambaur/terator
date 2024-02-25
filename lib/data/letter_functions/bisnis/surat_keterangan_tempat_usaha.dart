@@ -18,7 +18,7 @@ String suratKeteranganTempatUsaha(
     </p>
     <p><br></p>
     <p style="text-align: justify; ">
-      Yang bertanda tangan dibawah ini Kepala Desa ... Kecamatan ... Kabupaten ... menerangkan bahwa:
+      Yang bertanda tangan dibawah ini Kepala Desa <b>... (Nama Desa)</b> Kecamatan <b>... (Nama Kecamatan)</b> Kabupaten <b>... (Nama Kabupaten)</b> menerangkan bahwa:
     </p>
     <p>
       <table border="0" style="width:100%">
@@ -42,7 +42,7 @@ String suratKeteranganTempatUsaha(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Orang tersebut diatas adalah benar- benar mempunyai usaha <b>... (Usaha anda)</b> Yang terletak di Jln/Dsn ... Kelurahan/Desa ... Kecamatan ... Kabupaten ...
+      Orang tersebut diatas adalah benar- benar mempunyai usaha <b>... (Usaha anda)</b> Yang terletak di Jln/Dsn <b>... (Nama Jalan)</b> Kelurahan/Desa <b>... (Nama Desa)</b> Kecamatan <b>... (Nama Kecamatan)</b> Kabupaten <b>... (Nama Kabupaten)</b>.
     </p>
     <p style="text-align: justify; ">
       Demikian Surat Keterangan ini kami buat dengan sebenarnya, dan dapat Dipergunakan sebagai <b>... (Kebutuhan)</b>.
@@ -60,7 +60,7 @@ String suratKeteranganTempatUsaha(
             </p>
             $image
             <p>
-              <span style="white-space: nowrap">... (Nama Kepala Desa / Lurah)</span>
+              <span style="white-space: nowrap"><b>... (Nama Kepala Desa / Lurah)</b></span>
             </p>
           </td>
         </tr>

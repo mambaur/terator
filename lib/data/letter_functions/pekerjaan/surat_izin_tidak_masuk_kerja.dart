@@ -27,11 +27,11 @@ String suratIzinTidakMasukKerja(
     <p>
       Kepada Yth.
       <br>
-      Kepala Bagian ...
+      Kepala Bagian <b>... (Divisi)</b>
       <br>
-      ... (Nama Perusahaan Perusahaan)
+      <b>... (Nama Perusahaan)</b>
       <br>
-      ... (Alamat Perusahaan)
+      <b>... (Alamat Perusahaan)</b>
     </p>
     <p style="text-align: justify; ">
       Saya yang bertanda tangan dibawah ini:

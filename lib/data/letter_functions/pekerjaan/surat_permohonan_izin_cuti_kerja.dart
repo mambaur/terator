@@ -32,9 +32,9 @@ String suratPermohonanIzinCutiKerja(
     <p>
       Kepada Yth.
       <br>
-      Kepala Bagian ...
+      Kepala Bagian <b>... (Divisi)</b>
       <br>
-      ... (Nama Perusahaan Perusahaan)
+      <b>... (Nama Perusahaan)</b>
       <br>
       di Tempat
     </p>
@@ -72,7 +72,7 @@ String suratPermohonanIzinCutiKerja(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini, saya ingin mengajukan permohonan cuti untuk <b>... (Alasan)</b>. Saya mengajukan permohonan cuti ini terhitung mulai dari tanggal $dateNow2 sampai tanggal ...
+      Dengan ini, saya ingin mengajukan permohonan cuti untuk <b>... (Alasan)</b>. Saya mengajukan permohonan cuti ini terhitung mulai dari tanggal $dateNow2 sampai tanggal <b>... (Tanggal Cuti)</b>.
     </p>
     <p style="text-align: justify; ">
       Demikian surat permohonan cuti tahunan ini saya ajukan. Atas perhatian dan izinnya, saya ucapkan banyak terima kasih.

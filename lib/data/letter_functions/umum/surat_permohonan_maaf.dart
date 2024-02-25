@@ -20,9 +20,9 @@ String suratPermohonanMaaf(
       <br>
       Bapak/Ibu Pimpinan
       <br>
-      ... (Nama Perusahaan)
+      <b>... (Nama Perusahaan)</b>
       <br>
-      ... (Alamat)
+      <b>... (Alamat)</b>
       <br>
     </p>
     <p><br></p>
@@ -68,10 +68,10 @@ String suratPermohonanMaaf(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Bersamaan surat ini, saya bermaksud untuk menyampaikan permohonan maaf kepada ...
+      Bersamaan surat ini, saya bermaksud untuk menyampaikan permohonan maaf kepada <b>... (Penerima)</b>.
     </p>
     <p style="text-align: justify; ">
-      Sehubungan dengan kesalahan yang telah saya lakukan yaitu ...
+      Sehubungan dengan kesalahan yang telah saya lakukan yaitu <b>... (Kesalahan)</b>.
     </p>
     <p style="text-align: justify; ">
       Demikian surat permohonan maaf ini saya buat sebagai bentuk penyesalan saya terhadap kelalaian yang telah saya lakukan. Semoba Bapak/Ibu/Saudara berkenan untuk memaafkan saya.
