@@ -86,7 +86,7 @@ class _NavbarState extends State<Navbar> {
                     return const SettingScreen();
                   }));
                 },
-                icon: const Icon(Icons.help_outline, color: bSecondary))
+                icon: const Icon(Icons.help_outline, color: bDark))
           ],
         ),
         body: Center(
@@ -105,28 +105,28 @@ class _NavbarState extends State<Navbar> {
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: EdgeInsets.only(bottom: 5, top: 5),
+                  padding: EdgeInsets.only(bottom: 2.5, top: 5),
                   child: Icon(Icons.dashboard_outlined),
                 ),
                 label: 'Beranda',
               ),
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: EdgeInsets.only(bottom: 5, top: 5),
+                  padding: EdgeInsets.only(bottom: 2.5, top: 5),
                   child: Icon(Icons.schedule),
                 ),
                 label: 'File Saya',
               ),
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: EdgeInsets.only(bottom: 5, top: 5),
+                  padding: EdgeInsets.only(bottom: 2.5, top: 5),
                   child: Icon(Icons.contact_page_outlined),
                 ),
                 label: 'Akun',
               ),
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: EdgeInsets.only(bottom: 5, top: 5),
+                  padding: EdgeInsets.only(bottom: 2.5, top: 5),
                   child: Icon(Icons.settings_outlined),
                 ),
                 label: 'Pengaturan',
@@ -134,7 +134,7 @@ class _NavbarState extends State<Navbar> {
             ],
             currentIndex: _selectedIndex,
             selectedItemColor: bInfo,
-            unselectedItemColor: Colors.grey.shade900,
+            unselectedItemColor: bDark,
             onTap: _onItemTapped,
           ),
         ),

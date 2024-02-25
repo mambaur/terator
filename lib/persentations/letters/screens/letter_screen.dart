@@ -17,11 +17,13 @@ class _LetterScreenState extends State<LetterScreen> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: Text(widget.title, style: const TextStyle(color: bDark)),
+        title: Text(widget.title.toUpperCase(),
+            style: const TextStyle(color: bDark)),
         centerTitle: true,
         foregroundColor: bDark,
         backgroundColor: Colors.white,
       ),
+      backgroundColor: Colors.grey.shade200,
       body: CustomScrollView(
           // controller: _scrollController,
           physics: const AlwaysScrollableScrollPhysics(),
@@ -41,13 +43,13 @@ class _LetterScreenState extends State<LetterScreen> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(5),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 7,
-                            offset: const Offset(1, 3),
-                          )
-                        ],
+                        // boxShadow: [
+                        //   BoxShadow(
+                        //     color: Colors.black.withOpacity(0.1),
+                        //     blurRadius: 7,
+                        //     offset: const Offset(1, 3),
+                        //   )
+                        // ],
                       ),
                       child: ListTile(
                         onTap: () {
@@ -61,12 +63,13 @@ class _LetterScreenState extends State<LetterScreen> {
                         },
                         title: Text(widget.letters[index]["title"]),
                         subtitle: widget.letters[index]["subtitle"] != null
-                            ? Text(widget.letters[index]["subtitle"])
+                            ? Text(widget.letters[index]["subtitle"],
+                                style: const TextStyle(color: Colors.grey))
                             : null,
                         leading: const Icon(Icons.description_outlined,
                             color: bInfo),
-                        trailing:
-                            const Icon(Icons.trending_flat, color: bSecondary),
+                        // trailing:
+                        //     const Icon(Icons.trending_flat, color: bSecondary),
                       ));
                 },
               ),

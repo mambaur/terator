@@ -32,6 +32,7 @@ class MyFileScreen extends StatefulWidget {
 class _MyFileScreenState extends State<MyFileScreen> {
   final LetterRepository _letterRepo = LetterRepository();
   final ScrollController _scrollController = ScrollController();
+  InterstitialAd? _interstitialAd;
 
   convert(String htmlData, String name) async {
     LoadingOverlay.show(context);
@@ -155,6 +156,24 @@ class _MyFileScreenState extends State<MyFileScreen> {
         listener: listener(),
       );
       myBanner!.load();
+
+      InterstitialAd.load(
+          adUnitId: kDebugMode
+              ? 'ca-app-pub-3940256099942544/1033173712'
+              : 'ca-app-pub-2465007971338713/3304515640',
+          request: const AdRequest(),
+          adLoadCallback: InterstitialAdLoadCallback(
+            // Called when an ad is successfully received.
+            onAdLoaded: (ad) {
+              debugPrint('$ad loaded.');
+              // Keep a reference to the ad so you can show it later.
+              _interstitialAd = ad;
+            },
+            // Called when an ad request failed.
+            onAdFailedToLoad: (LoadAdError error) {
+              debugPrint('InterstitialAd failed to load: $error');
+            },
+          ));
     }
 
     _scrollController.addListener(onScroll);
@@ -163,7 +182,9 @@ class _MyFileScreenState extends State<MyFileScreen> {
 
   @override
   void dispose() {
-    myBanner!.dispose();
+    if (myBanner != null) {
+      myBanner!.dispose();
+    }
     super.dispose();
   }
 
@@ -368,23 +389,30 @@ class _MyFileScreenState extends State<MyFileScreen> {
                       ),
                     ),
                     ListTile(
-                      onTap: () {
+                      onTap: () async {
+                        if (_interstitialAd != null) {
+                          await _interstitialAd!.show();
+                        }
                         shareFile(letter.html ?? '', letter.title ?? '');
                       },
                       title: const Text('Berbagi'),
                       leading: const Icon(
                         Icons.share,
-                        color: bSuccess,
+                        color: bInfo,
                       ),
                     ),
                     ListTile(
-                      onTap: () {
+                      onTap: () async {
+                        if (_interstitialAd != null) {
+                          await _interstitialAd!.show();
+                        }
+
                         convert(letter.html ?? '', letter.title ?? '');
                       },
                       title: const Text('Download'),
                       leading: const Icon(
                         Icons.download,
-                        color: bSecondary,
+                        color: bInfo,
                       ),
                     ),
                     ListTile(
@@ -395,7 +423,7 @@ class _MyFileScreenState extends State<MyFileScreen> {
                       title: const Text('Hapus'),
                       leading: const Icon(
                         Icons.delete,
-                        color: bDanger,
+                        color: bInfo,
                       ),
                     ),
                   ],

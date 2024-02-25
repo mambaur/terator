@@ -27,6 +27,7 @@ class _LetterChooseAccountScreenState extends State<LetterChooseAccountScreen> {
         foregroundColor: bDark,
         backgroundColor: Colors.white,
       ),
+      backgroundColor: Colors.grey.shade200,
       body: FutureBuilder<List<AccountModel>>(
           future: _accountRepo.all(),
           builder: (context, snapshot) {
@@ -37,13 +38,23 @@ class _LetterChooseAccountScreenState extends State<LetterChooseAccountScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.7,
+                            width: MediaQuery.of(context).size.width * 0.5,
                             child: Image.asset("assets/img/empty.png")),
                         const SizedBox(
                           height: 15,
                         ),
-                        const Text('Yah, data akun kamu masih kosong :('),
-                        TextButton(
+                        const Text(
+                          'Yah, data akun kamu\nmasih kosong :(',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: bDark),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(50))),
                             onPressed: () {
                               Navigator.pushAndRemoveUntil<void>(
                                 context,
@@ -55,7 +66,11 @@ class _LetterChooseAccountScreenState extends State<LetterChooseAccountScreen> {
                                 ModalRoute.withName('/account-screen'),
                               );
                             },
-                            child: const Text('Tambahkan Akun'))
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 12.0, horizontal: 15),
+                              child: Text('+ Tambahkan Akun'),
+                            ))
                       ]),
                 );
               }
@@ -71,13 +86,13 @@ class _LetterChooseAccountScreenState extends State<LetterChooseAccountScreen> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(5),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 7,
-                            offset: const Offset(1, 3),
-                          )
-                        ],
+                        // boxShadow: [
+                        //   BoxShadow(
+                        //     color: Colors.black.withOpacity(0.1),
+                        //     blurRadius: 7,
+                        //     offset: const Offset(1, 3),
+                        //   )
+                        // ],
                       ),
                       child: ListTile(
                         onTap: () {
@@ -100,8 +115,13 @@ class _LetterChooseAccountScreenState extends State<LetterChooseAccountScreen> {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        subtitle: Text(snapshot.data![index].address ?? '',
-                            maxLines: 1, overflow: TextOverflow.ellipsis),
+                        subtitle: Text(
+                            snapshot.data![index].address != null &&
+                                    snapshot.data![index].address != ''
+                                ? snapshot.data![index].address!
+                                : (snapshot.data![index].telephone ?? ''),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis),
                         leading: const Icon(Icons.face, color: bSecondary),
                       ));
                 }),
@@ -158,11 +178,11 @@ class _LetterChooseAccountScreenState extends State<LetterChooseAccountScreen> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.grey.shade400,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18.0),
+                                  borderRadius: BorderRadius.circular(50.0),
                                 ),
                               ),
                               child: const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 10.0),
+                                padding: EdgeInsets.symmetric(vertical: 12.0),
                                 child: Text('Tidak',
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold)),
@@ -189,11 +209,11 @@ class _LetterChooseAccountScreenState extends State<LetterChooseAccountScreen> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: bInfo,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
+                                  borderRadius: BorderRadius.circular(50.0),
                                 ),
                               ),
                               child: const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 10.0),
+                                padding: EdgeInsets.symmetric(vertical: 12.0),
                                 child: Text('Iya',
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold)),

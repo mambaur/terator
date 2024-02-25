@@ -92,7 +92,9 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   void dispose() {
-    myBanner!.dispose();
+    if (myBanner != null) {
+      myBanner!.dispose();
+    }
     super.dispose();
   }
 
@@ -191,9 +193,12 @@ class _AccountScreenState extends State<AccountScreen> {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   subtitle: Text(
-                                      state.accounts![index].address ??
-                                          state.accounts![index].telephone ??
-                                          '',
+                                      state.accounts![index].address != null &&
+                                              state.accounts![index].address !=
+                                                  ''
+                                          ? state.accounts![index].address!
+                                          : (state.accounts![index].telephone ??
+                                              ''),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis),
                                   leading:
@@ -275,6 +280,9 @@ class _AccountScreenState extends State<AccountScreen> {
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
+                    const SizedBox(
+                      height: 3,
+                    ),
                     Text(
                       'Apakah kamu yakin ingin menghapus ${account.name}?',
                       style: const TextStyle(),
@@ -291,12 +299,15 @@ class _AccountScreenState extends State<AccountScreen> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.grey.shade400,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18.0),
+                                  borderRadius: BorderRadius.circular(50.0),
                                 ),
                               ),
-                              child: const Text('Batal',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
+                              child: const Padding(
+                                padding: EdgeInsets.all(15.0),
+                                child: Text('Batal',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                              ),
                               onPressed: () {
                                 Navigator.pop(context);
                               },
@@ -310,12 +321,15 @@ class _AccountScreenState extends State<AccountScreen> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: bInfo,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
+                                  borderRadius: BorderRadius.circular(50.0),
                                 ),
                               ),
-                              child: const Text(
-                                'Hapus',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                              child: const Padding(
+                                padding: EdgeInsets.all(15.0),
+                                child: Text(
+                                  'Hapus',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
                               ),
                               onPressed: () {
                                 Navigator.pop(context);

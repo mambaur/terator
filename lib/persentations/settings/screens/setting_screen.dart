@@ -63,7 +63,9 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   void dispose() {
-    myBanner!.dispose();
+    if (myBanner != null) {
+      myBanner!.dispose();
+    }
     super.dispose();
   }
 

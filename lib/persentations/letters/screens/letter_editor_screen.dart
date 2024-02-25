@@ -42,7 +42,7 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
   final LetterRepository _letterRepo = LetterRepository();
   final HtmlEditorController controller = HtmlEditorController();
   final _titleController = TextEditingController();
-  RewardedInterstitialAd? myRerwardedAd;
+  InterstitialAd? _interstitialAd;
 
   bool withSignature = false;
 
@@ -129,24 +129,6 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
     return directory?.path;
   }
 
-  // Future<void> showRewardAd() async {
-  //   if (myRerwardedAd != null) {
-  //     myRerwardedAd!.fullScreenContentCallback =
-  //         FullScreenContentCallback(onAdDismissedFullScreenContent: (ad) {
-  //       ad.dispose();
-  //       _createRewardedAd();
-  //     }, onAdFailedToShowFullScreenContent: (ad, error) {
-  //       ad.dispose();
-  //       _createRewardedAd();
-  //     }, onAdWillDismissFullScreenContent: (ad) {
-  //       ad.dispose();
-  //       _createRewardedAd();
-  //     });
-
-  //     myRerwardedAd!.show(onUserEarnedReward: (ad, reward) {});
-  //   }
-  // }
-
   Future<void> requestStoragePermission() async {
     PermissionStatus status = await Permission.storage.request();
     if (status.isDenied == true || status.isGranted != true) {
@@ -161,7 +143,25 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
 
   @override
   void initState() {
-    // _createRewardedAd();
+    if (!kDebugMode) {
+      InterstitialAd.load(
+          adUnitId: kDebugMode
+              ? 'ca-app-pub-3940256099942544/1033173712'
+              : 'ca-app-pub-2465007971338713/3304515640',
+          request: const AdRequest(),
+          adLoadCallback: InterstitialAdLoadCallback(
+            // Called when an ad is successfully received.
+            onAdLoaded: (ad) {
+              debugPrint('$ad loaded.');
+              // Keep a reference to the ad so you can show it later.
+              _interstitialAd = ad;
+            },
+            // Called when an ad request failed.
+            onAdFailedToLoad: (LoadAdError error) {
+              debugPrint('InterstitialAd failed to load: $error');
+            },
+          ));
+    }
     super.initState();
   }
 
@@ -275,14 +275,21 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: bInfo,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
+                                  borderRadius: BorderRadius.circular(50.0),
                                 ),
                               ),
-                              child: const Text(
-                                'Simpan & Download',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                              child: const Padding(
+                                padding: EdgeInsets.all(15.0),
+                                child: Text(
+                                  'SIMPAN & DOWNLOAD',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
                               ),
                               onPressed: () async {
+                                if (_interstitialAd != null) {
+                                  await _interstitialAd!.show();
+                                }
+
                                 if (_titleController.text == '') {
                                   Fluttertoast.showToast(
                                       msg: "Nama file tidak boleh kosong");

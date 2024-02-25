@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:terator/core/styles.dart';
@@ -92,17 +90,19 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: const Text(
                         'Hai, Selamat Datang!',
                         style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                            fontSize: 20,
+                            color: bDark,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                     const SizedBox(
-                      height: 5,
+                      height: 3,
                     ),
                     Container(
                       margin: const EdgeInsets.symmetric(horizontal: 15),
                       child: const Text(
-                        'Di Template Surat Generator',
-                        style: TextStyle(fontSize: 14),
+                        'Di Surat Generator',
+                        style: TextStyle(fontSize: 14, color: bDark),
                       ),
                     ),
                     Container(
@@ -135,8 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         hintStyle: TextStyle(
                                             color: Colors.grey.withOpacity(0.5),
                                             fontSize: 14),
-                                        hintText:
-                                            'Lagi cari template surat apa..'));
+                                        hintText: 'Lagi mau bikin surat apa?'));
                               },
                               suggestionsCallback: (pattern) async {
                                 return searchLetterData(pattern);
@@ -245,9 +244,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           const SizedBox(
                             height: 8,
                           ),
-                          const Text(
-                            'Sekolah',
-                          )
+                          const Text('Sekolah',
+                              style: TextStyle(fontSize: 12, color: bDark))
                         ],
                       ),
                     ),
@@ -279,9 +277,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           const SizedBox(
                             height: 8,
                           ),
-                          const Text(
-                            'Pekerjaan',
-                          )
+                          const Text('Pekerjaan',
+                              style: TextStyle(fontSize: 12, color: bDark))
                         ],
                       ),
                     ),
@@ -313,9 +310,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           const SizedBox(
                             height: 8,
                           ),
-                          const Text(
-                            'Desa',
-                          )
+                          const Text('Desa',
+                              style: TextStyle(fontSize: 12, color: bDark))
                         ],
                       ),
                     ),
@@ -347,9 +343,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           const SizedBox(
                             height: 8,
                           ),
-                          const Text(
-                            'Bisnis',
-                          )
+                          const Text('Bisnis',
+                              style: TextStyle(fontSize: 12, color: bDark))
                         ],
                       ),
                     ),
@@ -381,9 +376,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           const SizedBox(
                             height: 8,
                           ),
-                          const Text(
-                            'Umum',
-                          )
+                          const Text('Umum',
+                              style: TextStyle(fontSize: 12, color: bDark))
                         ],
                       ),
                     ),
@@ -405,9 +399,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(
                           height: 8,
                         ),
-                        const Text(
-                          'FAQ',
-                        )
+                        const Text('FAQ',
+                            style: TextStyle(fontSize: 12, color: bDark))
                       ],
                     ),
                   ),
@@ -428,9 +421,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(
                           height: 8,
                         ),
-                        const Text(
-                          'FAQ',
-                        )
+                        const Text('FAQ',
+                            style: TextStyle(fontSize: 12, color: bDark))
                       ],
                     ),
                   ),
@@ -451,9 +443,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(
                           height: 8,
                         ),
-                        const Text(
-                          'FAQ',
-                        )
+                        const Text('FAQ',
+                            style: TextStyle(fontSize: 12, color: bDark))
                       ],
                     ),
                   ),
@@ -480,7 +471,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             Text("Lihat Tutorial",
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 14)),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                    color: bDark)),
                             Text("Bikin surat hanya dalam 1 menit",
                                 style: TextStyle(color: Colors.grey)),
                           ],
@@ -498,6 +491,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
+              statusAd == StatusAd.loaded
+                  ? Container(
+                      margin: const EdgeInsets.only(
+                          left: 15, right: 15, bottom: 15),
+                      alignment: Alignment.center,
+                      width: myBanner!.size.width.toDouble(),
+                      height: myBanner!.size.height.toDouble(),
+                      child: AdWidget(ad: myBanner!),
+                    )
+                  : const SizedBox(),
             ])),
           ]),
     );
