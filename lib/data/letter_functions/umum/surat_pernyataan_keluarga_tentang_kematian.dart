@@ -9,9 +9,6 @@ String suratPernyataanKeluargaTentangKematian(
 
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
-  String image = img ??
-      '<p style="text-align: right; "><br></p><p style="text-align: right; "><br></p>';
-
   String html = """
     <p style="text-align: center;">
       <b>SURAT PERNYATAAN KELUARGA</b>
@@ -177,36 +174,47 @@ String suratPernyataanKeluargaTentangKematian(
       </ul>
     </p>
     <p><br></p>
+
     <table>
       <tbody>
         <tr>
           <td style="vertical-align:top;text-align:center;">
+            <br>
+            <span style="white-space: nowrap">Saksi 1</span>
+          </td>
+          <td style="vertical-align:top;text-align:center;">
+            <br>
+            <span style="white-space: nowrap">Saksi 2</span>
+          </td>
+          <td style="vertical-align:top;text-align:center;">
+            <span style="white-space: nowrap">${account?.letterCityWritten ?? ''}, $dateNow2</span>
+            <br>
+            <span style="white-space: nowrap">Yang mengajukan,</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:top;text-align:center;">
+            ${img == null ? '<br><br><br><br><br>' : ''}
+          </td>
+          <td style="vertical-align:top;text-align:center;">
+            ${img == null ? '<br><br><br><br><br>' : ''}
+          </td>
+          <td style="vertical-align:top;text-align:center;">
+            ${img ?? ''}
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:top;text-align:center;">
             <p>
-              <br>
-              <span style="white-space: nowrap">Saksi 1</span>
-            </p>
-            <p style="text-align: right; "><br></p><p style="text-align: right; "><br></p>
-            <p>
-              <span style="white-space: nowrap">...</span>
+              <span style="white-space: nowrap"><b>... (Saksi 1)</b></span>
             </p>
           </td>
           <td style="vertical-align:top;text-align:center;">
             <p>
-              <br>
-              <span style="white-space: nowrap">Saksi 2</span>
-            </p>
-            <p style="text-align: right; "><br></p><p style="text-align: right; "><br></p>
-            <p>
-              <span style="white-space: nowrap">...</span>
+              <span style="white-space: nowrap"><b>... (Saksi 2)</b></span>
             </p>
           </td>
           <td style="vertical-align:top;text-align:center;">
-            <p>
-              <span style="white-space: nowrap">${account?.letterCityWritten ?? ''}, $dateNow2</span>
-              <br>
-              <span style="white-space: nowrap">Yang mengajukan,</span>
-            </p>
-            $image
             <p>
               <span style="white-space: nowrap">${account?.name ?? ''}</span>
             </p>
@@ -214,6 +222,7 @@ String suratPernyataanKeluargaTentangKematian(
         </tr>
       </tbody>
     </table>
+
     <br><br><br>
   """;
 

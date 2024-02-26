@@ -187,8 +187,13 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
         callbacks: Callbacks(onInit: () {
           String text = LetterData.html(widget.keyLetter,
               account: widget.account,
+              // image: widget.withSignature
+              //     ? "<div style='margin-top:10px;margin-bottom:10px;text-align: center;'><img style='width:100%;' src='data:image/png;base64,${widget.account.signatureImage}'></div>"
+              //     : null
+              // image: widget.withSignature
+              //     ? "<p style='text-align: center;'><img style='width:50%;' src='data:image/png;base64,${widget.account.signatureImage}'></p>"
               image: widget.withSignature
-                  ? "<div style='margin-top:10px;margin-bottom:10px;text-align: center;'><img style='width:100%;' src='data:image/png;base64,${widget.account.signatureImage}'></div>"
+                  ? "<img style='width:100%;' src='data:image/png;base64,${widget.account.signatureImage}'>"
                   : null);
           controller.setText("$text<br><br><br>");
         }),

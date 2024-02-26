@@ -82,7 +82,8 @@ class _SettingScreenState extends State<SettingScreen> {
       // backgroundColor: Colors.white,
       backgroundColor: Colors.grey.shade200,
       body: CustomScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
+          physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics()),
           slivers: [
             SliverList(
                 delegate: SliverChildListDelegate([

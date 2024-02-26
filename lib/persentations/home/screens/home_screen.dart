@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:terator/core/styles.dart';
@@ -404,26 +405,37 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                            child: Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Image.asset('assets/icons/pribadi.png'),
-                        )),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        const Text('Pribadi',
-                            style: TextStyle(fontSize: 12, color: bDark))
-                      ],
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (builder) {
+                        return LetterScreen(
+                          letters: listLetters[5]["letters"],
+                          title: listLetters[5]["title"],
+                        );
+                      }));
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                              child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Image.asset('assets/icons/pribadi.png'),
+                          )),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          const Text('Pribadi',
+                              style: TextStyle(fontSize: 12, color: bDark))
+                        ],
+                      ),
                     ),
                   ),
                   Container(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/persentations/account/screens/account_screen.dart';
+import 'package:terator/persentations/faq/screens/faq_screen.dart';
 import 'package:terator/persentations/home/screens/home_screen.dart';
 import 'package:terator/persentations/my_files/screens/my_file_screen.dart';
 import 'package:terator/persentations/settings/screens/setting_screen.dart';
@@ -25,10 +26,6 @@ class _NavbarState extends State<Navbar> {
   ];
 
   final List<Widget> _titleOptions = <Widget>[
-    // const Text(
-    //   '🏡 Terator',
-    //   style: TextStyle(color: bDark),
-    // ),
     Image.asset(
       'assets/img/terator_logo.png',
       height: 45,
@@ -83,7 +80,7 @@ class _NavbarState extends State<Navbar> {
             IconButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (builder) {
-                    return const SettingScreen();
+                    return const FaqScreen();
                   }));
                 },
                 icon: const Icon(Icons.help_outline, color: bDark))

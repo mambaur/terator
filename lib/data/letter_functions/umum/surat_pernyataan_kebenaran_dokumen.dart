@@ -2,7 +2,7 @@ import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
 
-String suratKeteranganDomisili(
+String suratPernyataanKebenaranDokumen(
     LetterModel? letter, String? img, AccountModel? account) {
   // String dateNow =
   //     DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
@@ -11,11 +11,11 @@ String suratKeteranganDomisili(
 
   String html = """
     <p style="text-align: center;">
-      <b>SURAT KETERANGAN DOMILI</b>
+      <b>SURAT PERNYATAAN KEBENARAN DOKUMEN</b>
     </p>
     <p><br></p>
     <p style="text-align: justify; ">
-      Yang bertanda tangan di bawah ini Ketua RT/RW : <b>... (Alamat)</b>, menerangkan dengan sesungguhnya bahwa:
+      Yang bertanda tangan di bawah ini:
     </p>
     <p>
       <table border="0" style="width:100%">
@@ -26,94 +26,63 @@ String suratKeteranganDomisili(
 						<td style="width: 100%">${account?.name ?? ''}</td>
 					</tr>
 					<tr>
-						<td style="white-space: nowrap">NIK</td>
+						<td style="white-space: nowrap">NIK / No. KK</td>
 						<td>:&nbsp</td>
 						<td style="width: 100%"></td>
 					</tr>
 					<tr>
-						<td style="white-space: nowrap">Jenis Kelamin</td>
-						<td>:&nbsp</td>
-						<td style="width: 100%">${account?.gender ?? ''}</td>
-					</tr>
-					<tr>
-						<td style="white-space: nowrap">Tempat / Tgl. Lahir</td>
+						<td style="white-space: nowrap">Tempat, Tgl Lahir</td>
 						<td>:&nbsp</td>
 						<td style="width: 100%">${account?.placeAndDateOfBirth ?? ''}</td>
 					</tr>
 					<tr>
+						<td style="white-space: nowrap">No. Telp</td>
+						<td>:&nbsp</td>
+						<td style="width: 100%">${account?.telephone ?? ''}</td>
+					</tr>
+					<tr>
 						<td style="white-space: nowrap">Pekerjaan</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%">${account?.religion ?? ''}</td>
+						<td style="width: 100%"></td>
 					</tr>
           <tr>
-						<td style="white-space: nowrap">Alamat Sesuai KTP</td>
+						<td style="white-space: nowrap">Alamat</td>
 						<td>:&nbsp</td>
 						<td style="width: 100%">${account?.address ?? ''}</td>
 					</tr>
 				</tbody>
 			</table>
     </p>
+
     <p style="text-align: justify; ">
-      Adalah benar, yang bersangkutan merupakan penduduk yang tinggal dan berdomisili di lingkungan wilayah:
+      Dengan ini menyatakan sesungguhnya bahwa seluruh dokumen persyaratan administrasi <b>... (Nama Acara)</b> adalah <b>BENAR</b>.
     </p>
-    <p>
-      <table border="0" style="width:100%">
-				<tbody>
-					<tr>
-						<td style="white-space: nowrap">RT/RW</td>
-						<td>:&nbsp</td>
-						<td style="width: 100%"></td>
-					</tr>
-					<tr>
-						<td style="white-space: nowrap">Kelurahan</td>
-						<td>:&nbsp</td>
-						<td style="width: 100%"></td>
-					</tr>
-					<tr>
-						<td style="white-space: nowrap">Kecamatan</td>
-						<td>:&nbsp</td>
-						<td style="width: 100%"></td>
-					</tr>
-					<tr>
-						<td style="white-space: nowrap">Kabupaten</td>
-						<td>:&nbsp</td>
-						<td style="width: 100%"></td>
-					</tr>
-				</tbody>
-			</table>
-    </p>
+
     <p style="text-align: justify; ">
-      Demikian surat ini dibuat supaya dapat digunakan sebagaimana mestinya.
+      Apabila kemudian hari ternyata dokumen tersebut tidak benar (PALSU), maka saya siap menanggung resiko apapun yang diberikan kepada saya oleh <b>... (Nama Institusi)</b>.
+    </p>
+
+    <p style="text-align: justify; ">
+      Demikian Surat Pernyataan ini saya buat dengan penuh kesadaran, tanpa ada paksaan dari siapapun.
     <p><br></p>
+    
     <table>
       <tbody>
         <tr>
-          <td style="vertical-align:top;text-align:center;">
-            <br>
-            <span style="white-space: nowrap">Pemohon</span>
-          </td>
           <td style="width: 100%">&nbsp;</td>
           <td style="vertical-align:top;text-align:center;">
             <span style="white-space: nowrap">${account?.letterCityWritten ?? ''}, $dateNow2</span>
             <br>
-            <span style="white-space: nowrap">Ketua RT/RW,</span>
+            <span style="white-space: nowrap">Yang membuat menyatakan,</span>
           </td>
         </tr>
         <tr>
-          <td style="vertical-align:top;text-align:center;">
-            ${img == null ? '<br><br><br><br><br>' : ''}
-          </td>
           <td style="width: 100%">&nbsp;</td>
           <td style="vertical-align:top;text-align:center;">
-            ${img ?? ''}
+            ${img ?? '<br><br><br><br><br>'}
           </td>
         </tr>
         <tr>
-          <td style="vertical-align:top;text-align:center;">
-            <p>
-              <span style="white-space: nowrap"><b>... (Nama Ketua RT/RW)</b></span>
-            </p>
-          </td>
           <td style="width: 100%">&nbsp;</td>
           <td style="vertical-align:top;text-align:center;">
             <p>

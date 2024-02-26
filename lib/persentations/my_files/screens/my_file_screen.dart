@@ -199,7 +199,8 @@ class _MyFileScreenState extends State<MyFileScreen> {
         onRefresh: () => _refresh(),
         child: CustomScrollView(
             controller: _scrollController,
-            physics: const AlwaysScrollableScrollPhysics(),
+            physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics()),
             slivers: [
               SliverList(
                   delegate: SliverChildListDelegate([

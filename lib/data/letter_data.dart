@@ -1,3 +1,4 @@
+import 'package:terator/data/letter_functions/bisnis/surat_kesepakatan_kerja.dart';
 import 'package:terator/data/letter_functions/bisnis/surat_keterangan_tempat_usaha.dart';
 import 'package:terator/data/letter_functions/desa/surat_keterangan_domisili.dart';
 import 'package:terator/data/letter_functions/desa/surat_keterangan_tidak_mampu.dart';
@@ -7,6 +8,7 @@ import 'package:terator/data/letter_functions/pekerjaan/surat_pengunduran_diri.d
 import 'package:terator/data/letter_functions/pekerjaan/surat_permohonan_izin_cuti_kerja.dart';
 import 'package:terator/data/letter_functions/pekerjaan/surat_permohonan_magang_kerja.dart';
 import 'package:terator/data/letter_functions/pekerjaan/surat_pernyataan_kesediaan_bekerja_penuh_waktu.dart';
+import 'package:terator/data/letter_functions/pribadi/surat_pernyataan_pemilik_tempat_tinggal.dart';
 import 'package:terator/data/letter_functions/sekolah/surat_izin_tidak_masuk_sekolah.dart';
 import 'package:terator/data/letter_functions/sekolah/surat_keterangan_penghasilan_orang_tua.dart';
 import 'package:terator/data/letter_functions/sekolah/surat_perjanjian_tidak_mengulangi_kesalahan.dart';
@@ -17,6 +19,7 @@ import 'package:terator/data/letter_functions/sekolah/surat_persetujuan_orang_tu
 import 'package:terator/data/letter_functions/umum/surat_permohonan_maaf.dart';
 import 'package:terator/data/letter_functions/umum/surat_pernyataan_belum_menikah.dart';
 import 'package:terator/data/letter_functions/umum/surat_pernyataan_cerai.dart';
+import 'package:terator/data/letter_functions/umum/surat_pernyataan_kebenaran_dokumen.dart';
 import 'package:terator/data/letter_functions/umum/surat_pernyataan_keluarga_tentang_kematian.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
@@ -121,6 +124,10 @@ class LetterData {
         "title": "Surat Bisnis",
         "letters": [
           {
+            "key": "surat_kesepakatan_kerjasama",
+            "title": "Surat Kesepakatan Kerjasama"
+          },
+          {
             "key": "surat_keterangan_tempat_usaha",
             "title": "Surat Keterangan Tempat Usaha"
           },
@@ -131,6 +138,10 @@ class LetterData {
         "title": "Surat Umum",
         "letters": [
           {
+            "key": "surat_pernyataan_kebenaran_dokumen",
+            "title": "Surat Pernyataan Kebenaran Dokumen"
+          },
+          {
             "key": "surat_pernyataan_belum_menikah",
             "title": "Surat Pernyataan Belum Menikah"
           },
@@ -140,6 +151,16 @@ class LetterData {
             "title": "Surat Pernyataan Keluarga Tentang Kematian"
           },
           {"key": "surat_permohonan_maaf", "title": "Surat Permohonan Maaf"},
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Surat Pribadi",
+        "letters": [
+          {
+            "key": "surat_pernyataan_pemilik_tempat_tinggal",
+            "title": "Surat Pernyataan Pemilik Tempat Tinggal"
+          },
         ]
       },
     ];
@@ -197,6 +218,11 @@ List<Map<String, dynamic>> letterDataMap(String? image,
       "html": suratKeteranganTempatUsaha(letter, image, account)
     },
     {
+      "key": "surat_kesepakatan_kerjasama",
+      "title": "Surat Kesepakatan Kerjasama",
+      "html": suratKesepakatanKerjasama(letter, image, account)
+    },
+    {
       "key": "surat_izin_tidak_masuk_kerja",
       "title": "Surat Izin Tidak Masuk Kerja",
       "html": suratIzinTidakMasukKerja(letter, image, account)
@@ -250,6 +276,16 @@ List<Map<String, dynamic>> letterDataMap(String? image,
       "key": "surat_keterangan_domisili",
       "title": "Surat Keterangan Domisili",
       "html": suratKeteranganDomisili(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_pemilik_tempat_tinggal",
+      "title": "Surat Pernyataan Pemilik Tempat Tinggal",
+      "html": suratPernyataanPemilikTempatTinggal(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_kebenaran_dokumen",
+      "title": "Surat Pernyataan Kebenaran Dokumen",
+      "html": suratPernyataanKebenaranDokumen(letter, image, account)
     },
   ];
 }
