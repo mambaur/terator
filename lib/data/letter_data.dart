@@ -8,7 +8,10 @@ import 'package:terator/data/letter_functions/pekerjaan/surat_pengunduran_diri.d
 import 'package:terator/data/letter_functions/pekerjaan/surat_permohonan_izin_cuti_kerja.dart';
 import 'package:terator/data/letter_functions/pekerjaan/surat_permohonan_magang_kerja.dart';
 import 'package:terator/data/letter_functions/pekerjaan/surat_pernyataan_kesediaan_bekerja_penuh_waktu.dart';
+import 'package:terator/data/letter_functions/pribadi/surat_pernyataan_kehilangan_ijazah.dart';
+import 'package:terator/data/letter_functions/pribadi/surat_pernyataan_kesanggupan_membayar_ukt.dart';
 import 'package:terator/data/letter_functions/pribadi/surat_pernyataan_pemilik_tempat_tinggal.dart';
+import 'package:terator/data/letter_functions/pribadi/surat_persetujuan_suami_istri.dart';
 import 'package:terator/data/letter_functions/sekolah/surat_izin_tidak_masuk_sekolah.dart';
 import 'package:terator/data/letter_functions/sekolah/surat_keterangan_penghasilan_orang_tua.dart';
 import 'package:terator/data/letter_functions/sekolah/surat_perjanjian_tidak_mengulangi_kesalahan.dart';
@@ -161,6 +164,14 @@ class LetterData {
             "key": "surat_pernyataan_pemilik_tempat_tinggal",
             "title": "Surat Pernyataan Pemilik Tempat Tinggal"
           },
+          {
+            "key": "surat_persetujuan_suami_istri",
+            "title": "Surat Persetujuan Suami Istri"
+          },
+          {
+            "key": "surat_pernyataan_kehilangan_ijazah",
+            "title": "Surat Pernyataan Kehilangan Ijazah",
+          },
         ]
       },
     ];
@@ -286,6 +297,21 @@ List<Map<String, dynamic>> letterDataMap(String? image,
       "key": "surat_pernyataan_kebenaran_dokumen",
       "title": "Surat Pernyataan Kebenaran Dokumen",
       "html": suratPernyataanKebenaranDokumen(letter, image, account)
+    },
+    {
+      "key": "surat_persetujuan_suami_istri",
+      "title": "Surat Persetujuan Suami Istri",
+      "html": suratPersetujuanSuamiIstri(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_kesanggupan_membayar_ukt",
+      "title": "Surat Pernyataan Kesanggupan Membayar UKT",
+      "html": suratPernyataanKesanggupanMembayarUkt(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_kehilangan_ijazah",
+      "title": "Surat Pernyataan Kehilangan Ijazah",
+      "html": suratPernyataanKehilanganIjazah(letter, image, account)
     },
   ];
 }
