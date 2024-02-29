@@ -27,13 +27,30 @@ class _FaqScreenState extends State<FaqScreen> {
         padding: const EdgeInsets.all(15),
         children: const [
           FaqItem(
-              title: "Helo world",
+              title: "Apakah membuat surat di terator gratis?",
               description:
-                  "Sunt cupidatat dolor mollit ea ad. Aute labore incididunt non ipsum Lorem enim aute incididunt. Est ullamco voluptate voluptate excepteur aliqua sit eiusmod. Aliquip id non velit pariatur cupidatat laboris dolor. Culpa ut non exercitation irure voluptate."),
+                  "Iya benar, anda dapat membuat surat pada Aplikasi Terator secara gratis."),
           FaqItem(
-              title: "Helo world",
+              title: "Apakah surat dapat di Download?",
               description:
-                  "Sit consectetur occaecat adipisicing aute. Sint ad irure elit occaecat cupidatat id consequat consequat sunt mollit enim. Lorem aute enim voluptate fugiat nostrud ut veniam deserunt adipisicing ut incididunt. Veniam est et excepteur in sunt et do sunt."),
+                  "Anda dapat mendownload dan membagikan surat yang sudah anda generate dengan mudah ke teman, saudara, maupun keluarga anda."),
+          FaqItem(
+              title: "Apa maksudnya multiple account?",
+              description:
+                  "Artinya, anda dapat membuat surat untuk beberapa orang sekaligus dalam satu aplikasi."),
+          FaqItem(
+              title:
+                  "Apakah saya bisa merekomendasikan surat agar menjadi template di terator?",
+              description:
+                  "Tentu, anda dapat mengirimkan surat anda sendiri ke kami untuk dijadikan sebagai template surat, silahkan masuk ke menu Rekomendasikan Surat pada halaman Pengaturan. Kemudian isi form dan upload surat anda, kami akan segera memproses surat agar menjadi template dan dapat bermanfaat untuk orang lain."),
+          FaqItem(
+              title: "Berapa lama proses pembuatan surat?",
+              description:
+                  "Anda dapat membuat surat hanya dengan 1 menit saja, pilih template, tentukan untuk siapa suratnya, edit sesuai keinginan, lalu tinggal generate dan simpan."),
+          FaqItem(
+              title: "Apakah template surat akan selalu terupdate?",
+              description:
+                  "Kami akan berusaha semaksimal mungkin untuk selalu memperbarui template surat agar anda semakin mudah membuat surat sesuai keinginan."),
         ],
       ),
     );

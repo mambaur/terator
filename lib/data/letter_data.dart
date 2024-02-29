@@ -2,6 +2,8 @@ import 'package:terator/data/letter_functions/bisnis/surat_kesepakatan_kerja.dar
 import 'package:terator/data/letter_functions/bisnis/surat_keterangan_tempat_usaha.dart';
 import 'package:terator/data/letter_functions/desa/surat_keterangan_domisili.dart';
 import 'package:terator/data/letter_functions/desa/surat_keterangan_tidak_mampu.dart';
+import 'package:terator/data/letter_functions/kesehatan/surat_pernyataan_sehat_jasmani_rohani.dart';
+import 'package:terator/data/letter_functions/keuangan/surat_pernyataan_kepemilikan_harta.dart';
 import 'package:terator/data/letter_functions/pekerjaan/surat_izin_tidak_masuk_kerja.dart';
 import 'package:terator/data/letter_functions/pekerjaan/surat_lamaran_pekerjaan.dart';
 import 'package:terator/data/letter_functions/pekerjaan/surat_pengunduran_diri.dart';
@@ -174,6 +176,26 @@ class LetterData {
           },
         ]
       },
+      {
+        "id": 7,
+        "title": "Surat Keuangan",
+        "letters": [
+          {
+            "key": "surat_pernyataan_kepemilikan_harta",
+            "title": "Surat Pernyataan Kepemilikan Harta"
+          },
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Surat Keuangan",
+        "letters": [
+          {
+            "key": "surat_pernyataan_sehat_jasmani_rohani",
+            "title": "Surat Pernyataan Sehat Jasmani dan Rohani",
+          },
+        ]
+      },
     ];
 
     return result;
@@ -312,6 +334,16 @@ List<Map<String, dynamic>> letterDataMap(String? image,
       "key": "surat_pernyataan_kehilangan_ijazah",
       "title": "Surat Pernyataan Kehilangan Ijazah",
       "html": suratPernyataanKehilanganIjazah(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_kepemilikan_harta",
+      "title": "Surat Pernyataan Kepemilikan Harta",
+      "html": suratPernyataanKepemilikanHarta(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_sehat_jasmani_rohani",
+      "title": "Surat Pernyataan Sehat Jasmani dan Rohani",
+      "html": suratPernyataanSehatJasmaniRohani(letter, image, account)
     },
   ];
 }

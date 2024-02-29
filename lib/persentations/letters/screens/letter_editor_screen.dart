@@ -197,9 +197,15 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
                   : null);
           controller.setText("$text<br><br><br>");
         }),
-        // htmlToolbarOptions: const HtmlToolbarOptions(),
-        htmlToolbarOptions:
-            const HtmlToolbarOptions(toolbarPosition: ToolbarPosition.custom),
+        htmlToolbarOptions: const HtmlToolbarOptions(defaultToolbarButtons: [
+          FontSettingButtons(fontName: false),
+          ColorButtons(),
+          ListButtons(listStyles: false),
+          ParagraphButtons(
+              textDirection: false, lineHeight: false, caseConverter: false)
+        ]),
+        // htmlToolbarOptions:
+        //     const HtmlToolbarOptions(toolbarPosition: ToolbarPosition.custom),
         htmlEditorOptions: const HtmlEditorOptions(
           hint: "Tulis surat disini...",
           //initalText: "text content initial, if any",

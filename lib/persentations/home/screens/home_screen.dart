@@ -6,6 +6,7 @@ import 'package:terator/core/styles.dart';
 import 'package:terator/data/letter_data.dart';
 import 'package:terator/persentations/letters/screens/letter_choose_account_screen.dart';
 import 'package:terator/persentations/letters/screens/letter_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 enum StatusAd { initial, loaded }
 
@@ -17,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final String _youtubeUrl = 'https://bit.ly/generate-surat-terator';
   BannerAd? myBanner;
   List<Map<String, dynamic>> lettersData = letterDataMap(null);
 
@@ -58,6 +60,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
     listLetters = LetterData.listLetters(q: '');
     super.initState();
+  }
+
+  Future<void> _launchUrl(String url) async {
+    if (!await launchUrl(Uri.parse(url),
+        mode: LaunchMode.externalApplication)) {
+      throw 'Could not launch $url';
+    }
   }
 
   @override
@@ -382,26 +391,37 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                            child: Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Image.asset('assets/icons/keuangan.png'),
-                        )),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        const Text('Keuangan',
-                            style: TextStyle(fontSize: 12, color: bDark))
-                      ],
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (builder) {
+                        return LetterScreen(
+                          letters: listLetters[6]["letters"],
+                          title: listLetters[6]["title"],
+                        );
+                      }));
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                              child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Image.asset('assets/icons/keuangan.png'),
+                          )),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          const Text('Keuangan',
+                              style: TextStyle(fontSize: 12, color: bDark))
+                        ],
+                      ),
                     ),
                   ),
                   GestureDetector(
@@ -437,36 +457,43 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                            child: Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Image.asset('assets/icons/kesehatan.png'),
-                        )),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        const Text('Kesehatan',
-                            style: TextStyle(fontSize: 12, color: bDark))
-                      ],
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (builder) {
+                        return LetterScreen(
+                          letters: listLetters[7]["letters"],
+                          title: listLetters[7]["title"],
+                        );
+                      }));
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                              child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Image.asset('assets/icons/kesehatan.png'),
+                          )),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          const Text('Kesehatan',
+                              style: TextStyle(fontSize: 12, color: bDark))
+                        ],
+                      ),
                     ),
                   ),
                 ],
               ),
               GestureDetector(
-                onTap: () {
-                  // launchUrl(
-                  //     Uri.parse("https://www.youtube.com/watch?v=0023umP7Rn0"),
-                  //     mode: LaunchMode.externalApplication);
-                },
+                onTap: () => _launchUrl(_youtubeUrl),
                 child: Container(
                   margin:
                       const EdgeInsets.only(bottom: 15, left: 15, right: 15),
