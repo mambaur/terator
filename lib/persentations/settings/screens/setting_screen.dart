@@ -182,7 +182,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                     const Divider(),
                     const ListTile(
-                      title: Text('Versi 1.1.0'),
+                      title: Text('Versi 1.1.1'),
                       leading: Icon(
                         Icons.smartphone,
                         color: bInfo,

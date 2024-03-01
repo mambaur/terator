@@ -254,6 +254,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: 8,
                           ),
                           const Text('Sekolah',
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(fontSize: 12, color: bDark))
                         ],
                       ),
@@ -287,6 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: 8,
                           ),
                           const Text('Pekerjaan',
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(fontSize: 12, color: bDark))
                         ],
                       ),
@@ -320,6 +322,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: 8,
                           ),
                           const Text('Desa',
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(fontSize: 12, color: bDark))
                         ],
                       ),
@@ -353,6 +356,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: 8,
                           ),
                           const Text('Bisnis',
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(fontSize: 12, color: bDark))
                         ],
                       ),
@@ -386,6 +390,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: 8,
                           ),
                           const Text('Umum',
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(fontSize: 12, color: bDark))
                         ],
                       ),
@@ -419,6 +424,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: 8,
                           ),
                           const Text('Keuangan',
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(fontSize: 12, color: bDark))
                         ],
                       ),
@@ -452,6 +458,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: 8,
                           ),
                           const Text('Pribadi',
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(fontSize: 12, color: bDark))
                         ],
                       ),
@@ -485,6 +492,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: 8,
                           ),
                           const Text('Kesehatan',
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(fontSize: 12, color: bDark))
                         ],
                       ),
