@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/persentations/settings/screens/about_screen.dart';
 import 'package:terator/persentations/settings/screens/disclaimer_screen.dart';
@@ -181,14 +182,21 @@ class _SettingScreenState extends State<SettingScreen> {
                       trailing: const Icon(Icons.chevron_right),
                     ),
                     const Divider(),
-                    const ListTile(
-                      title: Text('Versi 1.1.1'),
-                      leading: Icon(
-                        Icons.smartphone,
-                        color: bInfo,
-                      ),
-                      trailing: Icon(Icons.chevron_right),
-                    ),
+                    FutureBuilder<PackageInfo>(
+                        future: PackageInfo.fromPlatform(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return ListTile(
+                              title: Text('Versi ${snapshot.data?.version}'),
+                              leading: const Icon(
+                                Icons.smartphone,
+                                color: bInfo,
+                              ),
+                              trailing: const Icon(Icons.chevron_right),
+                            );
+                          }
+                          return const SizedBox();
+                        }),
                     const SizedBox(
                       height: 10,
                     )

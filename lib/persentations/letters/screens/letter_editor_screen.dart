@@ -12,7 +12,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:terator/core/date_setting.dart';
 import 'package:terator/core/generator.dart';
 import 'package:terator/core/loading_overlay.dart';
@@ -48,20 +47,21 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
 
   convert(String htmlData, String name) async {
     try {
-      await requestStoragePermission();
       LoadingOverlay.show(context);
       var targetPath = await _localPath;
       var targetFileName = name;
       var html = '<div style="margin: 50px">$htmlData</div>';
 
-      var generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
+      File generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
           html, targetPath!, targetFileName);
 
       // if (kDebugMode) print(generatedPdfFile.readAsBytes());
 
       Uint8List fileByte = await generatedPdfFile.readAsBytes();
-      await DocumentFileSavePlus().saveFile(fileByte,
-          "${getRandomString(5)}_$targetFileName.pdf", "appliation/pdf");
+      await DocumentFileSavePlus().saveFile(
+          fileByte,
+          "$targetFileName - ${getRandomString(5).toUpperCase()}.pdf",
+          "appliation/pdf");
 
       await store(htmlData);
       LoadingOverlay.hide();
@@ -129,18 +129,6 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
     return directory?.path;
   }
 
-  Future<void> requestStoragePermission() async {
-    PermissionStatus status = await Permission.storage.request();
-    if (status.isDenied == true || status.isGranted != true) {
-      Fluttertoast.showToast(
-          msg:
-              'Mohon terima akses penyimpanan, agar surat kamu bisa di generate!');
-      requestStoragePermission();
-    } else {
-      debugPrint('request storage approve');
-    }
-  }
-
   @override
   void initState() {
     if (!kDebugMode) {
@@ -199,6 +187,7 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
         }),
         htmlToolbarOptions: const HtmlToolbarOptions(defaultToolbarButtons: [
           FontSettingButtons(fontName: false),
+          FontButtons(),
           ColorButtons(),
           ListButtons(listStyles: false),
           ParagraphButtons(

@@ -44,8 +44,10 @@ class _MyFileScreenState extends State<MyFileScreen> {
         html, targetPath!, targetFileName);
 
     Uint8List fileByte = await generatedPdfFile.readAsBytes();
-    await DocumentFileSavePlus().saveFile(fileByte,
-        "${getRandomString(5)}_$targetFileName.pdf", "appliation/pdf");
+    await DocumentFileSavePlus().saveFile(
+        fileByte,
+        "$targetFileName - ${getRandomString(5).toUpperCase()}.pdf",
+        "appliation/pdf");
 
     LoadingOverlay.hide();
     Navigator.pop(context);

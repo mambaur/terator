@@ -7,11 +7,9 @@ import 'package:document_file_save_plus/document_file_save_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:terator/core/date_setting.dart';
 import 'package:terator/core/generator.dart';
 import 'package:terator/core/loading_overlay.dart';
@@ -38,7 +36,6 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
 
   convert(String htmlData, String name) async {
     try {
-      await requestStoragePermission();
       LoadingOverlay.show(context);
 
       var targetPath = await _localPath;
@@ -48,8 +45,10 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
           html, targetPath!, targetFileName);
 
       Uint8List fileByte = await generatedPdfFile.readAsBytes();
-      await DocumentFileSavePlus().saveFile(fileByte,
-          "${getRandomString(5)}_$targetFileName.pdf", "appliation/pdf");
+      await DocumentFileSavePlus().saveFile(
+          fileByte,
+          "$targetFileName - ${getRandomString(5).toUpperCase()}.pdf",
+          "appliation/pdf");
 
       // if (kDebugMode) print(generatedPdfFile);
       await update(htmlData);
@@ -127,18 +126,6 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
   //           onAdLoaded: (ad) => setState(() => myRerwardedAd = ad),
   //           onAdFailedToLoad: (_) => setState(() => myRerwardedAd = null)));
   // }
-
-  Future<void> requestStoragePermission() async {
-    PermissionStatus status = await Permission.storage.request();
-    if (status.isDenied == true || status.isGranted != true) {
-      Fluttertoast.showToast(
-          msg:
-              'Mohon terima akses penyimpanan, agar surat kamu bisa di generate!');
-      requestStoragePermission();
-    } else {
-      debugPrint('request storage approve');
-    }
-  }
 
   @override
   void initState() {
