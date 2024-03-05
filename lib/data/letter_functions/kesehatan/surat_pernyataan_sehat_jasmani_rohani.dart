@@ -33,12 +33,12 @@ String suratPernyataanSehatJasmaniRohani(
 					<tr>
 						<td style="white-space: nowrap">Jenis Kelamin</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%">${account?.placeAndDateOfBirth ?? ''}</td>
+						<td style="width: 100%">${account?.gender ?? ''}</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap">Pekerjaan</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%">${account?.placeAndDateOfBirth ?? ''}</td>
+						<td style="width: 100%"></td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Alamat</td>
