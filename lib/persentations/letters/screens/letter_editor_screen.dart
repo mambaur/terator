@@ -2,12 +2,10 @@
 
 import 'dart:io';
 
-import 'package:cool_alert/cool_alert.dart';
-import 'package:document_file_save_plus/document_file_save_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
+import 'package:flutter_file_saver/flutter_file_saver.dart';
+import 'package:flutter_native_html_to_pdf/flutter_native_html_to_pdf.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
@@ -20,6 +18,7 @@ import 'package:terator/data/letter_data.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/persentations/navbar.dart';
 import 'package:terator/repositories/letter_repository.dart';
+import 'package:terator/utils/custom_snackbar.dart';
 
 class LetterEditorScreen extends StatefulWidget {
   final AccountModel account;
@@ -45,23 +44,20 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
 
   bool withSignature = false;
 
-  convert(String htmlData, String name) async {
+  void convert(String htmlData, String name) async {
     try {
       LoadingOverlay.show(context);
       var targetPath = await _localPath;
       var targetFileName = name;
       var html = '<div style="margin: 50px">$htmlData</div>';
 
-      File generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
-          html, targetPath!, targetFileName);
+      File generatedPdfFile = await HtmlToPdfConverter().convertHtmlToPdf(
+          html: html, targetDirectory: targetPath!, targetName: targetFileName);
 
-      // if (kDebugMode) print(generatedPdfFile.readAsBytes());
-
-      Uint8List fileByte = await generatedPdfFile.readAsBytes();
-      await DocumentFileSavePlus().saveFile(
-          fileByte,
-          "$targetFileName - ${getRandomString(5).toUpperCase()}.pdf",
-          "appliation/pdf");
+      await FlutterFileSaver().writeFileAsBytes(
+        fileName: "$targetFileName - ${getRandomString(5).toUpperCase()}.pdf",
+        bytes: await generatedPdfFile.readAsBytes(),
+      );
 
       await store(htmlData);
       LoadingOverlay.hide();
@@ -75,23 +71,12 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
         ModalRoute.withName('/account-screen'),
       );
 
-      CoolAlert.show(
-        backgroundColor: Colors.white,
-        context: context,
-        type: CoolAlertType.success,
-        title: "Sukses!!!",
-        text: "Surat kamu berhasil di generate dan di download!",
-      );
+      CustomSnackbar.show(context,
+          type: SnackbarType.success, message: "Surat berhasil di generate");
     } catch (e) {
       if (kDebugMode) print('error $e');
       LoadingOverlay.hide();
-      // Clipboard.setData(ClipboardData(text: '${e.toString()}\n${s.toString()}'))
-      //     .then((_) {
-      //   Fluttertoast.showToast(msg: 'Error telah disalin.');
-      // });
     }
-
-    // await showRewardAd();
   }
 
   Future store(String html) async {
@@ -113,15 +98,7 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
       if (Platform.isIOS) {
         directory = await getApplicationSupportDirectory();
       } else {
-        // if platform is android
-
-        // directory = Directory('/storage/emulated/0/Download');
-        // if (!await directory.exists()) {
-        //   directory = await getExternalStorageDirectory();
-        // }
-
         directory = await getTemporaryDirectory();
-        // directory = await getExternalStorageDirectory();
       }
     } catch (err) {
       if (kDebugMode) print("Can-not get download folder path");
@@ -138,13 +115,10 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
               : 'ca-app-pub-2465007971338713/3304515640',
           request: const AdRequest(),
           adLoadCallback: InterstitialAdLoadCallback(
-            // Called when an ad is successfully received.
             onAdLoaded: (ad) {
               debugPrint('$ad loaded.');
-              // Keep a reference to the ad so you can show it later.
               _interstitialAd = ad;
             },
-            // Called when an ad request failed.
             onAdFailedToLoad: (LoadAdError error) {
               debugPrint('InterstitialAd failed to load: $error');
             },
@@ -162,24 +136,16 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        centerTitle: true,
-        foregroundColor: bDark,
-        backgroundColor: Colors.white,
-        elevation: 0,
+      appBar: AppTheme.modernAppBar(
+        title: widget.title,
+        showBack: true,
+        context: context,
       ),
-      // insert element for ttd
       body: HtmlEditor(
         controller: controller,
         callbacks: Callbacks(onInit: () {
           String text = LetterData.html(widget.keyLetter,
               account: widget.account,
-              // image: widget.withSignature
-              //     ? "<div style='margin-top:10px;margin-bottom:10px;text-align: center;'><img style='width:100%;' src='data:image/png;base64,${widget.account.signatureImage}'></div>"
-              //     : null
-              // image: widget.withSignature
-              //     ? "<p style='text-align: center;'><img style='width:50%;' src='data:image/png;base64,${widget.account.signatureImage}'></p>"
               image: widget.withSignature
                   ? "<img style='width:100%;' src='data:image/png;base64,${widget.account.signatureImage}'>"
                   : null);
@@ -193,125 +159,123 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
           ParagraphButtons(
               textDirection: false, lineHeight: false, caseConverter: false)
         ]),
-        // htmlToolbarOptions:
-        //     const HtmlToolbarOptions(toolbarPosition: ToolbarPosition.custom),
         htmlEditorOptions: const HtmlEditorOptions(
           hint: "Tulis surat disini...",
-          //initalText: "text content initial, if any",
         ),
         otherOptions: OtherOptions(
           height: MediaQuery.of(context).size.height,
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          // String data = await controller.getText();
-          // Clipboard.setData(ClipboardData(text: data)).then((_) {
-          //   Fluttertoast.showToast(msg: 'Html berhasil disalin.');
-          // });
-          _showSubmitModal();
-        },
-        backgroundColor: bInfo,
-        child: const Icon(Icons.save),
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(colors: kGradientPrimary),
+          borderRadius: BorderRadius.circular(kRadiusMd),
+          boxShadow: kShadowPrimary,
+        ),
+        child: FloatingActionButton(
+          onPressed: () async {
+            _showSubmitModal();
+          },
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: const Icon(Icons.save_rounded, color: Colors.white),
+        ),
       ),
     );
   }
 
-  // ignore: unused_element
   Future<void> _showSubmitModal() {
-    return showModalBottomSheet<void>(
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
+    return AppTheme.showModernBottomSheet(
       context: context,
-      builder: (BuildContext context) {
-        return Padding(
-          padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(15),
-                    topRight: Radius.circular(15))),
-            child: Wrap(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    const Text(
-                      'Nama File!',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const Text(
-                      'Beri nama file yang akan kamu generate',
-                      style: TextStyle(),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    TextFormField(
-                      controller: _titleController,
-                      decoration: const InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: bSecondary),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: bInfo),
-                          ),
-                          labelStyle: TextStyle(color: bSecondary),
-                          labelText: 'Nama File'),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: bInfo,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50.0),
-                                ),
-                              ),
-                              child: const Padding(
-                                padding: EdgeInsets.all(15.0),
-                                child: Text(
-                                  'SIMPAN & DOWNLOAD',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              onPressed: () async {
-                                if (_interstitialAd != null) {
-                                  await _interstitialAd!.show();
-                                }
-
-                                if (_titleController.text == '') {
-                                  Fluttertoast.showToast(
-                                      msg: "Nama file tidak boleh kosong");
-                                  return;
-                                }
-                                Navigator.pop(context);
-
-                                String data = await controller.getText();
-                                convert(data, _titleController.text);
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: kPrimary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(kRadiusSm),
                 ),
-              ],
+                child: const Icon(Icons.save_alt_rounded,
+                    color: kPrimary, size: 22),
+              ),
+              const SizedBox(width: 12),
+              const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Simpan Surat',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: kTextPrimary,
+                    ),
+                  ),
+                  Text(
+                    'Beri nama file yang akan kamu generate',
+                    style: TextStyle(fontSize: 12, color: kTextSecondary),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          TextFormField(
+            controller: _titleController,
+            decoration: AppTheme.inputDecoration(
+              label: 'Nama File',
+              hint: 'Contoh: Surat Izin Sakit - Budi',
+              prefixIcon: Icons.insert_drive_file_outlined,
             ),
           ),
-        );
-      },
+          const SizedBox(height: 20),
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(colors: kGradientPrimary),
+                borderRadius: BorderRadius.circular(kRadiusMd),
+                boxShadow: kShadowPrimary,
+              ),
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(kRadiusMd),
+                  ),
+                ),
+                icon: const Icon(Icons.download_rounded, color: Colors.white),
+                label: const Text(
+                  'SIMPAN & DOWNLOAD',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                onPressed: () async {
+                  if (_interstitialAd != null) {
+                    await _interstitialAd!.show();
+                  }
+
+                  if (_titleController.text == '') {
+                    Fluttertoast.showToast(msg: "Nama file tidak boleh kosong");
+                    return;
+                  }
+                  Navigator.pop(context);
+
+                  String data = await controller.getText();
+                  convert(data, _titleController.text);
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

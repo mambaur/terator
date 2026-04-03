@@ -21,12 +21,10 @@ class _SettingScreenState extends State<SettingScreen> {
       'https://play.google.com/store/apps/dev?id=8918426189046119136';
   final String _urlApp =
       'https://play.google.com/store/apps/details?id=com.caraguna.terator';
-  final String _feedbackUrl = 'https://forms.gle/CXNMpwH6XottdEC58';
-  final String _rekomendasi = 'https://forms.gle/etyhdKKXN3TvcE6d9';
+  final String _contactUs = 'https://nexadream.id';
   BannerAd? myBanner;
 
   BannerAdListener listener() => BannerAdListener(
-        // Called when an ad is successfully received.
         onAdLoaded: (Ad ad) {
           if (kDebugMode) {
             print('Ad Loaded.');
@@ -50,9 +48,6 @@ class _SettingScreenState extends State<SettingScreen> {
   void initState() {
     if (!kDebugMode) {
       myBanner = BannerAd(
-        // test banner
-        // adUnitId: '/6499/example/banner',
-
         adUnitId: 'ca-app-pub-2465007971338713/8992395637',
         size: AdSize.banner,
         request: const AdRequest(),
@@ -74,138 +69,178 @@ class _SettingScreenState extends State<SettingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('Pengaturan'),
-      //   centerTitle: true,
-      //   foregroundColor: bDark,
-      //   backgroundColor: Colors.white,
-      //   elevation: 0,
-      // ),
-      // backgroundColor: Colors.white,
-      backgroundColor: Colors.grey.shade200,
-      body: CustomScrollView(
-          physics: const AlwaysScrollableScrollPhysics(
-              parent: BouncingScrollPhysics()),
-          slivers: [
-            SliverList(
-                delegate: SliverChildListDelegate([
-              statusAd == StatusAd.loaded
-                  ? Container(
-                      margin: const EdgeInsets.only(
-                          left: 15, right: 15, top: 15, bottom: 15),
-                      alignment: Alignment.center,
-                      width: myBanner!.size.width.toDouble(),
-                      height: myBanner!.size.height.toDouble(),
-                      child: AdWidget(ad: myBanner!),
-                    )
-                  : const SizedBox(),
-            ])),
-            SliverList(
-                delegate: SliverChildListDelegate([
-              Container(
-                margin: const EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10)),
-                child: Column(
-                  children: [
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    ListTile(
-                      onTap: () => _launchUrl(_urlDeveloper),
-                      title: const Text('Aplikasi Lainnya'),
-                      leading: const Icon(
-                        Icons.shop_outlined,
-                        color: bInfo,
-                      ),
-                      trailing: const Icon(Icons.chevron_right),
-                    ),
-                    const Divider(),
-                    ListTile(
-                      onTap: () => _launchUrl(_feedbackUrl),
-                      title: const Text('Berikan Kritik & Saran'),
-                      leading: const Icon(
-                        Icons.feedback_outlined,
-                        color: bInfo,
-                      ),
-                      trailing: const Icon(Icons.chevron_right),
-                    ),
-                    const Divider(),
-                    ListTile(
-                      onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (builder) {
-                          return const AboutScreen();
-                        }));
-                      },
-                      title: const Text('Tentang Aplikasi'),
-                      leading: const Icon(
-                        Icons.info_outline,
-                        color: bInfo,
-                      ),
-                      trailing: const Icon(Icons.chevron_right),
-                    ),
-                    const Divider(),
-                    ListTile(
-                      onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (builder) {
-                          return const DisclaimerScreen();
-                        }));
-                      },
-                      title: const Text('Disclaimer'),
-                      leading: const Icon(
-                        Icons.front_hand_outlined,
-                        color: bInfo,
-                      ),
-                      trailing: const Icon(Icons.chevron_right),
-                    ),
-                    const Divider(),
-                    ListTile(
-                      onTap: () => _launchUrl(_urlApp),
-                      title: const Text('Cek Update'),
-                      leading: const Icon(
-                        Icons.update,
-                        color: bInfo,
-                      ),
-                      trailing: const Icon(Icons.chevron_right),
-                    ),
-                    const Divider(),
-                    ListTile(
-                      onTap: () => _launchUrl(_rekomendasi),
-                      title: const Text('Rekomendasikan Surat'),
-                      leading: const Icon(
-                        Icons.mark_as_unread_outlined,
-                        color: bInfo,
-                      ),
-                      trailing: const Icon(Icons.chevron_right),
-                    ),
-                    const Divider(),
-                    FutureBuilder<PackageInfo>(
-                        future: PackageInfo.fromPlatform(),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return ListTile(
-                              title: Text('Versi ${snapshot.data?.version}'),
-                              leading: const Icon(
-                                Icons.smartphone,
-                                color: bInfo,
+      backgroundColor: kSurface,
+      body: ListView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.all(20),
+        children: [
+          if (statusAd == StatusAd.loaded)
+            Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              alignment: Alignment.center,
+              width: myBanner!.size.width.toDouble(),
+              height: myBanner!.size.height.toDouble(),
+              child: AdWidget(ad: myBanner!),
+            ),
+
+          // ─── Settings Group ───
+          Container(
+            decoration: AppTheme.cardDecoration(),
+            child: Column(
+              children: [
+                _buildSettingTile(
+                  icon: Icons.apps_rounded,
+                  color: kInfoBlue,
+                  title: 'Aplikasi Lainnya',
+                  onTap: () => _launchUrl(_urlDeveloper),
+                ),
+                _divider(),
+                _buildSettingTile(
+                  icon: Icons.info_rounded,
+                  color: kPrimary,
+                  title: 'Tentang Aplikasi',
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (builder) {
+                      return const AboutScreen();
+                    }));
+                  },
+                ),
+                _divider(),
+                _buildSettingTile(
+                  icon: Icons.gavel_rounded,
+                  color: kViolet,
+                  title: 'Disclaimer',
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (builder) {
+                      return const DisclaimerScreen();
+                    }));
+                  },
+                ),
+                _divider(),
+                _buildSettingTile(
+                  icon: Icons.system_update_rounded,
+                  color: kSuccess,
+                  title: 'Cek Update',
+                  onTap: () => _launchUrl(_urlApp),
+                ),
+                _divider(),
+                _buildSettingTile(
+                  icon: Icons.mail_rounded,
+                  color: const Color(0xFFEC4899),
+                  title: 'Hubungi Kami',
+                  onTap: () => _launchUrl(_contactUs),
+                ),
+                _divider(),
+                FutureBuilder<PackageInfo>(
+                  future: PackageInfo.fromPlatform(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 14),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: kTextMuted.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(kRadiusSm),
                               ),
-                              trailing: const Icon(Icons.chevron_right),
-                            );
-                          }
-                          return const SizedBox();
-                        }),
-                    const SizedBox(
-                      height: 10,
-                    )
-                  ],
+                              child: const Icon(Icons.smartphone_rounded,
+                                  color: kTextMuted, size: 20),
+                            ),
+                            const SizedBox(width: 14),
+                            Text(
+                              'Versi ${snapshot.data?.version}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 15,
+                                color: kTextSecondary,
+                              ),
+                            ),
+                            const Spacer(),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: kSuccess.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Text(
+                                'Terbaru',
+                                style: TextStyle(
+                                  color: kSuccess,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    return const SizedBox();
+                  },
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 80),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSettingTile({
+    required IconData icon,
+    required Color color,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(kRadiusSm),
+                ),
+                child: Icon(icon, color: color, size: 20),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 15,
+                    color: kTextPrimary,
+                  ),
                 ),
               ),
-            ])),
-            SliverList(delegate: SliverChildListDelegate([])),
-          ]),
+              const Icon(Icons.arrow_forward_ios_rounded,
+                  color: kTextMuted, size: 14),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _divider() {
+    return Divider(
+      height: 1,
+      indent: 58,
+      endIndent: 16,
+      color: Colors.grey.shade100,
     );
   }
 }

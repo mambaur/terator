@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/persentations/account/screens/account_screen.dart';
 import 'package:terator/persentations/faq/screens/faq_screen.dart';
@@ -25,25 +24,6 @@ class _NavbarState extends State<Navbar> {
     SettingScreen(),
   ];
 
-  final List<Widget> _titleOptions = <Widget>[
-    Image.asset(
-      'assets/img/terator_logo.png',
-      height: 45,
-    ),
-    const Text(
-      '📂 File Saya',
-      style: TextStyle(color: bDark),
-    ),
-    const Text(
-      '👦 Akun Surat',
-      style: TextStyle(color: bDark),
-    ),
-    const Text(
-      '⚙ Pengaturan',
-      style: TextStyle(color: bDark),
-    ),
-  ];
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -58,82 +38,182 @@ class _NavbarState extends State<Navbar> {
     super.initState();
   }
 
+  String _getTitle() {
+    switch (_selectedIndex) {
+      case 1:
+        return 'File Saya';
+      case 2:
+        return 'Akun Surat';
+      case 3:
+        return 'Pengaturan';
+      default:
+        return '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      onPopInvoked: (value) async {
-        final timegap = DateTime.now().difference(preBackpress);
-        final cantExit = timegap >= const Duration(seconds: 2);
-        preBackpress = DateTime.now();
-        if (cantExit) {
-          //show snackbar
-          Fluttertoast.showToast(msg: 'Tekan tombol kembali lagi untuk keluar');
-          return;
-        }
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          title: _titleOptions.elementAt(_selectedIndex),
-          backgroundColor: Colors.white,
-          actions: [
-            IconButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (builder) {
-                    return const FaqScreen();
-                  }));
-                },
-                icon: const Icon(Icons.help_outline, color: bDark))
-          ],
-        ),
-        body: Center(
-          child: _widgetOptions.elementAt(_selectedIndex),
-        ),
-        bottomNavigationBar: Container(
+    return Scaffold(
+      extendBody: true,
+      appBar: _selectedIndex == 0
+          ? AppBar(
+              elevation: 0,
+              backgroundColor: Colors.transparent,
+              flexibleSpace: Container(
+                decoration: AppTheme.gradientAppBar,
+              ),
+              title: Row(
+                children: [
+                  Image.asset(
+                    'assets/img/terator-logo-white.png',
+                    height: 36,
+                  ),
+                ],
+              ),
+              actions: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  margin: const EdgeInsets.only(
+                    right: 16,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(kRadiusSm),
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (builder) {
+                        return const FaqScreen();
+                      }));
+                    },
+                    icon: const Icon(Icons.help_outline_rounded,
+                        color: Colors.white, size: 22),
+                  ),
+                ),
+              ],
+            )
+          : AppBar(
+              elevation: 0,
+              backgroundColor: Colors.transparent,
+              flexibleSpace: Container(
+                decoration: AppTheme.gradientAppBar,
+              ),
+              title: Text(
+                _getTitle(),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                ),
+              ),
+              centerTitle: true,
+              actions: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  margin: const EdgeInsets.only(right: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(kRadiusSm),
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (builder) {
+                        return const FaqScreen();
+                      }));
+                    },
+                    icon: const Icon(Icons.help_outline_rounded,
+                        color: Colors.white, size: 22),
+                  ),
+                ),
+              ],
+            ),
+      body: _widgetOptions.elementAt(_selectedIndex),
+      bottomNavigationBar: Container(
+        margin: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+        decoration: BoxDecoration(
           color: Colors.white,
-          height: 75,
-          // padding: const EdgeInsets.symmetric(vertical: 10),
-          child: BottomNavigationBar(
-            backgroundColor: Colors.white,
-            type: BottomNavigationBarType.fixed,
-            selectedFontSize: 12,
-            iconSize: 28,
-            // unselectedLabelStyle: TextStyle(color: Colors.black),
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: EdgeInsets.only(bottom: 2.5, top: 5),
-                  child: Icon(Icons.dashboard_outlined),
+          borderRadius: BorderRadius.circular(kRadiusXl),
+          boxShadow: kShadowLg,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(kRadiusXl),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavItem(
+                  index: 0,
+                  icon: Icons.dashboard_rounded,
+                  label: 'Beranda',
                 ),
-                label: 'Beranda',
-              ),
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: EdgeInsets.only(bottom: 2.5, top: 5),
-                  child: Icon(Icons.schedule),
+                _buildNavItem(
+                  index: 1,
+                  icon: Icons.folder_rounded,
+                  label: 'File Saya',
                 ),
-                label: 'File Saya',
-              ),
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: EdgeInsets.only(bottom: 2.5, top: 5),
-                  child: Icon(Icons.contact_page_outlined),
+                _buildNavItem(
+                  index: 2,
+                  icon: Icons.person_rounded,
+                  label: 'Akun',
                 ),
-                label: 'Akun',
-              ),
-              BottomNavigationBarItem(
-                icon: Padding(
-                  padding: EdgeInsets.only(bottom: 2.5, top: 5),
-                  child: Icon(Icons.settings_outlined),
+                _buildNavItem(
+                  index: 3,
+                  icon: Icons.settings_rounded,
+                  label: 'Pengaturan',
                 ),
-                label: 'Pengaturan',
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem({
+    required int index,
+    required IconData icon,
+    required String label,
+  }) {
+    final isSelected = _selectedIndex == index;
+    return GestureDetector(
+      onTap: () => _onItemTapped(index),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeInOut,
+        padding: EdgeInsets.symmetric(
+          horizontal: isSelected ? 16 : 12,
+          vertical: 8,
+        ),
+        decoration: BoxDecoration(
+          color:
+              isSelected ? kPrimary.withValues(alpha: 0.1) : Colors.transparent,
+          borderRadius: BorderRadius.circular(kRadiusFull),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 22,
+              color: isSelected ? kPrimary : kTextMuted,
+            ),
+            if (isSelected) ...[
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: const TextStyle(
+                  color: kPrimary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                ),
               ),
             ],
-            currentIndex: _selectedIndex,
-            selectedItemColor: bInfo,
-            unselectedItemColor: bDark,
-            onTap: _onItemTapped,
-          ),
+          ],
         ),
       ),
     );

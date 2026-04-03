@@ -1,6 +1,6 @@
-# terator
+# Terator
 
-A Template Surat Generator.
+Template Surat Generator.
 
 ## Definisi
 

@@ -2,11 +2,10 @@
 
 import 'dart:io';
 
-import 'package:cool_alert/cool_alert.dart';
-import 'package:document_file_save_plus/document_file_save_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
+import 'package:flutter_file_saver/flutter_file_saver.dart';
+import 'package:flutter_native_html_to_pdf/flutter_native_html_to_pdf.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:path_provider/path_provider.dart';
@@ -16,6 +15,7 @@ import 'package:terator/core/loading_overlay.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/models/letter_model.dart';
 import 'package:terator/repositories/letter_repository.dart';
+import 'package:terator/utils/custom_snackbar.dart';
 
 class MyFileEditScreen extends StatefulWidget {
   final LetterModel letter;
@@ -34,45 +34,33 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
 
   bool withSignature = false;
 
-  convert(String htmlData, String name) async {
+  void convert(String htmlData, String name) async {
     try {
       LoadingOverlay.show(context);
 
       var targetPath = await _localPath;
       var targetFileName = name;
       var html = '<div style="margin: 50px">$htmlData</div>';
-      var generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
-          html, targetPath!, targetFileName);
 
-      Uint8List fileByte = await generatedPdfFile.readAsBytes();
-      await DocumentFileSavePlus().saveFile(
-          fileByte,
-          "$targetFileName - ${getRandomString(5).toUpperCase()}.pdf",
-          "appliation/pdf");
+      var generatedPdfFile = await HtmlToPdfConverter().convertHtmlToPdf(
+          html: html, targetDirectory: targetPath!, targetName: targetFileName);
 
-      // if (kDebugMode) print(generatedPdfFile);
+      await FlutterFileSaver().writeFileAsBytes(
+        fileName: "$targetFileName - ${getRandomString(5).toUpperCase()}.pdf",
+        bytes: await generatedPdfFile.readAsBytes(),
+      );
+
       await update(htmlData);
       isRefreshBack = true;
       LoadingOverlay.hide();
       Navigator.pop(context, isRefreshBack);
 
-      CoolAlert.show(
-        backgroundColor: Colors.white,
-        context: context,
-        type: CoolAlertType.success,
-        title: "Sukses!!!",
-        text: "Surat kamu berhasil di Update dan di download!",
-      );
+      CustomSnackbar.show(context,
+          type: SnackbarType.success, message: "Surat berhasil di Update");
     } catch (e) {
       LoadingOverlay.hide();
       if (kDebugMode) print(e.toString());
-      // Clipboard.setData(ClipboardData(text: '${e.toString()}\n${s.toString()}'))
-      //     .then((_) {
-      //   Fluttertoast.showToast(msg: 'Error telah disalin.');
-      // });
     }
-
-    // await showRewardAd();
   }
 
   Future update(String html) async {
@@ -89,7 +77,6 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
       if (Platform.isIOS) {
         directory = await getApplicationSupportDirectory();
       } else {
-        // directory = await getTemporaryDirectory();
         directory = await getExternalStorageDirectory();
       }
     } catch (err) {
@@ -98,38 +85,8 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
     return directory?.path;
   }
 
-  // Future<void> showRewardAd() async {
-  //   if (myRerwardedAd != null) {
-  //     myRerwardedAd!.fullScreenContentCallback =
-  //         FullScreenContentCallback(onAdDismissedFullScreenContent: (ad) {
-  //       ad.dispose();
-  //       _createRewardedAd();
-  //     }, onAdFailedToShowFullScreenContent: (ad, error) {
-  //       ad.dispose();
-  //       _createRewardedAd();
-  //     }, onAdWillDismissFullScreenContent: (ad) {
-  //       ad.dispose();
-  //       _createRewardedAd();
-  //     });
-
-  //     myRerwardedAd!.show(onUserEarnedReward: (ad, reward) {});
-  //   }
-  // }
-
-  // void _createRewardedAd() {
-  //   RewardedInterstitialAd.load(
-  //       adUnitId: kDebugMode
-  //           ? "/21775744923/example/rewarded_interstitial"
-  //           : "ca-app-pub-2465007971338713/5704134732", // production
-  //       request: const AdRequest(),
-  //       rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
-  //           onAdLoaded: (ad) => setState(() => myRerwardedAd = ad),
-  //           onAdFailedToLoad: (_) => setState(() => myRerwardedAd = null)));
-  // }
-
   @override
   void initState() {
-    // _createRewardedAd();
     super.initState();
   }
 
@@ -142,19 +99,11 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.letter.title ?? ''),
-        centerTitle: true,
-        foregroundColor: bDark,
-        backgroundColor: Colors.white,
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context, isRefreshBack);
-            },
-            icon: const Icon(Icons.arrow_back)),
-        elevation: 0,
+      appBar: AppTheme.modernAppBar(
+        title: widget.letter.title ?? '',
+        showBack: true,
+        context: context,
       ),
-      // insert element for ttd
       body: Column(
         children: [
           Expanded(
@@ -168,7 +117,6 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
                   toolbarPosition: ToolbarPosition.custom),
               htmlEditorOptions: const HtmlEditorOptions(
                 hint: "Your text here...",
-                //initalText: "text content initial, if any",
               ),
               otherOptions: OtherOptions(
                 height: MediaQuery.of(context).size.height,
@@ -177,16 +125,21 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          String data = await controller.getText();
-          // Clipboard.setData(ClipboardData(text: data)).then((_) {
-          //   Fluttertoast.showToast(msg: 'Html berhasil disalin.');
-          // });
-          convert(data, widget.letter.title ?? '');
-        },
-        backgroundColor: bInfo,
-        child: const Icon(Icons.save),
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(colors: kGradientPrimary),
+          borderRadius: BorderRadius.circular(kRadiusMd),
+          boxShadow: kShadowPrimary,
+        ),
+        child: FloatingActionButton(
+          onPressed: () async {
+            String data = await controller.getText();
+            convert(data, widget.letter.title ?? '');
+          },
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: const Icon(Icons.save_rounded, color: Colors.white),
+        ),
       ),
     );
   }

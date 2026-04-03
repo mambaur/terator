@@ -55,7 +55,7 @@ class DatabaseInstance {
   }
 
   // this opens the database (and creates it if it doesn't exist)
-  _openDatabase() async {
+  Future<Database> _openDatabase() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, _databaseName);
     return await openDatabase(path,

@@ -10,7 +10,7 @@ class AboutScreen extends StatefulWidget {
 }
 
 class _AboutScreenState extends State<AboutScreen> {
-  String crgStudio = 'https://caraguna.com';
+  String nexadream = 'https://nexadream.id';
   Future<void> _launchUrl(String url) async {
     if (!await launchUrl(Uri.parse(url),
         mode: LaunchMode.externalApplication)) {
@@ -21,73 +21,182 @@ class _AboutScreenState extends State<AboutScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(''),
-        centerTitle: true,
-        foregroundColor: bDark,
-        backgroundColor: Colors.white,
-        elevation: 0,
+      appBar: AppTheme.modernAppBar(
+        title: 'Tentang Aplikasi',
+        showBack: true,
+        context: context,
       ),
-      backgroundColor: Colors.white,
-      body: CustomScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          slivers: [
-            SliverList(
-                delegate: SliverChildListDelegate([
-              Container(
-                margin: const EdgeInsets.all(15),
-                child: Column(
-                  children: [
-                    Image.asset(
-                      'assets/img/terator_logo.png',
-                      height: 80,
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    const Text(
-                      'Terator adalah aplikasi yang membantu kamu membuat surat sesuai kebutuhan dengan cepat dan mudah hanya dengan satu klik saja.',
-                      textAlign: TextAlign.justify,
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    const Text(
-                        'Kamu juga dapat menambahkan tanda tangan digital di surat dengan elegan.',
-                        textAlign: TextAlign.justify),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    const Text(
-                        'Terator juga dapat membuat surat untuk orang lain, karena tersedia multiple akun yang dapat kamu masukkan.',
-                        textAlign: TextAlign.justify),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    const Text(
-                        'Download dan bagikan surat kamu ke semua orang sekarang juga!.',
-                        textAlign: TextAlign.justify),
-                    const SizedBox(
-                      height: 45,
-                    ),
-                    const Text('Powered by', textAlign: TextAlign.justify),
-                    GestureDetector(
-                      onTap: () => _launchUrl(crgStudio),
-                      child: Text(
-                        'CRG Studio',
-                        textAlign: TextAlign.justify,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Colors.blue.shade700),
+      backgroundColor: kSurface,
+      body: ListView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.all(20),
+        children: [
+          // ─── Logo Section ───
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 32),
+            decoration: AppTheme.cardDecoration(),
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: kPrimary.withValues(alpha: 0.05),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Image.asset(
+                    'assets/img/terator_logo.png',
+                    height: 64,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'TERATOR',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                    color: kTextPrimary,
+                    letterSpacing: 2,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'Template Surat Generator',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: kTextSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // ─── Description ───
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: AppTheme.cardDecoration(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _featureItem(
+                  icon: Icons.bolt_rounded,
+                  color: kWarning,
+                  title: 'Cepat & Mudah',
+                  desc:
+                      'Buat surat sesuai kebutuhan hanya dengan satu klik saja.',
+                ),
+                const SizedBox(height: 16),
+                _featureItem(
+                  icon: Icons.draw_rounded,
+                  color: kPrimary,
+                  title: 'Tanda Tangan Digital',
+                  desc:
+                      'Tambahkan tanda tangan digital di surat dengan elegan.',
+                ),
+                const SizedBox(height: 16),
+                _featureItem(
+                  icon: Icons.group_rounded,
+                  color: kViolet,
+                  title: 'Multi Akun',
+                  desc:
+                      'Buat surat untuk orang lain dengan fitur multiple akun.',
+                ),
+                const SizedBox(height: 16),
+                _featureItem(
+                  icon: Icons.share_rounded,
+                  color: kSuccess,
+                  title: 'Bagikan',
+                  desc: 'Download dan bagikan surat kamu ke semua orang!',
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // ─── Powered By ───
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: AppTheme.cardDecoration(),
+            child: Column(
+              children: [
+                const Text(
+                  'Powered by',
+                  style: TextStyle(
+                    color: kTextSecondary,
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                GestureDetector(
+                  onTap: () => _launchUrl(nexadream),
+                  child: ShaderMask(
+                    shaderCallback: (bounds) => const LinearGradient(
+                      colors: kGradientPrimary,
+                    ).createShader(bounds),
+                    child: const Text(
+                      'PT Nexadream\nInovasi Digital',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 18,
+                        color: Colors.white,
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              )
-            ])),
-            SliverList(delegate: SliverChildListDelegate([])),
-          ]),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  Widget _featureItem({
+    required IconData icon,
+    required Color color,
+    required String title,
+    required String desc,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(kRadiusSm),
+          ),
+          child: Icon(icon, color: color, size: 20),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                  color: kTextPrimary,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                desc,
+                style: const TextStyle(
+                  color: kTextSecondary,
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

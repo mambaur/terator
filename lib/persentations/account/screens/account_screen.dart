@@ -1,6 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -12,6 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:terator/persentations/account/screens/account_create_screen.dart';
 import 'package:terator/persentations/account/screens/account_update_screen.dart';
 import 'package:terator/repositories/account_repository.dart';
+import 'package:terator/utils/custom_snackbar.dart';
 
 enum StatusAd { initial, loaded }
 
@@ -28,7 +28,6 @@ class _AccountScreenState extends State<AccountScreen> {
   BannerAd? myBanner;
 
   BannerAdListener listener() => BannerAdListener(
-        // Called when an ad is successfully received.
         onAdLoaded: (Ad ad) {
           if (kDebugMode) {
             print('Ad Loaded.');
@@ -60,13 +59,8 @@ class _AccountScreenState extends State<AccountScreen> {
     await _accountRepo.delete(account.id!);
     _refresh();
     LoadingOverlay.hide();
-    CoolAlert.show(
-      backgroundColor: Colors.white,
-      context: context,
-      type: CoolAlertType.success,
-      title: "Sukses!!!",
-      text: "Akun berhasil dihapus!",
-    );
+    CustomSnackbar.show(context,
+        type: SnackbarType.success, message: "Akun berhasil dihapus");
   }
 
   @override
@@ -75,9 +69,6 @@ class _AccountScreenState extends State<AccountScreen> {
 
     if (!kDebugMode) {
       myBanner = BannerAd(
-        // test banner
-        // adUnitId: '/6499/example/banner',
-
         adUnitId: 'ca-app-pub-2465007971338713/8992395637',
         size: AdSize.banner,
         request: const AdRequest(),
@@ -101,253 +92,305 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade200,
+      backgroundColor: kSurface,
       body: RefreshIndicator(
         backgroundColor: Colors.white,
-        color: Colors.blue.shade700,
+        color: kPrimary,
         displacement: 20,
         onRefresh: () => _refresh(),
         child: CustomScrollView(
-            controller: _scrollController,
-            physics: const AlwaysScrollableScrollPhysics(
-                parent: BouncingScrollPhysics()),
-            slivers: [
-              SliverList(
-                  delegate: SliverChildListDelegate([
-                statusAd == StatusAd.loaded
-                    ? Container(
-                        margin:
-                            const EdgeInsets.only(left: 15, right: 15, top: 15),
-                        alignment: Alignment.center,
-                        width: myBanner!.size.width.toDouble(),
-                        height: myBanner!.size.height.toDouble(),
-                        child: AdWidget(ad: myBanner!),
-                      )
-                    : Container(),
-              ])),
-              SliverList(
-                  delegate: SliverChildListDelegate([
-                BlocBuilder<AccountCubit, AccountState>(
-                  builder: (context, state) {
-                    if (state.status == AccountStatusCubit.success) {
-                      if (state.accounts!.isEmpty) {
-                        return SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.7,
-                          child: Center(
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.4,
-                                      child: Image.asset(
-                                          "assets/img/account-empty.png")),
-                                  const SizedBox(
-                                    height: 15,
-                                  ),
-                                  const Text(
-                                    'Yah, data akun kamu\nmasih kosong :(',
-                                    textAlign: TextAlign.center,
-                                  )
-                                ]),
-                          ),
-                        );
-                      }
-                      return ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.only(top: 15),
-                        itemCount: state.hasReachMax
-                            ? state.accounts!.length
-                            : state.accounts!.length + 1,
-                        itemBuilder: (context, index) {
-                          if (index < state.accounts!.length) {
-                            return Container(
-                                margin: const EdgeInsets.only(
-                                    left: 15, right: 15, bottom: 15),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(5),
-                                  // boxShadow: [
-                                  //   BoxShadow(
-                                  //     color: Colors.black.withOpacity(0.1),
-                                  //     blurRadius: 7,
-                                  //     offset: const Offset(1, 3),
-                                  //   )
-                                  // ],
-                                ),
-                                child: ListTile(
-                                  onTap: () {
-                                    Navigator.push(context,
-                                        MaterialPageRoute(builder: (builder) {
-                                      return AccountUpdateScreen(
-                                          account: state.accounts![index]);
-                                    })).then((value) {
-                                      if (value == true) {
-                                        _refresh();
-                                      }
-                                    });
-                                  },
-                                  title: Text(
-                                    state.accounts![index].name ?? '',
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  subtitle: Text(
-                                      state.accounts![index].address != null &&
-                                              state.accounts![index].address !=
-                                                  ''
-                                          ? state.accounts![index].address!
-                                          : (state.accounts![index].telephone ??
-                                              ''),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis),
-                                  leading:
-                                      const Icon(Icons.face, color: bSecondary),
-                                  trailing: IconButton(
-                                    onPressed: () => _showDeleteModal(
-                                        state.accounts![index]),
-                                    icon: const Icon(Icons.close,
-                                        color: bSecondary),
-                                  ),
-                                ));
-                          } else {
-                            return Container(
-                              padding: const EdgeInsets.all(15.0),
-                              alignment: Alignment.center,
-                              child: const CircularProgressIndicator(
-                                color: bInfo,
-                              ),
-                            );
-                          }
-                        },
-                      );
-                    } else {
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics()),
+          slivers: [
+            SliverToBoxAdapter(
+              child: statusAd == StatusAd.loaded
+                  ? Container(
+                      margin:
+                          const EdgeInsets.only(left: 20, right: 20, top: 15),
+                      alignment: Alignment.center,
+                      width: myBanner!.size.width.toDouble(),
+                      height: myBanner!.size.height.toDouble(),
+                      child: AdWidget(ad: myBanner!),
+                    )
+                  : const SizedBox(),
+            ),
+            SliverToBoxAdapter(
+              child: BlocBuilder<AccountCubit, AccountState>(
+                builder: (context, state) {
+                  if (state.status == AccountStatusCubit.success) {
+                    if (state.accounts!.isEmpty) {
                       return SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.7,
-                        child: const Center(
-                          child: CircularProgressIndicator(
-                            color: bInfo,
+                        height: MediaQuery.of(context).size.height * 0.65,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(24),
+                                decoration: BoxDecoration(
+                                  color: kPrimary.withValues(alpha: 0.08),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.person_add_alt_1_rounded,
+                                  size: 56,
+                                  color: kPrimary,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              const Text(
+                                'Belum Ada Akun',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 18,
+                                  color: kTextPrimary,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              const Text(
+                                'Tambahkan akun surat dengan\nmenekan tombol + di bawah',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: kTextSecondary,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       );
                     }
-                  },
-                ),
-              ])),
-              SliverList(delegate: SliverChildListDelegate([])),
-            ]),
+                    return ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.only(top: 16),
+                      itemCount: state.hasReachMax
+                          ? state.accounts!.length
+                          : state.accounts!.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index < state.accounts!.length) {
+                          final account = state.accounts![index];
+                          return Container(
+                            margin: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                            decoration: AppTheme.cardDecoration(),
+                            child: Material(
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(kRadiusLg),
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(kRadiusLg),
+                                onTap: () {
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (builder) {
+                                    return AccountUpdateScreen(
+                                        account: account);
+                                  })).then((value) {
+                                    if (value == true) {
+                                      _refresh();
+                                    }
+                                  });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(14),
+                                  child: Row(
+                                    children: [
+                                      AppTheme.avatarInitial(
+                                        account.name ?? '',
+                                      ),
+                                      const SizedBox(width: 14),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              account.name ?? '',
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 15,
+                                                color: kTextPrimary,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              account.address != null &&
+                                                      account.address != ''
+                                                  ? account.address!
+                                                  : (account.telephone ?? ''),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                color: kTextSecondary,
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      IconButton(
+                                        onPressed: () =>
+                                            _showDeleteModal(account),
+                                        icon: Icon(
+                                          Icons.delete_outline_rounded,
+                                          color: kError.withValues(alpha: 0.6),
+                                          size: 22,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        } else {
+                          return const Padding(
+                            padding: EdgeInsets.all(15.0),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: kPrimary,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    );
+                  } else {
+                    return SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.65,
+                      child: const Center(
+                        child: CircularProgressIndicator(color: kPrimary),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 80)),
+          ],
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (builder) {
-            return const AccountCreateScreen();
-          })).then((value) {
-            if (value == true) {
-              _refresh();
-            }
-          });
-        },
-        backgroundColor: bInfo,
-        child: const Icon(Icons.group_add),
+      floatingActionButton: Container(
+        margin: EdgeInsets.only(bottom: 84),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(colors: kGradientPrimary),
+          borderRadius: BorderRadius.circular(kRadiusMd),
+          boxShadow: kShadowPrimary,
+        ),
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (builder) {
+              return const AccountCreateScreen();
+            })).then((value) {
+              if (value == true) {
+                _refresh();
+              }
+            });
+          },
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: const Icon(Icons.person_add_rounded, color: Colors.white),
+        ),
       ),
     );
   }
 
-  // ignore: unused_element
   Future<void> _showDeleteModal(AccountModel account) {
-    return showModalBottomSheet<void>(
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
+    return AppTheme.showModernBottomSheet(
       context: context,
-      builder: (BuildContext context) {
-        return Padding(
-          padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(15),
-                    topRight: Radius.circular(15))),
-            child: Wrap(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    const Text(
-                      'Peringatan!',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      height: 3,
-                    ),
-                    Text(
-                      'Apakah kamu yakin ingin menghapus ${account.name}?',
-                      style: const TextStyle(),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.grey.shade400,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50.0),
-                                ),
-                              ),
-                              child: const Padding(
-                                padding: EdgeInsets.all(15.0),
-                                child: Text('Batal',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: bInfo,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50.0),
-                                ),
-                              ),
-                              child: const Padding(
-                                padding: EdgeInsets.all(15.0),
-                                child: Text(
-                                  'Hapus',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                                delete(account);
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: kError.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(kRadiusSm),
                 ),
-              ],
+                child:
+                    const Icon(Icons.warning_rounded, color: kError, size: 22),
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                'Hapus Akun?',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: kTextPrimary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Apakah kamu yakin ingin menghapus akun "${account.name}"?',
+            style: const TextStyle(
+              fontSize: 14,
+              color: kTextSecondary,
             ),
           ),
-        );
-      },
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: Colors.grey.shade300),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(kRadiusMd),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  child: const Text(
+                    'Batal',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: kTextSecondary,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                        colors: [kError, Color(0xFFF87171)]),
+                    borderRadius: BorderRadius.circular(kRadiusMd),
+                  ),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(kRadiusMd),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    child: const Text(
+                      'Hapus',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      delete(account);
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

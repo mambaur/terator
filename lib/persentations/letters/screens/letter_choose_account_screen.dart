@@ -17,231 +17,276 @@ class LetterChooseAccountScreen extends StatefulWidget {
 
 class _LetterChooseAccountScreenState extends State<LetterChooseAccountScreen> {
   final AccountRepository _accountRepo = AccountRepository();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        title: const Text("Surat Untuk Siapa?", style: TextStyle(color: bDark)),
-        centerTitle: true,
-        foregroundColor: bDark,
-        backgroundColor: Colors.white,
+      appBar: AppTheme.modernAppBar(
+        title: 'Surat Untuk Siapa?',
+        showBack: true,
+        context: context,
       ),
-      backgroundColor: Colors.grey.shade200,
+      backgroundColor: kSurface,
       body: FutureBuilder<List<AccountModel>>(
-          future: _accountRepo.all(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data!.isEmpty) {
-                return Center(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.5,
-                            child: Image.asset("assets/img/empty.png")),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        const Text(
-                          'Yah, data akun kamu\nmasih kosong :(',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: bDark),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(50))),
-                            onPressed: () {
-                              Navigator.pushAndRemoveUntil<void>(
-                                context,
-                                MaterialPageRoute<void>(
-                                    builder: (BuildContext context) =>
-                                        const Navbar(
-                                          selectedIndex: 2,
-                                        )),
-                                ModalRoute.withName('/account-screen'),
-                              );
-                            },
-                            child: const Padding(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 12.0, horizontal: 15),
-                              child: Text('+ Tambahkan Akun'),
-                            ))
-                      ]),
-                );
-              }
-              return ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: snapshot.data!.length,
-                padding: const EdgeInsets.only(top: 15),
-                itemBuilder: ((context, index) {
-                  return Container(
-                      margin: const EdgeInsets.only(
-                          left: 15, right: 15, bottom: 15),
+        future: _accountRepo.all(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.data!.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(5),
-                        // boxShadow: [
-                        //   BoxShadow(
-                        //     color: Colors.black.withOpacity(0.1),
-                        //     blurRadius: 7,
-                        //     offset: const Offset(1, 3),
-                        //   )
-                        // ],
+                        color: kPrimary.withValues(alpha: 0.08),
+                        shape: BoxShape.circle,
                       ),
-                      child: ListTile(
-                        onTap: () {
-                          if (snapshot.data![index].signatureImage != null) {
-                            _showSignatureOptionModal(snapshot.data![index]);
-                          } else {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (builder) {
-                              return LetterEditorScreen(
-                                title: widget.title,
-                                keyLetter: widget.keyLetter,
-                                account: snapshot.data![index],
-                                withSignature: false,
-                              );
-                            }));
-                          }
-                        },
-                        title: Text(
-                          snapshot.data![index].name ?? '',
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                      child: const Icon(
+                        Icons.person_add_alt_1_rounded,
+                        size: 56,
+                        color: kPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Belum Ada Akun Surat',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                        color: kTextPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 40),
+                      child: Text(
+                        'Tambahkan akun terlebih dahulu untuk mulai membuat surat',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: kTextSecondary,
+                          fontSize: 14,
                         ),
-                        subtitle: Text(
-                            snapshot.data![index].address != null &&
-                                    snapshot.data![index].address != ''
-                                ? snapshot.data![index].address!
-                                : (snapshot.data![index].telephone ?? ''),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis),
-                        leading: const Icon(Icons.face, color: bSecondary),
-                      ));
-                }),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    AppTheme.gradientButton(
+                      label: 'Tambahkan Akun',
+                      icon: Icons.person_add_rounded,
+                      onTap: () {
+                        Navigator.pushAndRemoveUntil<void>(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (BuildContext context) => const Navbar(
+                              selectedIndex: 2,
+                            ),
+                          ),
+                          ModalRoute.withName('/account-screen'),
+                        );
+                      },
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 14, horizontal: 28),
+                    ),
+                  ],
+                ),
               );
             }
-            return const SizedBox();
-          }),
+            return ListView.builder(
+              physics: const BouncingScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: snapshot.data!.length,
+              padding: const EdgeInsets.only(top: 16),
+              itemBuilder: ((context, index) {
+                final account = snapshot.data![index];
+                return Container(
+                  margin: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                  decoration: AppTheme.cardDecoration(),
+                  child: Material(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(kRadiusLg),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(kRadiusLg),
+                      onTap: () {
+                        if (account.signatureImage != null) {
+                          _showSignatureOptionModal(account);
+                        } else {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (builder) {
+                            return LetterEditorScreen(
+                              title: widget.title,
+                              keyLetter: widget.keyLetter,
+                              account: account,
+                              withSignature: false,
+                            );
+                          }));
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(14),
+                        child: Row(
+                          children: [
+                            AppTheme.avatarInitial(account.name ?? ''),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    account.name ?? '',
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 15,
+                                      color: kTextPrimary,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    account.address != null &&
+                                            account.address != ''
+                                        ? account.address!
+                                        : (account.telephone ?? ''),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: kTextSecondary,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Icon(Icons.arrow_forward_ios_rounded,
+                                color: kTextMuted, size: 16),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            );
+          }
+          return const Center(
+            child: CircularProgressIndicator(color: kPrimary),
+          );
+        },
+      ),
     );
   }
 
   Future<void> _showSignatureOptionModal(AccountModel account) {
-    return showModalBottomSheet<void>(
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
+    return AppTheme.showModernBottomSheet(
       context: context,
-      builder: (BuildContext context) {
-        return Padding(
-          padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(15),
-                    topRight: Radius.circular(15))),
-            child: Wrap(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    const Text(
-                      'Tanda Tangan',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'Apakah kamu ingin menggunakan tanda tangan ${account.name}?',
-                      style: const TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.grey.shade400,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50.0),
-                                ),
-                              ),
-                              child: const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 12.0),
-                                child: Text('Tidak',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (builder) {
-                                  return LetterEditorScreen(
-                                    title: widget.title,
-                                    keyLetter: widget.keyLetter,
-                                    account: account,
-                                    withSignature: false,
-                                  );
-                                }));
-                              },
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: bInfo,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50.0),
-                                ),
-                              ),
-                              child: const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 12.0),
-                                child: Text('Iya',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (builder) {
-                                  return LetterEditorScreen(
-                                    title: widget.title,
-                                    keyLetter: widget.keyLetter,
-                                    account: account,
-                                    withSignature: true,
-                                  );
-                                }));
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: kPrimary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(kRadiusSm),
                 ),
-              ],
+                child:
+                    const Icon(Icons.draw_rounded, color: kPrimary, size: 22),
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                'Tanda Tangan',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: kTextPrimary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Apakah kamu ingin menggunakan tanda tangan ${account.name}?',
+            style: const TextStyle(
+              fontSize: 14,
+              color: kTextSecondary,
             ),
           ),
-        );
-      },
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: Colors.grey.shade300),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(kRadiusMd),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  child: const Text(
+                    'Tidak',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: kTextSecondary,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (builder) {
+                      return LetterEditorScreen(
+                        title: widget.title,
+                        keyLetter: widget.keyLetter,
+                        account: account,
+                        withSignature: false,
+                      );
+                    }));
+                  },
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(colors: kGradientPrimary),
+                    borderRadius: BorderRadius.circular(kRadiusMd),
+                  ),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(kRadiusMd),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    child: const Text(
+                      'Ya, Gunakan',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (builder) {
+                        return LetterEditorScreen(
+                          title: widget.title,
+                          keyLetter: widget.keyLetter,
+                          account: account,
+                          withSignature: true,
+                        );
+                      }));
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
