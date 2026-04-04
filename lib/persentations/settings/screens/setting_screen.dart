@@ -1,10 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/persentations/settings/screens/about_screen.dart';
 import 'package:terator/persentations/settings/screens/disclaimer_screen.dart';
+import 'package:terator/persentations/subscription/cubit/subscription_cubit.dart';
+import 'package:terator/persentations/subscription/widgets/premium_gate.dart';
+import 'package:terator/utils/custom_snackbar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 enum StatusAd { initial, loaded }
@@ -21,7 +25,8 @@ class _SettingScreenState extends State<SettingScreen> {
       'https://play.google.com/store/apps/dev?id=8918426189046119136';
   final String _urlApp =
       'https://play.google.com/store/apps/details?id=com.caraguna.terator';
-  final String _contactUs = 'https://nexadream.id';
+  // final String _feedbackUrl = 'https://forms.gle/CXNMpwH6XottdEC58';
+  // final String _rekomendasi = 'https://forms.gle/etyhdKKXN3TvcE6d9';
   BannerAd? myBanner;
 
   BannerAdListener listener() => BannerAdListener(
@@ -83,17 +88,35 @@ class _SettingScreenState extends State<SettingScreen> {
               child: AdWidget(ad: myBanner!),
             ),
 
+          // ─── Premium Status Card ───
+          BlocBuilder<SubscriptionCubit, SubscriptionState>(
+            builder: (context, state) {
+              return _buildPremiumStatusCard(context, state);
+            },
+          ),
+          const SizedBox(height: 16),
+
           // ─── Settings Group ───
           Container(
             decoration: AppTheme.cardDecoration(),
             child: Column(
               children: [
+                // ─── Contoh Fitur Premium ───
+                _buildPremiumDemoTile(context),
+                _divider(),
                 _buildSettingTile(
                   icon: Icons.apps_rounded,
                   color: kInfoBlue,
                   title: 'Aplikasi Lainnya',
                   onTap: () => _launchUrl(_urlDeveloper),
                 ),
+                // _divider(),
+                // _buildSettingTile(
+                //   icon: Icons.rate_review_rounded,
+                //   color: kWarning,
+                //   title: 'Berikan Kritik & Saran',
+                //   onTap: () => _launchUrl(_feedbackUrl),
+                // ),
                 _divider(),
                 _buildSettingTile(
                   icon: Icons.info_rounded,
@@ -125,12 +148,32 @@ class _SettingScreenState extends State<SettingScreen> {
                   title: 'Cek Update',
                   onTap: () => _launchUrl(_urlApp),
                 ),
+                // _divider(),
+                // _buildSettingTile(
+                //   icon: Icons.mail_rounded,
+                //   color: const Color(0xFFEC4899),
+                //   title: 'Rekomendasikan Surat',
+                //   onTap: () => _launchUrl(_rekomendasi),
+                // ),
                 _divider(),
+                // ─── Restore Pembelian ───
                 _buildSettingTile(
-                  icon: Icons.mail_rounded,
-                  color: const Color(0xFFEC4899),
-                  title: 'Hubungi Kami',
-                  onTap: () => _launchUrl(_contactUs),
+                  icon: Icons.restore_rounded,
+                  color: const Color(0xFF0EA5E9),
+                  title: 'Restore Pembelian',
+                  onTap: () async {
+                    final cubit = context.read<SubscriptionCubit>();
+                    final result = await cubit.restorePurchases();
+                    if (context.mounted) {
+                      CustomSnackbar.show(context,
+                          type: result
+                              ? SnackbarType.success
+                              : SnackbarType.warning,
+                          message: result
+                              ? 'Pembelian berhasil di-restore! 🎉'
+                              : 'Tidak ditemukan pembelian sebelumnya.');
+                    }
+                  },
                 ),
                 _divider(),
                 FutureBuilder<PackageInfo>(
@@ -190,6 +233,172 @@ class _SettingScreenState extends State<SettingScreen> {
           const SizedBox(height: 80),
         ],
       ),
+    );
+  }
+
+  // ─── Premium Status Card ───
+  Widget _buildPremiumStatusCard(
+      BuildContext context, SubscriptionState state) {
+    final isPremium = state.isPremium;
+    return GestureDetector(
+      onTap: () {
+        // Navigator.push(context, MaterialPageRoute(builder: (builder) {
+        //   return const SubscriptionScreen();
+        // }));
+        context.read<SubscriptionCubit>().showPaywall();
+      },
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: isPremium
+                ? [const Color(0xFFD97706), const Color(0xFFF59E0B)]
+                : kGradientPrimary,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(kRadiusLg),
+          boxShadow: isPremium
+              ? [
+                  BoxShadow(
+                    color: const Color(0xFFD97706).withValues(alpha: 0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : kShadowPrimary,
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(kRadiusSm),
+              ),
+              child: Icon(
+                isPremium
+                    ? Icons.workspace_premium_rounded
+                    : Icons.diamond_outlined,
+                color: Colors.white,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    isPremium ? 'Premium Aktif ✓' : 'Akun Gratis',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    isPremium
+                        ? 'Semua fitur premium telah aktif'
+                        : 'Upgrade ke Premium untuk fitur lengkap',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.85),
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: Colors.white.withValues(alpha: 0.7),
+              size: 16,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ─── Contoh Fitur Premium Tile ───
+  Widget _buildPremiumDemoTile(BuildContext context) {
+    return BlocBuilder<SubscriptionCubit, SubscriptionState>(
+      builder: (context, state) {
+        return Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              if (state.isPremium) {
+                // User sudah premium — tampilkan konten
+                CustomSnackbar.show(context,
+                    message:
+                        "🎉 Selamat! Kamu memiliki akses penuh ke fitur premium!",
+                    type: SnackbarType.success);
+              } else {
+                // User belum premium — tampilkan premium gate
+                PremiumGate.show(context);
+              }
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFD97706), Color(0xFFF59E0B)],
+                      ),
+                      borderRadius: BorderRadius.circular(kRadiusSm),
+                    ),
+                    child: const Icon(Icons.star_rounded,
+                        color: Colors.white, size: 20),
+                  ),
+                  const SizedBox(width: 14),
+                  const Expanded(
+                    child: Text(
+                      'Contoh Fitur Premium',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 15,
+                        color: kTextPrimary,
+                      ),
+                    ),
+                  ),
+                  // ─── PRO Badge ───
+                  if (!state.isPremium)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFD97706), Color(0xFFF59E0B)],
+                        ),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Text(
+                        'PRO',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    )
+                  else
+                    const Icon(Icons.check_circle_rounded,
+                        color: kSuccess, size: 20),
+                  const SizedBox(width: 4),
+                  const Icon(Icons.arrow_forward_ios_rounded,
+                      color: kTextMuted, size: 14),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 

@@ -29,6 +29,8 @@ dependencies:
   google_mobile_ads: ^7.0.0
   flutter_typeahead: ^5.0.1
   upgrader: ^12.5.0
+  purchases_flutter: ^9.16.0
+  purchases_ui_flutter: ^9.16.0
   
   cupertino_icons: ^1.0.2
 

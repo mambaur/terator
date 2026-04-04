@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/persentations/account/screens/account_screen.dart';
 import 'package:terator/persentations/faq/screens/faq_screen.dart';
 import 'package:terator/persentations/home/screens/home_screen.dart';
 import 'package:terator/persentations/my_files/screens/my_file_screen.dart';
 import 'package:terator/persentations/settings/screens/setting_screen.dart';
+import 'package:terator/persentations/subscription/cubit/subscription_cubit.dart';
+import 'package:terator/persentations/subscription/widgets/premium_gate.dart';
+import 'package:terator/utils/custom_snackbar.dart';
 
 class Navbar extends StatefulWidget {
   final int? selectedIndex;
@@ -71,12 +75,13 @@ class _NavbarState extends State<Navbar> {
                 ],
               ),
               actions: [
+                // ─── Subscription Button ───
+                _buildSubscriptionButton(),
+                // ─── FAQ Button ───
                 Container(
                   width: 44,
                   height: 44,
-                  margin: const EdgeInsets.only(
-                    right: 16,
-                  ),
+                  margin: const EdgeInsets.only(right: 16),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(kRadiusSm),
@@ -110,6 +115,9 @@ class _NavbarState extends State<Navbar> {
               ),
               centerTitle: true,
               actions: [
+                // ─── Subscription Button ───
+                _buildSubscriptionButton(),
+                // ─── FAQ Button ───
                 Container(
                   width: 44,
                   height: 44,
@@ -171,6 +179,66 @@ class _NavbarState extends State<Navbar> {
           ),
         ),
       ),
+    );
+  }
+
+  // ─── Subscription AppBar Button ───
+  Widget _buildSubscriptionButton() {
+    return BlocBuilder<SubscriptionCubit, SubscriptionState>(
+      builder: (context, state) {
+        return Container(
+          width: 44,
+          height: 44,
+          margin: const EdgeInsets.only(right: 6),
+          decoration: BoxDecoration(
+            color: state.isPremium
+                ? const Color(0xFFF59E0B).withValues(alpha: 0.3)
+                : Colors.white.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(kRadiusSm),
+          ),
+          child: Stack(
+            children: [
+              IconButton(
+                onPressed: () {
+                  // Navigator.push(context, MaterialPageRoute(builder: (builder) {
+                  //   return const SubscriptionScreen();
+                  // }));
+
+                  if (state.isPremium) {
+                    CustomSnackbar.show(context,
+                        message:
+                            "🎉 Selamat! Kamu memiliki akses penuh ke fitur premium!",
+                        type: SnackbarType.success);
+                  } else {
+                    PremiumGate.show(context);
+                  }
+                },
+                icon: Icon(
+                  state.isPremium
+                      ? Icons.workspace_premium_rounded
+                      : Icons.diamond_outlined,
+                  color:
+                      state.isPremium ? const Color(0xFFFCD34D) : Colors.white,
+                  size: 22,
+                ),
+              ),
+              if (state.isPremium)
+                Positioned(
+                  top: 6,
+                  right: 6,
+                  child: Container(
+                    width: 8,
+                    height: 8,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFFCD34D),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 
