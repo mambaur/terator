@@ -29,6 +29,12 @@ import 'package:terator/data/letter_functions/umum/surat_pernyataan_keluarga_ten
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
 
+// Letter key => Premium true/false
+final premiumLetterMap = {
+  'surat_permohonan_beasiswa': true,
+  'surat_permohonan_pindah_sekolah': true,
+};
+
 class LetterData {
   static String html(String key,
       {String? image, LetterModel? letter, AccountModel? account}) {
@@ -59,7 +65,7 @@ class LetterData {
           {
             "key": "surat_permohonan_beasiswa",
             "title": "Surat Permohonan Beasiswa",
-            "subtitle": "SMP/SMA"
+            "subtitle": "SMP/SMA",
           },
           {
             "key": "surat_pernyataan_tidak_menerima_beasiswa",
@@ -188,7 +194,7 @@ class LetterData {
       },
       {
         "id": 8,
-        "title": "Surat Keuangan",
+        "title": "Surat Kesehatan",
         "letters": [
           {
             "key": "surat_pernyataan_sehat_jasmani_rohani",

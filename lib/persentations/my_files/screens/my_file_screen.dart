@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_file_saver/flutter_file_saver.dart';
 import 'package:flutter_native_html_to_pdf/flutter_native_html_to_pdf.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -14,6 +13,7 @@ import 'package:terator/core/generator.dart';
 import 'package:terator/core/loading_overlay.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/persentations/ads/widgets/banner_ad_widget.dart';
 import 'package:terator/persentations/my_files/cubits/file_cubit/file_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:terator/persentations/my_files/screens/my_file_edit_screen.dart';
@@ -32,7 +32,6 @@ class MyFileScreen extends StatefulWidget {
 class _MyFileScreenState extends State<MyFileScreen> {
   final LetterRepository _letterRepo = LetterRepository();
   final ScrollController _scrollController = ScrollController();
-  InterstitialAd? _interstitialAd;
 
   void convert(String htmlData, String name) async {
     LoadingOverlay.show(context);
@@ -116,60 +115,14 @@ class _MyFileScreenState extends State<MyFileScreen> {
     return dateDiffHuman;
   }
 
-  BannerAd? myBanner;
-
-  BannerAdListener listener() => BannerAdListener(
-        onAdLoaded: (Ad ad) {
-          if (kDebugMode) {
-            print('Ad Loaded.');
-          }
-          setState(() {
-            statusAd = StatusAd.loaded;
-          });
-        },
-      );
-
   StatusAd statusAd = StatusAd.initial;
 
   @override
   void initState() {
     context.read<FileCubit>().getFiles(isInit: true);
 
-    if (!kDebugMode) {
-      myBanner = BannerAd(
-        adUnitId: 'ca-app-pub-2465007971338713/8992395637',
-        size: AdSize.banner,
-        request: const AdRequest(),
-        listener: listener(),
-      );
-      myBanner!.load();
-
-      InterstitialAd.load(
-          adUnitId: kDebugMode
-              ? 'ca-app-pub-3940256099942544/1033173712'
-              : 'ca-app-pub-2465007971338713/3304515640',
-          request: const AdRequest(),
-          adLoadCallback: InterstitialAdLoadCallback(
-            onAdLoaded: (ad) {
-              debugPrint('$ad loaded.');
-              _interstitialAd = ad;
-            },
-            onAdFailedToLoad: (LoadAdError error) {
-              debugPrint('InterstitialAd failed to load: $error');
-            },
-          ));
-    }
-
     _scrollController.addListener(onScroll);
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    if (myBanner != null) {
-      myBanner!.dispose();
-    }
-    super.dispose();
   }
 
   @override
@@ -187,16 +140,9 @@ class _MyFileScreenState extends State<MyFileScreen> {
               parent: BouncingScrollPhysics()),
           slivers: [
             SliverToBoxAdapter(
-              child: statusAd == StatusAd.loaded
-                  ? Container(
-                      margin:
-                          const EdgeInsets.only(left: 20, right: 20, top: 15),
-                      alignment: Alignment.center,
-                      width: myBanner!.size.width.toDouble(),
-                      height: myBanner!.size.height.toDouble(),
-                      child: AdWidget(ad: myBanner!),
-                    )
-                  : const SizedBox(),
+              child: BannerAdWidget(
+                placement: BannerPlacement.myFilePage,
+              ),
             ),
             SliverToBoxAdapter(
               child: BlocBuilder<FileCubit, FileState>(
@@ -411,9 +357,6 @@ class _MyFileScreenState extends State<MyFileScreen> {
             color: kSuccess,
             title: 'Berbagi',
             onTap: () async {
-              if (_interstitialAd != null) {
-                await _interstitialAd!.show();
-              }
               shareFile(letter.html ?? '', letter.title ?? '');
             },
           ),
@@ -422,9 +365,6 @@ class _MyFileScreenState extends State<MyFileScreen> {
             color: kPrimary,
             title: 'Download',
             onTap: () async {
-              if (_interstitialAd != null) {
-                await _interstitialAd!.show();
-              }
               convert(letter.html ?? '', letter.title ?? '');
             },
           ),

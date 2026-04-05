@@ -189,7 +189,7 @@ class _NavbarState extends State<Navbar> {
         return Container(
           width: 44,
           height: 44,
-          margin: const EdgeInsets.only(right: 6),
+          margin: const EdgeInsets.only(right: 8),
           decoration: BoxDecoration(
             color: state.isPremium
                 ? const Color(0xFFF59E0B).withValues(alpha: 0.3)
@@ -200,10 +200,6 @@ class _NavbarState extends State<Navbar> {
             children: [
               IconButton(
                 onPressed: () {
-                  // Navigator.push(context, MaterialPageRoute(builder: (builder) {
-                  //   return const SubscriptionScreen();
-                  // }));
-
                   if (state.isPremium) {
                     CustomSnackbar.show(context,
                         message:

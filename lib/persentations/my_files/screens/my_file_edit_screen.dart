@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_file_saver/flutter_file_saver.dart';
 import 'package:flutter_native_html_to_pdf/flutter_native_html_to_pdf.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:terator/core/date_setting.dart';
@@ -30,7 +29,6 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
   final HtmlEditorController controller = HtmlEditorController();
   final titleController = TextEditingController();
   bool isRefreshBack = false;
-  RewardedInterstitialAd? myRerwardedAd;
 
   bool withSignature = false;
 

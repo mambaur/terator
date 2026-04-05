@@ -1,8 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:terator/core/loading_overlay.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/models/account_model.dart';
@@ -10,8 +8,12 @@ import 'package:terator/persentations/account/account_cubits/cubit/account_cubit
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:terator/persentations/account/screens/account_create_screen.dart';
 import 'package:terator/persentations/account/screens/account_update_screen.dart';
+import 'package:terator/persentations/ads/widgets/banner_ad_widget.dart';
+import 'package:terator/persentations/subscription/cubit/subscription_cubit.dart';
 import 'package:terator/repositories/account_repository.dart';
 import 'package:terator/utils/custom_snackbar.dart';
+
+import '../../subscription/widgets/premium_gate.dart';
 
 enum StatusAd { initial, loaded }
 
@@ -25,20 +27,6 @@ class AccountScreen extends StatefulWidget {
 class _AccountScreenState extends State<AccountScreen> {
   final ScrollController _scrollController = ScrollController();
   final AccountRepository _accountRepo = AccountRepository();
-  BannerAd? myBanner;
-
-  BannerAdListener listener() => BannerAdListener(
-        onAdLoaded: (Ad ad) {
-          if (kDebugMode) {
-            print('Ad Loaded.');
-          }
-          setState(() {
-            statusAd = StatusAd.loaded;
-          });
-        },
-      );
-
-  StatusAd statusAd = StatusAd.initial;
 
   void onScroll() {
     double maxScroll = _scrollController.position.maxScrollExtent;
@@ -67,26 +55,8 @@ class _AccountScreenState extends State<AccountScreen> {
   void initState() {
     context.read<AccountCubit>().getAccounts(isInit: true);
 
-    if (!kDebugMode) {
-      myBanner = BannerAd(
-        adUnitId: 'ca-app-pub-2465007971338713/8992395637',
-        size: AdSize.banner,
-        request: const AdRequest(),
-        listener: listener(),
-      );
-      myBanner!.load();
-    }
-
     _scrollController.addListener(onScroll);
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    if (myBanner != null) {
-      myBanner!.dispose();
-    }
-    super.dispose();
   }
 
   @override
@@ -104,16 +74,9 @@ class _AccountScreenState extends State<AccountScreen> {
               parent: BouncingScrollPhysics()),
           slivers: [
             SliverToBoxAdapter(
-              child: statusAd == StatusAd.loaded
-                  ? Container(
-                      margin:
-                          const EdgeInsets.only(left: 20, right: 20, top: 15),
-                      alignment: Alignment.center,
-                      width: myBanner!.size.width.toDouble(),
-                      height: myBanner!.size.height.toDouble(),
-                      child: AdWidget(ad: myBanner!),
-                    )
-                  : const SizedBox(),
+              child: BannerAdWidget(
+                placement: BannerPlacement.accountPage,
+              ),
             ),
             SliverToBoxAdapter(
               child: BlocBuilder<AccountCubit, AccountState>(
@@ -161,6 +124,7 @@ class _AccountScreenState extends State<AccountScreen> {
                         ),
                       );
                     }
+
                     return ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
@@ -271,27 +235,55 @@ class _AccountScreenState extends State<AccountScreen> {
           ],
         ),
       ),
-      floatingActionButton: Container(
-        margin: EdgeInsets.only(bottom: 84),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(colors: kGradientPrimary),
-          borderRadius: BorderRadius.circular(kRadiusMd),
-          boxShadow: kShadowPrimary,
-        ),
-        child: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (builder) {
-              return const AccountCreateScreen();
-            })).then((value) {
-              if (value == true) {
-                _refresh();
-              }
-            });
-          },
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          child: const Icon(Icons.person_add_rounded, color: Colors.white),
-        ),
+      floatingActionButton: BlocBuilder<AccountCubit, AccountState>(
+        builder: (context, stateAccount) {
+          int accountCount = 0;
+          if (stateAccount.status == AccountStatusCubit.success) {
+            accountCount = (stateAccount.accounts ?? []).length;
+          }
+          return BlocBuilder<SubscriptionCubit, SubscriptionState>(
+            builder: (context, state) {
+              return Container(
+                margin: EdgeInsets.only(bottom: 84),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(colors: kGradientPrimary),
+                  borderRadius: BorderRadius.circular(kRadiusMd),
+                  boxShadow: kShadowPrimary,
+                ),
+                child: Badge(
+                  isLabelVisible: !state.isPremium && accountCount > 3,
+                  alignment: Alignment.topLeft,
+                  backgroundColor: Color(0xFFF59E0B),
+                  label: Icon(
+                    Icons.diamond,
+                    color: Colors.white,
+                  ),
+                  child: FloatingActionButton(
+                    onPressed: () {
+                      if (!state.isPremium && accountCount > 3) {
+                        PremiumGate.show(context);
+                        return;
+                      }
+
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (builder) {
+                        return const AccountCreateScreen();
+                      })).then((value) {
+                        if (value == true) {
+                          _refresh();
+                        }
+                      });
+                    },
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                    child: const Icon(Icons.person_add_rounded,
+                        color: Colors.white),
+                  ),
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }

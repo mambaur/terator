@@ -1,12 +1,15 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/data/letter_data.dart';
+import 'package:terator/persentations/ads/widgets/banner_ad_widget.dart';
 import 'package:terator/persentations/letters/screens/letter_choose_account_screen.dart';
 import 'package:terator/persentations/letters/screens/letter_screen.dart';
+import 'package:terator/persentations/subscription/cubit/subscription_cubit.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../subscription/widgets/premium_gate.dart';
 
 enum StatusAd { initial, loaded }
 
@@ -19,7 +22,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final String _youtubeUrl = 'https://bit.ly/generate-surat-terator';
-  BannerAd? myBanner;
   List<Map<String, dynamic>> lettersData = letterDataMap(null);
 
   List<Map<String, dynamic>> searchLetterData(String q) {
@@ -27,19 +29,6 @@ class _HomeScreenState extends State<HomeScreen> {
         .where((e) => (e["title"]).toLowerCase().contains(q.toLowerCase()))
         .toList();
   }
-
-  BannerAdListener listener() => BannerAdListener(
-        onAdLoaded: (Ad ad) {
-          if (kDebugMode) {
-            print('Ad Loaded.');
-          }
-          setState(() {
-            statusAd = StatusAd.loaded;
-          });
-        },
-      );
-
-  StatusAd statusAd = StatusAd.initial;
 
   List<Map<String, dynamic>> listLetters = [];
 
@@ -105,18 +94,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    if (!kDebugMode) {
-      myBanner = BannerAd(
-        adUnitId: kDebugMode
-            ? '/6499/example/banner'
-            : 'ca-app-pub-2465007971338713/8992395637',
-        size: AdSize.banner,
-        request: const AdRequest(),
-        listener: listener(),
-      );
-      myBanner!.load();
-    }
-
     listLetters = LetterData.listLetters(q: '');
     super.initState();
   }
@@ -126,14 +103,6 @@ class _HomeScreenState extends State<HomeScreen> {
         mode: LaunchMode.externalApplication)) {
       throw 'Could not launch $url';
     }
-  }
-
-  @override
-  void dispose() {
-    if (myBanner != null) {
-      myBanner!.dispose();
-    }
-    super.dispose();
   }
 
   @override
@@ -151,6 +120,14 @@ class _HomeScreenState extends State<HomeScreen> {
           // ─── Quick Stats ───
           SliverToBoxAdapter(
             child: _buildQuickStats(),
+          ),
+
+          // ─── Ad Banner ───
+          SliverToBoxAdapter(
+            child: BannerAdWidget(
+              margin: const EdgeInsets.only(left: 15, right: 15, top: 20),
+              placement: BannerPlacement.homePage,
+            ),
           ),
 
           // ─── Category Section Title ───
@@ -198,19 +175,6 @@ class _HomeScreenState extends State<HomeScreen> {
           // ─── Tutorial Card ───
           SliverToBoxAdapter(
             child: _buildTutorialCard(),
-          ),
-
-          // ─── Ad Banner ───
-          SliverToBoxAdapter(
-            child: statusAd == StatusAd.loaded
-                ? Container(
-                    margin: const EdgeInsets.fromLTRB(20, 0, 20, 15),
-                    alignment: Alignment.center,
-                    width: myBanner!.size.width.toDouble(),
-                    height: myBanner!.size.height.toDouble(),
-                    child: AdWidget(ad: myBanner!),
-                  )
-                : const SizedBox(),
           ),
 
           // Bottom padding for floating nav
@@ -284,59 +248,98 @@ class _HomeScreenState extends State<HomeScreen> {
                 const Icon(Icons.search_rounded, color: kTextMuted, size: 22),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: TypeAheadField<Map<String, dynamic>>(
-                    builder: (context, controller, focusNode) {
-                      return TextField(
-                        controller: controller,
-                        focusNode: focusNode,
-                        autofocus: false,
-                        style: const TextStyle(fontSize: 14),
-                        decoration: InputDecoration(
-                          isDense: true,
-                          border: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                          filled: false,
-                          hintStyle: TextStyle(
-                            color: Colors.grey.shade400,
-                            fontSize: 14,
-                          ),
-                          hintText: 'Cari template surat...',
-                          contentPadding: EdgeInsets.zero,
-                        ),
+                  child: BlocBuilder<SubscriptionCubit, SubscriptionState>(
+                    builder: (context, state) {
+                      return TypeAheadField<Map<String, dynamic>>(
+                        builder: (context, controller, focusNode) {
+                          return TextField(
+                            controller: controller,
+                            focusNode: focusNode,
+                            autofocus: false,
+                            style: const TextStyle(fontSize: 14),
+                            decoration: InputDecoration(
+                              isDense: true,
+                              border: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              errorBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              filled: false,
+                              hintStyle: TextStyle(
+                                color: Colors.grey.shade400,
+                                fontSize: 14,
+                              ),
+                              hintText: 'Cari template surat...',
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                          );
+                        },
+                        suggestionsCallback: (pattern) async {
+                          return searchLetterData(pattern);
+                        },
+                        itemBuilder: (context, suggestion) {
+                          bool isPremiumLetter =
+                              premiumLetterMap[suggestion['key']] == true;
+                          return ListTile(
+                            leading: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: kPrimary.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(Icons.description_outlined,
+                                  color: kPrimary, size: 20),
+                            ),
+                            title: Text(
+                              suggestion['title'],
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.w500),
+                            ),
+                            trailing: isPremiumLetter
+                                ? Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 3),
+                                    decoration: BoxDecoration(
+                                      gradient: const LinearGradient(
+                                        colors: [
+                                          Color(0xFFD97706),
+                                          Color(0xFFF59E0B)
+                                        ],
+                                      ),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: const Text(
+                                      'PRO',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w800,
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
+                                  )
+                                : null,
+                          );
+                        },
+                        onSelected: (suggestion) {
+                          bool isPremiumLetter =
+                              premiumLetterMap[suggestion['key']] == true;
+                          if (isPremiumLetter && !state.isPremium) {
+                            PremiumGate.show(context);
+                            return;
+                          }
+
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (builder) {
+                            return LetterChooseAccountScreen(
+                              keyLetter: suggestion['key'],
+                              title: suggestion['title'],
+                            );
+                          }));
+                        },
                       );
-                    },
-                    suggestionsCallback: (pattern) async {
-                      return searchLetterData(pattern);
-                    },
-                    itemBuilder: (context, suggestion) {
-                      return ListTile(
-                        leading: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: kPrimary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(Icons.description_outlined,
-                              color: kPrimary, size: 20),
-                        ),
-                        title: Text(
-                          suggestion['title'],
-                          style: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w500),
-                        ),
-                      );
-                    },
-                    onSelected: (suggestion) {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (builder) {
-                        return LetterChooseAccountScreen(
-                          keyLetter: suggestion['key'],
-                          title: suggestion['title'],
-                        );
-                      }));
                     },
                   ),
                 ),

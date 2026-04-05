@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:terator/core/styles.dart';
+import 'package:terator/persentations/ads/widgets/banner_ad_widget.dart';
 import 'package:terator/persentations/faq/screens/faq_item.dart';
 
 class FaqScreen extends StatefulWidget {
@@ -24,6 +25,11 @@ class _FaqScreenState extends State<FaqScreen> {
             parent: AlwaysScrollableScrollPhysics()),
         padding: const EdgeInsets.all(20),
         children: [
+          BannerAdWidget(
+            margin: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
+            placement: BannerPlacement.settingPage,
+          ),
+
           // ─── Header ───
           Container(
             padding: const EdgeInsets.all(20),

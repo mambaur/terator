@@ -9,6 +9,7 @@ import 'package:terator/core/date_setting.dart';
 import 'package:terator/core/loading_overlay.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/models/account_model.dart';
+import 'package:terator/persentations/ads/widgets/banner_ad_widget.dart';
 import 'package:terator/repositories/account_repository.dart';
 import 'package:terator/utils/custom_snackbar.dart';
 
@@ -153,6 +154,10 @@ class _AccountUpdateScreenState extends State<AccountUpdateScreen> {
           physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.all(20),
           children: [
+            BannerAdWidget(
+              margin: EdgeInsets.only(bottom: 15),
+              placement: BannerPlacement.editAccountPage,
+            ),
             // ─── Section: Data Akun ───
             _buildSectionCard(
               icon: Icons.person_rounded,

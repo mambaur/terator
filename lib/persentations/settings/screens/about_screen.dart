@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:terator/core/styles.dart';
+import 'package:terator/persentations/ads/widgets/banner_ad_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutScreen extends StatefulWidget {
@@ -68,6 +69,11 @@ class _AboutScreenState extends State<AboutScreen> {
                 ),
               ],
             ),
+          ),
+
+          BannerAdWidget(
+            margin: EdgeInsets.only(top: 16),
+            placement: BannerPlacement.aboutPage,
           ),
 
           const SizedBox(height: 16),

@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_file_saver/flutter_file_saver.dart';
 import 'package:flutter_native_html_to_pdf/flutter_native_html_to_pdf.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:terator/core/date_setting.dart';
@@ -40,7 +39,6 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
   final LetterRepository _letterRepo = LetterRepository();
   final HtmlEditorController controller = HtmlEditorController();
   final _titleController = TextEditingController();
-  InterstitialAd? _interstitialAd;
 
   bool withSignature = false;
 
@@ -108,22 +106,6 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
 
   @override
   void initState() {
-    if (!kDebugMode) {
-      InterstitialAd.load(
-          adUnitId: kDebugMode
-              ? 'ca-app-pub-3940256099942544/1033173712'
-              : 'ca-app-pub-2465007971338713/3304515640',
-          request: const AdRequest(),
-          adLoadCallback: InterstitialAdLoadCallback(
-            onAdLoaded: (ad) {
-              debugPrint('$ad loaded.');
-              _interstitialAd = ad;
-            },
-            onAdFailedToLoad: (LoadAdError error) {
-              debugPrint('InterstitialAd failed to load: $error');
-            },
-          ));
-    }
     super.initState();
   }
 
@@ -258,10 +240,6 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
                   ),
                 ),
                 onPressed: () async {
-                  if (_interstitialAd != null) {
-                    await _interstitialAd!.show();
-                  }
-
                   if (_titleController.text == '') {
                     Fluttertoast.showToast(msg: "Nama file tidak boleh kosong");
                     return;

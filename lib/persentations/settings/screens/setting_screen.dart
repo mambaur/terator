@@ -1,9 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:terator/core/styles.dart';
+import 'package:terator/persentations/ads/widgets/banner_ad_widget.dart';
 import 'package:terator/persentations/settings/screens/about_screen.dart';
 import 'package:terator/persentations/settings/screens/disclaimer_screen.dart';
 import 'package:terator/persentations/subscription/cubit/subscription_cubit.dart';
@@ -27,20 +26,6 @@ class _SettingScreenState extends State<SettingScreen> {
       'https://play.google.com/store/apps/details?id=com.caraguna.terator';
   // final String _feedbackUrl = 'https://forms.gle/CXNMpwH6XottdEC58';
   // final String _rekomendasi = 'https://forms.gle/etyhdKKXN3TvcE6d9';
-  BannerAd? myBanner;
-
-  BannerAdListener listener() => BannerAdListener(
-        onAdLoaded: (Ad ad) {
-          if (kDebugMode) {
-            print('Ad Loaded.');
-          }
-          setState(() {
-            statusAd = StatusAd.loaded;
-          });
-        },
-      );
-
-  StatusAd statusAd = StatusAd.initial;
 
   Future<void> _launchUrl(String url) async {
     if (!await launchUrl(Uri.parse(url),
@@ -51,24 +36,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   void initState() {
-    if (!kDebugMode) {
-      myBanner = BannerAd(
-        adUnitId: 'ca-app-pub-2465007971338713/8992395637',
-        size: AdSize.banner,
-        request: const AdRequest(),
-        listener: listener(),
-      );
-      myBanner!.load();
-    }
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    if (myBanner != null) {
-      myBanner!.dispose();
-    }
-    super.dispose();
   }
 
   @override
@@ -79,14 +47,10 @@ class _SettingScreenState extends State<SettingScreen> {
         physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.all(20),
         children: [
-          if (statusAd == StatusAd.loaded)
-            Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              alignment: Alignment.center,
-              width: myBanner!.size.width.toDouble(),
-              height: myBanner!.size.height.toDouble(),
-              child: AdWidget(ad: myBanner!),
-            ),
+          BannerAdWidget(
+            margin: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
+            placement: BannerPlacement.settingPage,
+          ),
 
           // ─── Premium Status Card ───
           BlocBuilder<SubscriptionCubit, SubscriptionState>(
@@ -102,8 +66,8 @@ class _SettingScreenState extends State<SettingScreen> {
             child: Column(
               children: [
                 // ─── Contoh Fitur Premium ───
-                _buildPremiumDemoTile(context),
-                _divider(),
+                // _buildPremiumDemoTile(context),
+                // _divider(),
                 _buildSettingTile(
                   icon: Icons.apps_rounded,
                   color: kInfoBlue,
@@ -242,10 +206,7 @@ class _SettingScreenState extends State<SettingScreen> {
     final isPremium = state.isPremium;
     return GestureDetector(
       onTap: () {
-        // Navigator.push(context, MaterialPageRoute(builder: (builder) {
-        //   return const SubscriptionScreen();
-        // }));
-        context.read<SubscriptionCubit>().showPaywall();
+        PremiumGate.show(context);
       },
       child: Container(
         padding: const EdgeInsets.all(20),
@@ -322,6 +283,7 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   // ─── Contoh Fitur Premium Tile ───
+  // ignore: unused_element
   Widget _buildPremiumDemoTile(BuildContext context) {
     return BlocBuilder<SubscriptionCubit, SubscriptionState>(
       builder: (context, state) {
