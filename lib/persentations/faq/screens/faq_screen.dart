@@ -78,7 +78,7 @@ class _FaqScreenState extends State<FaqScreen> {
             number: 1,
             title: "Apakah membuat surat di terator gratis?",
             description:
-                "Iya benar, anda dapat membuat surat pada Aplikasi Terator secara gratis.",
+                "Iya benar, anda dapat membuat surat pada Aplikasi Terator secara gratis. Namun, untuk dapat menikmati fitur secara lengkap, anda dapat berlangganan sesuai paket yang tersedia.",
           ),
           const FaqItem(
             number: 2,
@@ -97,7 +97,7 @@ class _FaqScreenState extends State<FaqScreen> {
             title:
                 "Apakah saya bisa merekomendasikan surat agar menjadi template di terator?",
             description:
-                "Tentu, anda dapat mengirimkan surat anda sendiri ke kami untuk dijadikan sebagai template surat, silahkan masuk ke menu Rekomendasikan Surat pada halaman Pengaturan. Kemudian isi form dan upload surat anda, kami akan segera memproses surat agar menjadi template dan dapat bermanfaat untuk orang lain.",
+                "Tentu, anda dapat mengirimkan surat anda sendiri ke kami untuk dijadikan sebagai template surat, silahkan masuk ke menu tentang aplikasi lalu klik tombol Hubungi Kami.",
           ),
           const FaqItem(
             number: 5,
@@ -110,6 +110,13 @@ class _FaqScreenState extends State<FaqScreen> {
             title: "Apakah template surat akan selalu terupdate?",
             description:
                 "Kami akan berusaha semaksimal mungkin untuk selalu memperbarui template surat agar anda semakin mudah membuat surat sesuai keinginan.",
+          ),
+          const FaqItem(
+            number: 7,
+            title:
+                "Bagaimana jika saya sudah membeli paket premium tapi status di aplikasi masih menunjukkan gratis?",
+            description:
+                "Jika anda sudah membeli paket premium namun status di aplikasi masih menunjukkan gratis, anda dapat mencoba melakukan Kembalikan Pembelian (Restore), tombol ini tersedia pada halaman pengaturan.\n\nAtau silahkan hubungi kami melalui menu tentang aplikasi lalu klik tombol hubungi kami.",
           ),
         ],
       ),

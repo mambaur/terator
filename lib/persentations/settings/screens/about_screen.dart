@@ -152,6 +152,11 @@ class _AboutScreenState extends State<AboutScreen> {
                     ),
                   ),
                 ),
+                Container(
+                    margin: EdgeInsets.only(top: 16),
+                    width: double.infinity,
+                    child: OutlinedButton(
+                        onPressed: () {}, child: Text('Hubungi Kami')))
               ],
             ),
           ),

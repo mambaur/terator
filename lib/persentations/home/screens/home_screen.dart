@@ -21,7 +21,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final String _youtubeUrl = 'https://bit.ly/generate-surat-terator';
+  final String _youtubeUrl =
+      'https://nexadream.id/tutorial-generate-surat-terator';
   List<Map<String, dynamic>> lettersData = letterDataMap(null);
 
   List<Map<String, dynamic>> searchLetterData(String q) {

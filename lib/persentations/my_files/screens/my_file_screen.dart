@@ -16,6 +16,7 @@ import 'package:terator/models/letter_model.dart';
 import 'package:terator/persentations/ads/widgets/banner_ad_widget.dart';
 import 'package:terator/persentations/my_files/cubits/file_cubit/file_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:terator/persentations/my_files/screens/letter_preview_screen.dart';
 import 'package:terator/persentations/my_files/screens/my_file_edit_screen.dart';
 import 'package:terator/repositories/letter_repository.dart';
 import 'package:terator/utils/custom_snackbar.dart';
@@ -337,6 +338,20 @@ class _MyFileScreenState extends State<MyFileScreen> {
             style: const TextStyle(color: kTextSecondary, fontSize: 13),
           ),
           const SizedBox(height: 20),
+          _buildActionTile(
+            icon: Icons.visibility_rounded,
+            color: kViolet,
+            title: 'Preview Surat',
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (builder) {
+                return LetterPreviewScreen(
+                  htmlContent: letter.html ?? '',
+                  title: letter.title ?? 'Preview',
+                );
+              }));
+            },
+          ),
           _buildActionTile(
             icon: Icons.edit_rounded,
             color: kInfoBlue,

@@ -15,6 +15,7 @@ dependencies:
   html_editor_enhanced: ^2.7.1
   package_info_plus: ^9.0.1
   fluttertoast: ^9.0.0
+  flutter_pdfview: ^1.4.4
   loading_animation_widget: ^1.2.0+3
   overlay_loading_progress: ^1.0.0
   cached_network_image: ^3.4.1
