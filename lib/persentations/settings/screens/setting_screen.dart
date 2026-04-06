@@ -206,7 +206,14 @@ class _SettingScreenState extends State<SettingScreen> {
     final isPremium = state.isPremium;
     return GestureDetector(
       onTap: () {
-        PremiumGate.show(context);
+        if (isPremium) {
+          CustomSnackbar.show(context,
+              message:
+                  "🎉 Selamat! Kamu memiliki akses penuh ke fitur premium!",
+              type: SnackbarType.success);
+        } else {
+          PremiumGate.show(context);
+        }
       },
       child: Container(
         padding: const EdgeInsets.all(20),

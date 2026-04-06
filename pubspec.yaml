@@ -2,7 +2,7 @@ name: terator
 description: Template Surat Generator.
 
 publish_to: 'none'
-version: 1.4.0+10
+version: 1.4.1+12
 
 environment:
   sdk: '>=2.18.2 <3.0.0'
