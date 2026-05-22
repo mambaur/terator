@@ -7,7 +7,7 @@ import 'package:path_provider/path_provider.dart';
 
 class DatabaseInstance {
   final String _databaseName = "surat_generator.db";
-  final int _databaseVersion = 1;
+  final int _databaseVersion = 2;
 
   // Account Table
   final String accountTable = 'accounts';
@@ -45,6 +45,15 @@ class DatabaseInstance {
   final String letterCreatedAt = 'created_at';
   final String letterUpdatedAt = 'updated_at';
 
+  // Bookmark Table — stores user-bookmarked letter templates (by template key)
+  final String bookmarkTable = 'bookmarks';
+  final String bookmarkId = 'id';
+  final String bookmarkLetterKey = 'letter_key';
+  final String bookmarkTitle = 'title';
+  final String bookmarkSubtitle = 'subtitle';
+  final String bookmarkCategoryTitle = 'category_title';
+  final String bookmarkCreatedAt = 'created_at';
+
   // only have a single app-wide reference to the database
   Database? _db;
   Future<Database> get init async {
@@ -59,7 +68,24 @@ class DatabaseInstance {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, _databaseName);
     return await openDatabase(path,
-        version: _databaseVersion, onCreate: _onCreate);
+        version: _databaseVersion,
+        onCreate: _onCreate,
+        onUpgrade: _onUpgrade);
+  }
+
+  Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('''
+            CREATE TABLE $bookmarkTable (
+              $bookmarkId INTEGER PRIMARY KEY AUTOINCREMENT,
+              $bookmarkLetterKey TEXT NOT NULL UNIQUE,
+              $bookmarkTitle TEXT NULL,
+              $bookmarkSubtitle TEXT NULL,
+              $bookmarkCategoryTitle TEXT NULL,
+              $bookmarkCreatedAt TEXT NULL
+            )
+            ''');
+    }
   }
 
   // SQL code to create the database table
@@ -101,6 +127,17 @@ class DatabaseInstance {
             $letterWithSignature INTEGER NULL,
             $letterCreatedAt TEXT NULL,
             $letterUpdatedAt TEXT NULL
+          )
+          ''');
+
+    await db.execute('''
+          CREATE TABLE $bookmarkTable (
+            $bookmarkId INTEGER PRIMARY KEY AUTOINCREMENT,
+            $bookmarkLetterKey TEXT NOT NULL UNIQUE,
+            $bookmarkTitle TEXT NULL,
+            $bookmarkSubtitle TEXT NULL,
+            $bookmarkCategoryTitle TEXT NULL,
+            $bookmarkCreatedAt TEXT NULL
           )
           ''');
   }

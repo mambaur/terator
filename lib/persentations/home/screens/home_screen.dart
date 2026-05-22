@@ -4,12 +4,11 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/data/letter_data.dart';
 import 'package:terator/persentations/ads/widgets/banner_ad_widget.dart';
-import 'package:terator/persentations/letters/screens/letter_choose_account_screen.dart';
+import 'package:terator/persentations/bookmarks/cubit/bookmark_cubit.dart';
+import 'package:terator/persentations/bookmarks/screens/letter_bookmark_list_screen.dart';
+import 'package:terator/persentations/letters/screens/letter_detail_screen.dart';
 import 'package:terator/persentations/letters/screens/letter_screen.dart';
-import 'package:terator/persentations/subscription/cubit/subscription_cubit.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../../subscription/widgets/premium_gate.dart';
 
 enum StatusAd { initial, loaded }
 
@@ -173,6 +172,11 @@ class _HomeScreenState extends State<HomeScreen> {
             child: _buildPopularSection(context),
           ),
 
+          // ─── Bookmarked Templates ───
+          SliverToBoxAdapter(
+            child: _buildBookmarkSection(context),
+          ),
+
           // ─── Tutorial Card ───
           SliverToBoxAdapter(
             child: _buildTutorialCard(),
@@ -249,98 +253,88 @@ class _HomeScreenState extends State<HomeScreen> {
                 const Icon(Icons.search_rounded, color: kTextMuted, size: 22),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: BlocBuilder<SubscriptionCubit, SubscriptionState>(
-                    builder: (context, state) {
-                      return TypeAheadField<Map<String, dynamic>>(
-                        builder: (context, controller, focusNode) {
-                          return TextField(
-                            controller: controller,
-                            focusNode: focusNode,
-                            autofocus: false,
-                            style: const TextStyle(fontSize: 14),
-                            decoration: InputDecoration(
-                              isDense: true,
-                              border: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              errorBorder: InputBorder.none,
-                              disabledBorder: InputBorder.none,
-                              filled: false,
-                              hintStyle: TextStyle(
-                                color: Colors.grey.shade400,
-                                fontSize: 14,
-                              ),
-                              hintText: 'Cari template surat...',
-                              contentPadding: EdgeInsets.zero,
-                            ),
-                          );
-                        },
-                        suggestionsCallback: (pattern) async {
-                          return searchLetterData(pattern);
-                        },
-                        itemBuilder: (context, suggestion) {
-                          bool isPremiumLetter =
-                              premiumLetterMap[suggestion['key']] == true;
-                          return ListTile(
-                            leading: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: kPrimary.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Icon(Icons.description_outlined,
-                                  color: kPrimary, size: 20),
-                            ),
-                            title: Text(
-                              suggestion['title'],
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.w500),
-                            ),
-                            trailing: isPremiumLetter
-                                ? Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 3),
-                                    decoration: BoxDecoration(
-                                      gradient: const LinearGradient(
-                                        colors: [
-                                          Color(0xFFD97706),
-                                          Color(0xFFF59E0B)
-                                        ],
-                                      ),
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                    child: const Text(
-                                      'PRO',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w800,
-                                        letterSpacing: 0.5,
-                                      ),
-                                    ),
-                                  )
-                                : null,
-                          );
-                        },
-                        onSelected: (suggestion) {
-                          bool isPremiumLetter =
-                              premiumLetterMap[suggestion['key']] == true;
-                          if (isPremiumLetter && !state.isPremium) {
-                            PremiumGate.show(context);
-                            return;
-                          }
-
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (builder) {
-                            return LetterChooseAccountScreen(
-                              keyLetter: suggestion['key'],
-                              title: suggestion['title'],
-                            );
-                          }));
-                        },
+                  child: TypeAheadField<Map<String, dynamic>>(
+                    builder: (context, controller, focusNode) {
+                      return TextField(
+                        controller: controller,
+                        focusNode: focusNode,
+                        autofocus: false,
+                        style: const TextStyle(fontSize: 14),
+                        decoration: InputDecoration(
+                          isDense: true,
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          filled: false,
+                          hintStyle: TextStyle(
+                            color: Colors.grey.shade400,
+                            fontSize: 14,
+                          ),
+                          hintText: 'Cari template surat...',
+                          contentPadding: EdgeInsets.zero,
+                        ),
                       );
+                    },
+                    suggestionsCallback: (pattern) async {
+                      return searchLetterData(pattern);
+                    },
+                    itemBuilder: (context, suggestion) {
+                      bool isPremiumLetter =
+                          premiumLetterMap[suggestion['key']] == true;
+                      return ListTile(
+                        leading: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: kPrimary.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(Icons.description_outlined,
+                              color: kPrimary, size: 20),
+                        ),
+                        title: Text(
+                          suggestion['title'],
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w500),
+                        ),
+                        trailing: isPremiumLetter
+                            ? Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 3),
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      Color(0xFFD97706),
+                                      Color(0xFFF59E0B)
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: const Text(
+                                  'PRO',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              )
+                            : null,
+                      );
+                    },
+                    onSelected: (suggestion) {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (builder) {
+                        return LetterDetailScreen(
+                          keyLetter: suggestion['key'],
+                          title: suggestion['title'],
+                          subtitle: suggestion['subtitle'],
+                        );
+                      }));
                     },
                   ),
                 ),
@@ -577,7 +571,7 @@ class _HomeScreenState extends State<HomeScreen> {
               return GestureDetector(
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (builder) {
-                    return LetterChooseAccountScreen(
+                    return LetterDetailScreen(
                       keyLetter: item['key'],
                       title: item['title'],
                     );
@@ -620,6 +614,163 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  // ─── Bookmark Section ───
+  Widget _buildBookmarkSection(BuildContext context) {
+    return BlocBuilder<BookmarkCubit, BookmarkState>(
+      builder: (context, state) {
+        if (state.bookmarks.isEmpty) {
+          return const SizedBox.shrink();
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 28, 20, 14),
+              child: Row(
+                children: [
+                  Container(
+                    width: 4,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [kPrimary, kViolet],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'Surat Tersimpan',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: kTextPrimary,
+                    ),
+                  ),
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (builder) =>
+                              const LetterBookmarkListScreen(),
+                        ),
+                      );
+                    },
+                    child: Row(
+                      children: const [
+                        Text(
+                          'Lihat Semua',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: kPrimary,
+                          ),
+                        ),
+                        SizedBox(width: 2),
+                        Icon(Icons.arrow_forward_rounded,
+                            color: kPrimary, size: 16),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ...state.bookmarks.take(3).map((bookmark) {
+              final isPremiumLetter =
+                  premiumLetterMap[bookmark.letterKey] == true;
+              return Container(
+                margin: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+                decoration: AppTheme.cardDecoration(),
+                child: Material(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(kRadiusLg),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(kRadiusLg),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (builder) => LetterDetailScreen(
+                            keyLetter: bookmark.letterKey ?? '',
+                            title: bookmark.title ?? '',
+                            subtitle: bookmark.subtitle,
+                            categoryTitle: bookmark.categoryTitle,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: kPrimary.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(kRadiusSm),
+                            ),
+                            child: const Icon(
+                              Icons.bookmark_rounded,
+                              color: kPrimary,
+                              size: 20,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              bookmark.title ?? '',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                                color: kTextPrimary,
+                              ),
+                            ),
+                          ),
+                          if (isPremiumLetter)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFFD97706),
+                                    Color(0xFFF59E0B)
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: const Text(
+                                'PRO',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            )
+                          else
+                            const Icon(Icons.arrow_forward_ios_rounded,
+                                color: kTextMuted, size: 14),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ],
+        );
+      },
     );
   }
 

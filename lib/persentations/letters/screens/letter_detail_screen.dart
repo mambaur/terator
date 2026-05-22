@@ -1,0 +1,306 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:html_editor_enhanced/html_editor.dart';
+import 'package:terator/core/styles.dart';
+import 'package:terator/data/letter_data.dart';
+import 'package:terator/models/account_model.dart';
+import 'package:terator/persentations/bookmarks/cubit/bookmark_cubit.dart';
+import 'package:terator/persentations/letters/screens/letter_choose_account_screen.dart';
+import 'package:terator/persentations/subscription/cubit/subscription_cubit.dart';
+import 'package:terator/persentations/subscription/widgets/premium_gate.dart';
+import 'package:terator/utils/custom_snackbar.dart';
+
+class LetterDetailScreen extends StatefulWidget {
+  final String keyLetter;
+  final String title;
+  final String? subtitle;
+  final String? categoryTitle;
+  const LetterDetailScreen({
+    super.key,
+    required this.keyLetter,
+    required this.title,
+    this.subtitle,
+    this.categoryTitle,
+  });
+
+  @override
+  State<LetterDetailScreen> createState() => _LetterDetailScreenState();
+}
+
+class _LetterDetailScreenState extends State<LetterDetailScreen> {
+  final HtmlEditorController _previewController = HtmlEditorController();
+
+  // Dummy sample account so the preview shows realistic content
+  AccountModel get _sampleAccount => AccountModel(
+        name: 'Budi Santoso',
+        parentName: 'Ahmad Santoso',
+        placeAndDateOfBirth: 'Jakarta, 12 Januari 1995',
+        gender: 'Laki-laki',
+        religion: 'Islam',
+        lastEducation: 'S1',
+        educationNumber: '20240001',
+        educationClass: 'XII IPA 1',
+        educationInstitution: 'SMA Negeri 1 Jakarta',
+        educationFaculty: 'Teknik Informatika',
+        educationStudyProgram: 'Teknik Informatika',
+        educationAddress: 'Jl. Pendidikan No. 10, Jakarta',
+        heightOrWeight: '170/65',
+        telephone: '081234567890',
+        email: 'budi.santoso@example.com',
+        maritalStatus: 'Belum Menikah',
+        address: 'Jl. Merdeka No. 17, Jakarta Pusat',
+        letterCityWritten: 'Jakarta',
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isPremiumLetter = premiumLetterMap[widget.keyLetter] == true;
+    final String previewHtml = LetterData.html(
+      widget.keyLetter,
+      account: _sampleAccount,
+    );
+
+    return Scaffold(
+      backgroundColor: kSurface,
+      appBar: AppBar(
+        title: Text(widget.title),
+        backgroundColor: kPrimary,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded),
+          onPressed: () => Navigator.pop(context),
+        ),
+        actions: [
+          BlocBuilder<BookmarkCubit, BookmarkState>(
+            builder: (context, state) {
+              final bool isBookmarked = state.keys.contains(widget.keyLetter);
+              return IconButton(
+                tooltip: isBookmarked ? 'Hapus dari bookmark' : 'Simpan ke bookmark',
+                icon: Icon(
+                  isBookmarked
+                      ? Icons.bookmark_rounded
+                      : Icons.bookmark_border_rounded,
+                  color: Colors.white,
+                ),
+                onPressed: () async {
+                  await context.read<BookmarkCubit>().toggle(
+                        letterKey: widget.keyLetter,
+                        title: widget.title,
+                        subtitle: widget.subtitle,
+                        categoryTitle: widget.categoryTitle,
+                      );
+                  if (!context.mounted) return;
+                  CustomSnackbar.show(
+                    context,
+                    type: SnackbarType.success,
+                    message: isBookmarked
+                        ? 'Template dihapus dari bookmark'
+                        : 'Template disimpan ke bookmark',
+                  );
+                },
+              );
+            },
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          // Header info chip row
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+            color: kPrimary,
+            child: Row(
+              children: [
+                if (widget.categoryTitle != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(kRadiusSm),
+                    ),
+                    child: Text(
+                      widget.categoryTitle!,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                if (widget.categoryTitle != null) const SizedBox(width: 8),
+                if (widget.subtitle != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(kRadiusSm),
+                    ),
+                    child: Text(
+                      widget.subtitle!,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                const Spacer(),
+                if (isPremiumLetter)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFD97706), Color(0xFFF59E0B)],
+                      ),
+                      borderRadius: BorderRadius.circular(kRadiusSm),
+                    ),
+                    child: const Text(
+                      'PRO',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+
+          // Preview label
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+            child: Row(
+              children: [
+                Container(
+                  width: 4,
+                  height: 18,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: kGradientPrimary,
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                const Text(
+                  'Preview Template',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: kTextPrimary,
+                  ),
+                ),
+                const Spacer(),
+                const Icon(Icons.visibility_outlined,
+                    color: kTextMuted, size: 18),
+              ],
+            ),
+          ),
+
+          // HTML Preview (read-only)
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+              decoration: BoxDecoration(
+                color: kCardWhite,
+                borderRadius: BorderRadius.circular(kRadiusLg),
+                boxShadow: kShadowSm,
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: IgnorePointer(
+                child: HtmlEditor(
+                  controller: _previewController,
+                  callbacks: Callbacks(onInit: () {
+                    _previewController.setText(previewHtml);
+                  }),
+                  htmlToolbarOptions: const HtmlToolbarOptions(
+                    defaultToolbarButtons: [],
+                    toolbarPosition: ToolbarPosition.custom,
+                  ),
+                  htmlEditorOptions: const HtmlEditorOptions(
+                    disabled: true,
+                    shouldEnsureVisible: false,
+                  ),
+                  otherOptions: OtherOptions(
+                    height: MediaQuery.of(context).size.height,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+          decoration: BoxDecoration(
+            color: kCardWhite,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 12,
+                offset: const Offset(0, -2),
+              ),
+            ],
+          ),
+          child: BlocBuilder<SubscriptionCubit, SubscriptionState>(
+            builder: (context, subState) {
+              return Container(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(colors: kGradientPrimary),
+                  borderRadius: BorderRadius.circular(kRadiusMd),
+                  boxShadow: kShadowPrimary,
+                ),
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(kRadiusMd),
+                    ),
+                    minimumSize: const Size.fromHeight(52),
+                  ),
+                  icon: const Icon(Icons.edit_document, color: Colors.white),
+                  label: const Text(
+                    'Gunakan Template',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                      letterSpacing: 0.3,
+                      fontSize: 15,
+                    ),
+                  ),
+                  onPressed: () {
+                    if (isPremiumLetter && !subState.isPremium) {
+                      PremiumGate.show(context);
+                      return;
+                    }
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (builder) => LetterChooseAccountScreen(
+                          keyLetter: widget.keyLetter,
+                          title: widget.title,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}

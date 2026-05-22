@@ -6,6 +6,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/persentations/account/account_cubits/cubit/account_cubit.dart';
+import 'package:terator/persentations/bookmarks/cubit/bookmark_cubit.dart';
 import 'package:terator/persentations/my_files/cubits/file_cubit/file_cubit.dart';
 import 'package:terator/persentations/subscription/cubit/subscription_cubit.dart';
 import 'package:terator/persentations/navbar.dart';
@@ -36,6 +37,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => SubscriptionCubit()..init(),
+        ),
+        BlocProvider(
+          create: (context) => BookmarkCubit()..load(),
         ),
       ],
       child: MaterialApp(
