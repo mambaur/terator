@@ -35,7 +35,8 @@ class _LetterPreviewScreenState extends State<LetterPreviewScreen> {
   Future<void> _generatePdf() async {
     try {
       final tempDir = await getTemporaryDirectory();
-      final html = '<div style="margin: 50px">${widget.htmlContent}</div>';
+      final html =
+          '<div style="margin: 105px 90px">${widget.htmlContent}</div>';
       final timestamp = DateTime.now().millisecondsSinceEpoch;
 
       final generatedPdf = await HtmlToPdfConverter().convertHtmlToPdf(

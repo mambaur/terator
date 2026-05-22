@@ -375,7 +375,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('50+',
+                      Text('100+',
                           style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,

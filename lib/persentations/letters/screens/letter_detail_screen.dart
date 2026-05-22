@@ -76,7 +76,8 @@ class _LetterDetailScreenState extends State<LetterDetailScreen> {
             builder: (context, state) {
               final bool isBookmarked = state.keys.contains(widget.keyLetter);
               return IconButton(
-                tooltip: isBookmarked ? 'Hapus dari bookmark' : 'Simpan ke bookmark',
+                tooltip:
+                    isBookmarked ? 'Hapus dari bookmark' : 'Simpan ke bookmark',
                 icon: Icon(
                   isBookmarked
                       ? Icons.bookmark_rounded
@@ -105,6 +106,8 @@ class _LetterDetailScreenState extends State<LetterDetailScreen> {
         ],
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // Header info chip row
           Container(
@@ -112,11 +115,13 @@ class _LetterDetailScreenState extends State<LetterDetailScreen> {
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
             color: kPrimary,
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (widget.categoryTitle != null)
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 5),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.18),
                       borderRadius: BorderRadius.circular(kRadiusSm),
@@ -133,8 +138,8 @@ class _LetterDetailScreenState extends State<LetterDetailScreen> {
                 if (widget.categoryTitle != null) const SizedBox(width: 8),
                 if (widget.subtitle != null)
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 5),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.18),
                       borderRadius: BorderRadius.circular(kRadiusSm),
@@ -148,11 +153,11 @@ class _LetterDetailScreenState extends State<LetterDetailScreen> {
                       ),
                     ),
                   ),
-                const Spacer(),
+                // const Spacer(),
                 if (isPremiumLetter)
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 5),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
                         colors: [Color(0xFFD97706), Color(0xFFF59E0B)],
@@ -174,36 +179,39 @@ class _LetterDetailScreenState extends State<LetterDetailScreen> {
           ),
 
           // Preview label
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-            child: Row(
-              children: [
-                Container(
-                  width: 4,
-                  height: 18,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: kGradientPrimary,
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                const Text(
-                  'Preview Template',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: kTextPrimary,
-                  ),
-                ),
-                const Spacer(),
-                const Icon(Icons.visibility_outlined,
-                    color: kTextMuted, size: 18),
-              ],
-            ),
+          // Padding(
+          //   padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+          //   child: Row(
+          //     children: [
+          //       Container(
+          //         width: 4,
+          //         height: 18,
+          //         decoration: BoxDecoration(
+          //           gradient: const LinearGradient(
+          //             colors: kGradientPrimary,
+          //             begin: Alignment.topCenter,
+          //             end: Alignment.bottomCenter,
+          //           ),
+          //           borderRadius: BorderRadius.circular(2),
+          //         ),
+          //       ),
+          //       const SizedBox(width: 8),
+          //       const Text(
+          //         'Preview Template',
+          //         style: TextStyle(
+          //           fontSize: 16,
+          //           fontWeight: FontWeight.w700,
+          //           color: kTextPrimary,
+          //         ),
+          //       ),
+          //       const Spacer(),
+          //       const Icon(Icons.visibility_outlined,
+          //           color: kTextMuted, size: 18),
+          //     ],
+          //   ),
+          // ),
+          SizedBox(
+            height: 16,
           ),
 
           // HTML Preview (read-only)

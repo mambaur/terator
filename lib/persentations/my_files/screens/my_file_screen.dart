@@ -38,7 +38,7 @@ class _MyFileScreenState extends State<MyFileScreen> {
     LoadingOverlay.show(context);
     var targetPath = await _localPath;
     var targetFileName = name;
-    var html = '<div style="margin: 50px">$htmlData</div>';
+    var html = '<div style="margin: 105px 90px">$htmlData</div>';
 
     var generatedPdfFile = await HtmlToPdfConverter().convertHtmlToPdf(
         html: html, targetDirectory: targetPath!, targetName: targetFileName);
@@ -59,7 +59,7 @@ class _MyFileScreenState extends State<MyFileScreen> {
     LoadingOverlay.show(context);
     var targetPath = await _localPath;
     var targetFileName = name;
-    var html = '<div style="margin: 50px">$htmlData</div>';
+    var html = '<div style="margin: 105px 90px">$htmlData</div>';
 
     var generatedPdfFile = await HtmlToPdfConverter().convertHtmlToPdf(
         html: html,

@@ -43,6 +43,16 @@ import 'package:terator/data/letter_functions/pekerjaan/surat_pengunduran_diri.d
 import 'package:terator/data/letter_functions/pekerjaan/surat_permohonan_izin_cuti_kerja.dart';
 import 'package:terator/data/letter_functions/pekerjaan/surat_permohonan_magang_kerja.dart';
 import 'package:terator/data/letter_functions/pekerjaan/surat_pernyataan_kesediaan_bekerja_penuh_waktu.dart';
+import 'package:terator/data/letter_functions/pekerjaan/surat_permohonan_kenaikan_gaji.dart';
+import 'package:terator/data/letter_functions/pekerjaan/surat_permohonan_kenaikan_jabatan.dart';
+import 'package:terator/data/letter_functions/pekerjaan/surat_permohonan_mutasi_kerja.dart';
+import 'package:terator/data/letter_functions/pekerjaan/surat_permohonan_perpanjangan_kontrak_kerja.dart';
+import 'package:terator/data/letter_functions/pekerjaan/surat_permohonan_cuti_melahirkan.dart';
+import 'package:terator/data/letter_functions/pekerjaan/surat_permohonan_reimbursement_biaya.dart';
+import 'package:terator/data/letter_functions/pekerjaan/surat_permohonan_surat_keterangan_kerja.dart';
+import 'package:terator/data/letter_functions/pekerjaan/surat_pernyataan_tidak_bekerja_di_tempat_lain.dart';
+import 'package:terator/data/letter_functions/pekerjaan/surat_pernyataan_kerahasiaan_perusahaan.dart';
+import 'package:terator/data/letter_functions/pekerjaan/surat_pernyataan_bersedia_mengikuti_peraturan_perusahaan.dart';
 import 'package:terator/data/letter_functions/pribadi/surat_pernyataan_kehilangan_ijazah.dart';
 import 'package:terator/data/letter_functions/pribadi/surat_pernyataan_kesanggupan_membayar_ukt.dart';
 import 'package:terator/data/letter_functions/pribadi/surat_pernyataan_pemilik_tempat_tinggal.dart';
@@ -62,6 +72,16 @@ import 'package:terator/data/letter_functions/sekolah/surat_permohonan_beasiswa.
 import 'package:terator/data/letter_functions/sekolah/surat_permohonan_pindah_sekolah.dart';
 import 'package:terator/data/letter_functions/sekolah/surat_pernyataan_tidak_menerima_beasiswa.dart';
 import 'package:terator/data/letter_functions/sekolah/surat_persetujuan_orang_tua.dart';
+import 'package:terator/data/letter_functions/sekolah/surat_permohonan_cuti_akademik.dart';
+import 'package:terator/data/letter_functions/sekolah/surat_permohonan_aktif_kembali_kuliah.dart';
+import 'package:terator/data/letter_functions/sekolah/surat_permohonan_dispensasi.dart';
+import 'package:terator/data/letter_functions/sekolah/surat_permohonan_pindah_jurusan.dart';
+import 'package:terator/data/letter_functions/sekolah/surat_permohonan_keringanan_biaya_spp.dart';
+import 'package:terator/data/letter_functions/sekolah/surat_permohonan_pengantar_penelitian.dart';
+import 'package:terator/data/letter_functions/sekolah/surat_permohonan_pengantar_magang.dart';
+import 'package:terator/data/letter_functions/sekolah/surat_permohonan_ujian_susulan.dart';
+import 'package:terator/data/letter_functions/sekolah/surat_permohonan_surat_keterangan_aktif_kuliah.dart';
+import 'package:terator/data/letter_functions/sekolah/surat_pernyataan_bebas_plagiarisme.dart';
 import 'package:terator/data/letter_functions/umum/surat_permohonan_maaf.dart';
 import 'package:terator/data/letter_functions/umum/surat_pernyataan_belum_menikah.dart';
 import 'package:terator/data/letter_functions/umum/surat_pernyataan_cerai.dart';
@@ -140,6 +160,57 @@ class LetterData {
             "title": "Surat Perjanjian Tidak Mengulangi Kesalahan",
             "subtitle": "SMP/SMA"
           },
+          // ─── 10 Surat Sekolah Baru ───
+          {
+            "key": "surat_permohonan_cuti_akademik",
+            "title": "Surat Permohonan Cuti Akademik",
+            "subtitle": "Kuliah/Kampus"
+          },
+          {
+            "key": "surat_permohonan_aktif_kembali_kuliah",
+            "title": "Surat Permohonan Aktif Kembali Kuliah",
+            "subtitle": "Kuliah/Kampus"
+          },
+          {
+            "key": "surat_permohonan_dispensasi",
+            "title": "Surat Permohonan Dispensasi",
+            "subtitle": "SMP/SMA"
+          },
+          {
+            "key": "surat_permohonan_pindah_jurusan",
+            "title": "Surat Permohonan Pindah Jurusan",
+            "subtitle": "Kuliah/Kampus"
+          },
+          {
+            "key": "surat_permohonan_keringanan_biaya_spp",
+            "title": "Surat Permohonan Keringanan Biaya SPP",
+            "subtitle": "SMP/SMA"
+          },
+          {
+            "key": "surat_permohonan_pengantar_penelitian",
+            "title": "Surat Permohonan Surat Pengantar Penelitian",
+            "subtitle": "Kuliah/Kampus"
+          },
+          {
+            "key": "surat_permohonan_pengantar_magang",
+            "title": "Surat Permohonan Surat Pengantar Magang/PKL",
+            "subtitle": "SMP/SMA"
+          },
+          {
+            "key": "surat_permohonan_ujian_susulan",
+            "title": "Surat Permohonan Mengikuti Ujian Susulan",
+            "subtitle": "SMP/SMA"
+          },
+          {
+            "key": "surat_permohonan_surat_keterangan_aktif_kuliah",
+            "title": "Surat Permohonan Surat Keterangan Aktif Kuliah",
+            "subtitle": "Kuliah/Kampus"
+          },
+          {
+            "key": "surat_pernyataan_bebas_plagiarisme",
+            "title": "Surat Pernyataan Bebas Plagiarisme",
+            "subtitle": "Kuliah/Kampus"
+          },
         ]
       },
       {
@@ -166,6 +237,47 @@ class LetterData {
           {
             "key": "surat_lamaran_pekerjaan",
             "title": "Surat Lamaran Pekerjaan"
+          },
+          // ─── 10 Surat Pekerjaan Baru ───
+          {
+            "key": "surat_permohonan_kenaikan_gaji",
+            "title": "Surat Permohonan Kenaikan Gaji"
+          },
+          {
+            "key": "surat_permohonan_kenaikan_jabatan",
+            "title": "Surat Permohonan Kenaikan Jabatan"
+          },
+          {
+            "key": "surat_permohonan_mutasi_kerja",
+            "title": "Surat Permohonan Mutasi Kerja"
+          },
+          {
+            "key": "surat_permohonan_perpanjangan_kontrak_kerja",
+            "title": "Surat Permohonan Perpanjangan Kontrak Kerja"
+          },
+          {
+            "key": "surat_permohonan_cuti_melahirkan",
+            "title": "Surat Permohonan Cuti Melahirkan"
+          },
+          {
+            "key": "surat_permohonan_reimbursement_biaya",
+            "title": "Surat Permohonan Reimbursement Biaya"
+          },
+          {
+            "key": "surat_permohonan_surat_keterangan_kerja",
+            "title": "Surat Permohonan Surat Keterangan Kerja"
+          },
+          {
+            "key": "surat_pernyataan_tidak_bekerja_di_tempat_lain",
+            "title": "Surat Pernyataan Tidak Bekerja di Tempat Lain"
+          },
+          {
+            "key": "surat_pernyataan_kerahasiaan_perusahaan",
+            "title": "Surat Pernyataan Kerahasiaan Perusahaan"
+          },
+          {
+            "key": "surat_pernyataan_bersedia_mengikuti_peraturan_perusahaan",
+            "title": "Surat Pernyataan Bersedia Mengikuti Peraturan Perusahaan"
           },
         ]
       },
@@ -451,6 +563,57 @@ List<Map<String, dynamic>> letterDataMap(String? image,
       "title": "Surat Perjanjian Tidak Mengulangi Kesalahan",
       "html": suratPerjanjianTidakMengulangiKesalahan(letter, image, account)
     },
+    // ─── Sekolah (10 new) ───
+    {
+      "key": "surat_permohonan_cuti_akademik",
+      "title": "Surat Permohonan Cuti Akademik",
+      "html": suratPermohonanCutiAkademik(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_aktif_kembali_kuliah",
+      "title": "Surat Permohonan Aktif Kembali Kuliah",
+      "html": suratPermohonanAktifKembaliKuliah(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_dispensasi",
+      "title": "Surat Permohonan Dispensasi",
+      "html": suratPermohonanDispensasi(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_pindah_jurusan",
+      "title": "Surat Permohonan Pindah Jurusan",
+      "html": suratPermohonanPindahJurusan(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_keringanan_biaya_spp",
+      "title": "Surat Permohonan Keringanan Biaya SPP",
+      "html": suratPermohonanKeringananBiayaSpp(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_pengantar_penelitian",
+      "title": "Surat Permohonan Surat Pengantar Penelitian",
+      "html": suratPermohonanPengantarPenelitian(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_pengantar_magang",
+      "title": "Surat Permohonan Surat Pengantar Magang/PKL",
+      "html": suratPermohonanPengantarMagang(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_ujian_susulan",
+      "title": "Surat Permohonan Mengikuti Ujian Susulan",
+      "html": suratPermohonanUjianSusulan(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_surat_keterangan_aktif_kuliah",
+      "title": "Surat Permohonan Surat Keterangan Aktif Kuliah",
+      "html": suratPermohonanSuratKeteranganAktifKuliah(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_bebas_plagiarisme",
+      "title": "Surat Pernyataan Bebas Plagiarisme",
+      "html": suratPernyataanBebasPlagiarisme(letter, image, account)
+    },
     // ─── Pekerjaan ───
     {
       "key": "surat_permohonan_magang_kerja",
@@ -491,6 +654,58 @@ List<Map<String, dynamic>> letterDataMap(String? image,
       "key": "surat_lamaran_pekerjaan",
       "title": "Surat Lamaran Pekerjaan",
       "html": suratLamaranPekerjaan(letter, image, account)
+    },
+    // ─── Pekerjaan (10 new) ───
+    {
+      "key": "surat_permohonan_kenaikan_gaji",
+      "title": "Surat Permohonan Kenaikan Gaji",
+      "html": suratPermohonanKenaikanGaji(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_kenaikan_jabatan",
+      "title": "Surat Permohonan Kenaikan Jabatan",
+      "html": suratPermohonanKenaikanJabatan(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_mutasi_kerja",
+      "title": "Surat Permohonan Mutasi Kerja",
+      "html": suratPermohonanMutasiKerja(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_perpanjangan_kontrak_kerja",
+      "title": "Surat Permohonan Perpanjangan Kontrak Kerja",
+      "html": suratPermohonanPerpanjanganKontrakKerja(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_cuti_melahirkan",
+      "title": "Surat Permohonan Cuti Melahirkan",
+      "html": suratPermohonanCutiMelahirkan(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_reimbursement_biaya",
+      "title": "Surat Permohonan Reimbursement Biaya",
+      "html": suratPermohonanReimbursementBiaya(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_surat_keterangan_kerja",
+      "title": "Surat Permohonan Surat Keterangan Kerja",
+      "html": suratPermohonanSuratKeteranganKerja(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_tidak_bekerja_di_tempat_lain",
+      "title": "Surat Pernyataan Tidak Bekerja di Tempat Lain",
+      "html": suratPernyataanTidakBekerjaDiTempatLain(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_kerahasiaan_perusahaan",
+      "title": "Surat Pernyataan Kerahasiaan Perusahaan",
+      "html": suratPernyataanKerahasiaanPerusahaan(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_bersedia_mengikuti_peraturan_perusahaan",
+      "title": "Surat Pernyataan Bersedia Mengikuti Peraturan Perusahaan",
+      "html":
+          suratPernyataanBersediaMengikutiPeraturanPerusahaan(letter, image, account)
     },
     // ─── Umum ───
     {
