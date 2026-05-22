@@ -47,6 +47,14 @@ import 'package:terator/data/letter_functions/pribadi/surat_pernyataan_kehilanga
 import 'package:terator/data/letter_functions/pribadi/surat_pernyataan_kesanggupan_membayar_ukt.dart';
 import 'package:terator/data/letter_functions/pribadi/surat_pernyataan_pemilik_tempat_tinggal.dart';
 import 'package:terator/data/letter_functions/pribadi/surat_persetujuan_suami_istri.dart';
+import 'package:terator/data/letter_functions/pribadi/surat_pernyataan_tanggung_jawab_mutlak.dart';
+import 'package:terator/data/letter_functions/pribadi/surat_pernyataan_bersedia_ditempatkan.dart';
+import 'package:terator/data/letter_functions/pribadi/surat_pernyataan_tidak_menuntut.dart';
+import 'package:terator/data/letter_functions/pribadi/surat_pernyataan_kepemilikan_kendaraan.dart';
+import 'package:terator/data/letter_functions/pribadi/surat_kuasa_pengambilan_dokumen.dart';
+import 'package:terator/data/letter_functions/pribadi/surat_pernyataan_kebenaran_data_diri.dart';
+import 'package:terator/data/letter_functions/pribadi/surat_pernyataan_hak_asuh_anak.dart';
+import 'package:terator/data/letter_functions/pribadi/surat_pernyataan_penggunaan_nama.dart';
 import 'package:terator/data/letter_functions/sekolah/surat_izin_tidak_masuk_sekolah.dart';
 import 'package:terator/data/letter_functions/sekolah/surat_keterangan_penghasilan_orang_tua.dart';
 import 'package:terator/data/letter_functions/sekolah/surat_perjanjian_tidak_mengulangi_kesalahan.dart';
@@ -283,6 +291,39 @@ class LetterData {
             "key": "surat_pernyataan_kehilangan_ijazah",
             "title": "Surat Pernyataan Kehilangan Ijazah",
           },
+          // ─── 8 Surat Pribadi Baru ───
+          {
+            "key": "surat_pernyataan_tanggung_jawab_mutlak",
+            "title": "Surat Pernyataan Tanggung Jawab Mutlak"
+          },
+          {
+            "key": "surat_pernyataan_bersedia_ditempatkan",
+            "title": "Surat Pernyataan Bersedia Ditempatkan"
+          },
+          {
+            "key": "surat_pernyataan_tidak_menuntut",
+            "title": "Surat Pernyataan Tidak Menuntut"
+          },
+          {
+            "key": "surat_pernyataan_kepemilikan_kendaraan",
+            "title": "Surat Pernyataan Kepemilikan Kendaraan"
+          },
+          {
+            "key": "surat_kuasa_pengambilan_dokumen",
+            "title": "Surat Kuasa Pengambilan Dokumen"
+          },
+          {
+            "key": "surat_pernyataan_kebenaran_data_diri",
+            "title": "Surat Pernyataan Kebenaran Data Diri"
+          },
+          {
+            "key": "surat_pernyataan_hak_asuh_anak",
+            "title": "Surat Pernyataan Hak Asuh Anak"
+          },
+          {
+            "key": "surat_pernyataan_penggunaan_nama",
+            "title": "Surat Pernyataan Penggunaan Nama"
+          },
         ]
       },
       {
@@ -508,6 +549,47 @@ List<Map<String, dynamic>> letterDataMap(String? image,
       "key": "surat_pernyataan_kehilangan_ijazah",
       "title": "Surat Pernyataan Kehilangan Ijazah",
       "html": suratPernyataanKehilanganIjazah(letter, image, account)
+    },
+    // ─── Pribadi (8 new) ───
+    {
+      "key": "surat_pernyataan_tanggung_jawab_mutlak",
+      "title": "Surat Pernyataan Tanggung Jawab Mutlak",
+      "html": suratPernyataanTanggungJawabMutlak(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_bersedia_ditempatkan",
+      "title": "Surat Pernyataan Bersedia Ditempatkan",
+      "html": suratPernyataanBersediaDitempatkan(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_tidak_menuntut",
+      "title": "Surat Pernyataan Tidak Menuntut",
+      "html": suratPernyataanTidakMenuntut(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_kepemilikan_kendaraan",
+      "title": "Surat Pernyataan Kepemilikan Kendaraan",
+      "html": suratPernyataanKepemilikanKendaraan(letter, image, account)
+    },
+    {
+      "key": "surat_kuasa_pengambilan_dokumen",
+      "title": "Surat Kuasa Pengambilan Dokumen",
+      "html": suratKuasaPengambilanDokumen(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_kebenaran_data_diri",
+      "title": "Surat Pernyataan Kebenaran Data Diri",
+      "html": suratPernyataanKebenaranDataDiri(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_hak_asuh_anak",
+      "title": "Surat Pernyataan Hak Asuh Anak",
+      "html": suratPernyataanHakAsuhAnak(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_penggunaan_nama",
+      "title": "Surat Pernyataan Penggunaan Nama",
+      "html": suratPernyataanPenggunaanNama(letter, image, account)
     },
     // ─── Keuangan (existing + 8 new) ───
     {
