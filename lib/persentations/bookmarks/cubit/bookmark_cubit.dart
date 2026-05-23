@@ -50,6 +50,11 @@ class BookmarkCubit extends Cubit<BookmarkState> {
     await load();
   }
 
+  Future<void> removeAll() async {
+    await _bookmarkRepo.deleteAll();
+    await load();
+  }
+
   Future<void> toggle({
     required String letterKey,
     required String title,

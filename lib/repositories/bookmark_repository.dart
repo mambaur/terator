@@ -58,4 +58,9 @@ class BookmarkRepository {
       whereArgs: [letterKey],
     );
   }
+
+  Future<int> deleteAll() async {
+    Database db = await dbInstance.init;
+    return await db.delete(dbInstance.bookmarkTable);
+  }
 }

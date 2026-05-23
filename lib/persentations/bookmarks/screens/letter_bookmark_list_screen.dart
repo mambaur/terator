@@ -4,9 +4,61 @@ import 'package:terator/core/styles.dart';
 import 'package:terator/data/letter_data.dart';
 import 'package:terator/persentations/bookmarks/cubit/bookmark_cubit.dart';
 import 'package:terator/persentations/letters/screens/letter_detail_screen.dart';
+import 'package:terator/utils/custom_snackbar.dart';
 
 class LetterBookmarkListScreen extends StatelessWidget {
   const LetterBookmarkListScreen({super.key});
+
+  Future<void> _confirmRemoveAll(BuildContext context) async {
+    final cubit = context.read<BookmarkCubit>();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(kRadiusLg),
+        ),
+        title: const Text(
+          'Hapus Semua Bookmark?',
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: kTextPrimary,
+          ),
+        ),
+        content: const Text(
+          'Semua surat tersimpan akan dihapus dari bookmark. Tindakan ini tidak dapat dibatalkan.',
+          style: TextStyle(color: kTextSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text(
+              'Batal',
+              style: TextStyle(color: kTextSecondary),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text(
+              'Hapus Semua',
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+    await cubit.removeAll();
+    if (!context.mounted) return;
+    CustomSnackbar.show(
+      context,
+      message: 'Semua bookmark berhasil dihapus.',
+      type: SnackbarType.success,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +67,23 @@ class LetterBookmarkListScreen extends StatelessWidget {
         title: 'Surat Tersimpan',
         showBack: true,
         context: context,
+        actions: [
+          BlocBuilder<BookmarkCubit, BookmarkState>(
+            buildWhen: (prev, curr) =>
+                prev.bookmarks.isEmpty != curr.bookmarks.isEmpty,
+            builder: (context, state) {
+              if (state.bookmarks.isEmpty) return const SizedBox.shrink();
+              return IconButton(
+                tooltip: 'Hapus semua bookmark',
+                onPressed: () => _confirmRemoveAll(context),
+                icon: const Icon(
+                  Icons.delete_sweep_rounded,
+                  color: Colors.white,
+                ),
+              );
+            },
+          ),
+        ],
       ),
       backgroundColor: kSurface,
       body: BlocBuilder<BookmarkCubit, BookmarkState>(

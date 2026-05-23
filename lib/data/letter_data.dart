@@ -8,6 +8,16 @@ import 'package:terator/data/letter_functions/bisnis/surat_permohonan_izin_usaha
 import 'package:terator/data/letter_functions/bisnis/surat_pemutusan_kerjasama.dart';
 import 'package:terator/data/letter_functions/bisnis/surat_kuasa_bisnis.dart';
 import 'package:terator/data/letter_functions/bisnis/surat_peringatan_pembayaran.dart';
+import 'package:terator/data/letter_functions/bisnis/surat_permohonan_sponsorship.dart';
+import 'package:terator/data/letter_functions/bisnis/surat_pemberitahuan_kenaikan_harga.dart';
+import 'package:terator/data/letter_functions/bisnis/surat_penunjukan_distributor.dart';
+import 'package:terator/data/letter_functions/bisnis/surat_permohonan_perpanjangan_kontrak_bisnis.dart';
+import 'package:terator/data/letter_functions/bisnis/surat_pernyataan_kerahasiaan_bisnis.dart';
+import 'package:terator/data/letter_functions/bisnis/surat_pengembalian_barang.dart';
+import 'package:terator/data/letter_functions/bisnis/surat_permohonan_kredit_usaha.dart';
+import 'package:terator/data/letter_functions/bisnis/surat_perjanjian_jual_beli.dart';
+import 'package:terator/data/letter_functions/bisnis/surat_pengajuan_tender.dart';
+import 'package:terator/data/letter_functions/bisnis/surat_permohonan_menjadi_supplier.dart';
 import 'package:terator/data/letter_functions/desa/surat_keterangan_domisili.dart';
 import 'package:terator/data/letter_functions/desa/surat_keterangan_tidak_mampu.dart';
 import 'package:terator/data/letter_functions/desa/surat_pengantar_ktp.dart';
@@ -19,6 +29,16 @@ import 'package:terator/data/letter_functions/desa/surat_keterangan_pindah.dart'
 import 'package:terator/data/letter_functions/desa/surat_pengantar_nikah.dart';
 import 'package:terator/data/letter_functions/desa/surat_keterangan_berkelakuan_baik.dart';
 import 'package:terator/data/letter_functions/desa/surat_keterangan_ahli_waris.dart';
+import 'package:terator/data/letter_functions/desa/surat_keterangan_penghasilan_warga.dart';
+import 'package:terator/data/letter_functions/desa/surat_pengantar_skck.dart';
+import 'package:terator/data/letter_functions/desa/surat_keterangan_beda_nama.dart';
+import 'package:terator/data/letter_functions/desa/surat_keterangan_janda_duda.dart';
+import 'package:terator/data/letter_functions/desa/surat_keterangan_tanah.dart';
+import 'package:terator/data/letter_functions/desa/surat_permohonan_bantuan_sosial.dart';
+import 'package:terator/data/letter_functions/desa/surat_keterangan_tidak_sengketa.dart';
+import 'package:terator/data/letter_functions/desa/surat_pengantar_izin_keramaian.dart';
+import 'package:terator/data/letter_functions/desa/surat_keterangan_belum_pernah_menikah.dart';
+import 'package:terator/data/letter_functions/desa/surat_keterangan_kehilangan.dart';
 import 'package:terator/data/letter_functions/kesehatan/surat_pernyataan_sehat_jasmani_rohani.dart';
 import 'package:terator/data/letter_functions/kesehatan/surat_izin_sakit.dart';
 import 'package:terator/data/letter_functions/kesehatan/surat_keterangan_bebas_narkoba.dart';
@@ -28,6 +48,16 @@ import 'package:terator/data/letter_functions/kesehatan/surat_pernyataan_riwayat
 import 'package:terator/data/letter_functions/kesehatan/surat_pernyataan_tidak_buta_warna.dart';
 import 'package:terator/data/letter_functions/kesehatan/surat_pernyataan_tidak_hamil.dart';
 import 'package:terator/data/letter_functions/kesehatan/surat_permohonan_bantuan_biaya_pengobatan.dart';
+import 'package:terator/data/letter_functions/kesehatan/surat_permohonan_rekam_medis.dart';
+import 'package:terator/data/letter_functions/kesehatan/surat_pernyataan_alergi_obat.dart';
+import 'package:terator/data/letter_functions/kesehatan/surat_izin_perawatan_anak.dart';
+import 'package:terator/data/letter_functions/kesehatan/surat_permohonan_visum.dart';
+import 'package:terator/data/letter_functions/kesehatan/surat_pernyataan_tidak_merokok.dart';
+import 'package:terator/data/letter_functions/kesehatan/surat_permohonan_second_opinion.dart';
+import 'package:terator/data/letter_functions/kesehatan/surat_pernyataan_golongan_darah.dart';
+import 'package:terator/data/letter_functions/kesehatan/surat_permohonan_cuti_sakit_berkepanjangan.dart';
+import 'package:terator/data/letter_functions/kesehatan/surat_penolakan_tindakan_medis.dart';
+import 'package:terator/data/letter_functions/kesehatan/surat_pernyataan_kesehatan_mental.dart';
 import 'package:terator/data/letter_functions/keuangan/surat_pernyataan_kepemilikan_harta.dart';
 import 'package:terator/data/letter_functions/keuangan/surat_kwitansi_pembayaran.dart';
 import 'package:terator/data/letter_functions/keuangan/surat_permohonan_pinjaman.dart';
@@ -101,21 +131,79 @@ import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
 
 // Letter key => Premium true/false
+// Each category has minimum 7 premium letters.
 final premiumLetterMap = {
+  // ─── Sekolah (7) ───
   'surat_permohonan_beasiswa': true,
   'surat_permohonan_pindah_sekolah': true,
+  'surat_permohonan_cuti_akademik': true,
+  'surat_permohonan_pindah_jurusan': true,
+  'surat_permohonan_keringanan_biaya_spp': true,
+  'surat_permohonan_pengantar_penelitian': true,
+  'surat_pernyataan_bebas_plagiarisme': true,
+
+  // ─── Pekerjaan (7) ───
   'surat_pernyataan_kesediaan_bekerja_paruh_waktu': true,
+  'surat_permohonan_kenaikan_gaji': true,
+  'surat_permohonan_kenaikan_jabatan': true,
+  'surat_permohonan_mutasi_kerja': true,
+  'surat_permohonan_perpanjangan_kontrak_kerja': true,
+  'surat_permohonan_cuti_melahirkan': true,
+  'surat_pernyataan_kerahasiaan_perusahaan': true,
+
+  // ─── Desa (7) ───
   'surat_pengantar_nikah': true,
   'surat_keterangan_ahli_waris': true,
   'surat_keterangan_usaha': true,
+  'surat_keterangan_tanah': true,
+  'surat_keterangan_tidak_sengketa': true,
+  'surat_keterangan_janda_duda': true,
+  'surat_keterangan_beda_nama': true,
+
+  // ─── Bisnis (7) ───
   'surat_permohonan_izin_usaha': true,
   'surat_kuasa_bisnis': true,
   'surat_penawaran_barang': true,
+  'surat_penunjukan_distributor': true,
+  'surat_pernyataan_kerahasiaan_bisnis': true,
+  'surat_perjanjian_jual_beli': true,
+  'surat_pengajuan_tender': true,
+
+  // ─── Umum (7) ───
   'surat_pernyataan_cerai': true,
+  'surat_pernyataan_hibah': true,
+  'surat_wasiat': true,
+  'surat_pernyataan_tidak_terlibat_kasus_hukum': true,
+  'surat_pernyataan_tidak_keberatan': true,
+  'surat_permohonan_bantuan_dana_acara': true,
+  'surat_pengaduan_umum': true,
+
+  // ─── Pribadi (7) ───
+  'surat_pernyataan_tanggung_jawab_mutlak': true,
+  'surat_pernyataan_bersedia_ditempatkan': true,
+  'surat_pernyataan_tidak_menuntut': true,
+  'surat_pernyataan_kepemilikan_kendaraan': true,
+  'surat_kuasa_pengambilan_dokumen': true,
+  'surat_pernyataan_hak_asuh_anak': true,
+  'surat_pernyataan_penggunaan_nama': true,
+
+  // ─── Keuangan (7) ───
   'surat_perjanjian_sewa_rumah': true,
   'surat_kuasa_pengurusan_keuangan': true,
   'surat_pernyataan_penghasilan': true,
+  'surat_permohonan_pinjaman': true,
+  'surat_pernyataan_hutang': true,
+  'surat_pernyataan_pelunasan_hutang': true,
+  'surat_permohonan_pengembalian_dana': true,
+
+  // ─── Kesehatan (7) ───
   'surat_keterangan_bebas_narkoba': true,
+  'surat_permohonan_visum': true,
+  'surat_permohonan_second_opinion': true,
+  'surat_penolakan_tindakan_medis': true,
+  'surat_pernyataan_kesehatan_mental': true,
+  'surat_persetujuan_tindakan_medis': true,
+  'surat_permohonan_rekam_medis': true,
 };
 
 class LetterData {
@@ -334,6 +422,47 @@ class LetterData {
             "key": "surat_keterangan_ahli_waris",
             "title": "Surat Keterangan Ahli Waris"
           },
+          // ─── 10 Surat Desa Baru ───
+          {
+            "key": "surat_keterangan_penghasilan_warga",
+            "title": "Surat Keterangan Penghasilan Warga"
+          },
+          {
+            "key": "surat_pengantar_skck",
+            "title": "Surat Pengantar SKCK"
+          },
+          {
+            "key": "surat_keterangan_beda_nama",
+            "title": "Surat Keterangan Beda Nama"
+          },
+          {
+            "key": "surat_keterangan_janda_duda",
+            "title": "Surat Keterangan Janda/Duda"
+          },
+          {
+            "key": "surat_keterangan_tanah",
+            "title": "Surat Keterangan Tanah"
+          },
+          {
+            "key": "surat_permohonan_bantuan_sosial",
+            "title": "Surat Permohonan Bantuan Sosial"
+          },
+          {
+            "key": "surat_keterangan_tidak_sengketa",
+            "title": "Surat Keterangan Tidak Sengketa"
+          },
+          {
+            "key": "surat_pengantar_izin_keramaian",
+            "title": "Surat Pengantar Izin Keramaian"
+          },
+          {
+            "key": "surat_keterangan_belum_pernah_menikah",
+            "title": "Surat Keterangan Belum Pernah Menikah"
+          },
+          {
+            "key": "surat_keterangan_kehilangan",
+            "title": "Surat Keterangan Kehilangan"
+          },
         ]
       },
       {
@@ -374,6 +503,47 @@ class LetterData {
           {
             "key": "surat_peringatan_pembayaran",
             "title": "Surat Peringatan Pembayaran"
+          },
+          // ─── 10 Surat Bisnis Baru ───
+          {
+            "key": "surat_permohonan_sponsorship",
+            "title": "Surat Permohonan Sponsorship"
+          },
+          {
+            "key": "surat_pemberitahuan_kenaikan_harga",
+            "title": "Surat Pemberitahuan Kenaikan Harga"
+          },
+          {
+            "key": "surat_penunjukan_distributor",
+            "title": "Surat Penunjukan Distributor"
+          },
+          {
+            "key": "surat_permohonan_perpanjangan_kontrak_bisnis",
+            "title": "Surat Permohonan Perpanjangan Kontrak Bisnis"
+          },
+          {
+            "key": "surat_pernyataan_kerahasiaan_bisnis",
+            "title": "Surat Pernyataan Kerahasiaan Bisnis (NDA)"
+          },
+          {
+            "key": "surat_pengembalian_barang",
+            "title": "Surat Pengembalian Barang"
+          },
+          {
+            "key": "surat_permohonan_kredit_usaha",
+            "title": "Surat Permohonan Kredit Usaha"
+          },
+          {
+            "key": "surat_perjanjian_jual_beli",
+            "title": "Surat Perjanjian Jual Beli"
+          },
+          {
+            "key": "surat_pengajuan_tender",
+            "title": "Surat Pengajuan Tender"
+          },
+          {
+            "key": "surat_permohonan_menjadi_supplier",
+            "title": "Surat Permohonan Menjadi Supplier"
           },
         ]
       },
@@ -557,6 +727,47 @@ class LetterData {
           {
             "key": "surat_permohonan_bantuan_biaya_pengobatan",
             "title": "Surat Permohonan Bantuan Biaya Pengobatan"
+          },
+          // ─── 10 Surat Kesehatan Baru ───
+          {
+            "key": "surat_permohonan_rekam_medis",
+            "title": "Surat Permohonan Rekam Medis"
+          },
+          {
+            "key": "surat_pernyataan_alergi_obat",
+            "title": "Surat Pernyataan Alergi Obat"
+          },
+          {
+            "key": "surat_izin_perawatan_anak",
+            "title": "Surat Izin Perawatan Anak"
+          },
+          {
+            "key": "surat_permohonan_visum",
+            "title": "Surat Permohonan Visum et Repertum"
+          },
+          {
+            "key": "surat_pernyataan_tidak_merokok",
+            "title": "Surat Pernyataan Tidak Merokok"
+          },
+          {
+            "key": "surat_permohonan_second_opinion",
+            "title": "Surat Permohonan Second Opinion"
+          },
+          {
+            "key": "surat_pernyataan_golongan_darah",
+            "title": "Surat Pernyataan Golongan Darah"
+          },
+          {
+            "key": "surat_permohonan_cuti_sakit_berkepanjangan",
+            "title": "Surat Permohonan Cuti Sakit Berkepanjangan"
+          },
+          {
+            "key": "surat_penolakan_tindakan_medis",
+            "title": "Surat Penolakan Tindakan Medis"
+          },
+          {
+            "key": "surat_pernyataan_kesehatan_mental",
+            "title": "Surat Pernyataan Kesehatan Mental"
           },
         ]
       },
@@ -991,6 +1202,57 @@ List<Map<String, dynamic>> letterDataMap(String? image,
       "title": "Surat Permohonan Bantuan Biaya Pengobatan",
       "html": suratPermohonanBantuanBiayaPengobatan(letter, image, account)
     },
+    // ─── Kesehatan (10 new) ───
+    {
+      "key": "surat_permohonan_rekam_medis",
+      "title": "Surat Permohonan Rekam Medis",
+      "html": suratPermohonanRekamMedis(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_alergi_obat",
+      "title": "Surat Pernyataan Alergi Obat",
+      "html": suratPernyataanAlergiObat(letter, image, account)
+    },
+    {
+      "key": "surat_izin_perawatan_anak",
+      "title": "Surat Izin Perawatan Anak",
+      "html": suratIzinPerawatanAnak(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_visum",
+      "title": "Surat Permohonan Visum et Repertum",
+      "html": suratPermohonanVisum(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_tidak_merokok",
+      "title": "Surat Pernyataan Tidak Merokok",
+      "html": suratPernyataanTidakMerokok(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_second_opinion",
+      "title": "Surat Permohonan Second Opinion",
+      "html": suratPermohonanSecondOpinion(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_golongan_darah",
+      "title": "Surat Pernyataan Golongan Darah",
+      "html": suratPernyataanGolonganDarah(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_cuti_sakit_berkepanjangan",
+      "title": "Surat Permohonan Cuti Sakit Berkepanjangan",
+      "html": suratPermohonanCutiSakitBerkepanjangan(letter, image, account)
+    },
+    {
+      "key": "surat_penolakan_tindakan_medis",
+      "title": "Surat Penolakan Tindakan Medis",
+      "html": suratPenolakanTindakanMedis(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_kesehatan_mental",
+      "title": "Surat Pernyataan Kesehatan Mental",
+      "html": suratPernyataanKesehatanMental(letter, image, account)
+    },
     // ─── Bisnis (8 new) ───
     {
       "key": "surat_penawaran_barang",
@@ -1031,6 +1293,57 @@ List<Map<String, dynamic>> letterDataMap(String? image,
       "key": "surat_peringatan_pembayaran",
       "title": "Surat Peringatan Pembayaran",
       "html": suratPeringatanPembayaran(letter, image, account)
+    },
+    // ─── Bisnis (10 new) ───
+    {
+      "key": "surat_permohonan_sponsorship",
+      "title": "Surat Permohonan Sponsorship",
+      "html": suratPermohonanSponsorship(letter, image, account)
+    },
+    {
+      "key": "surat_pemberitahuan_kenaikan_harga",
+      "title": "Surat Pemberitahuan Kenaikan Harga",
+      "html": suratPemberitahuanKenaikanHarga(letter, image, account)
+    },
+    {
+      "key": "surat_penunjukan_distributor",
+      "title": "Surat Penunjukan Distributor",
+      "html": suratPenunjukanDistributor(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_perpanjangan_kontrak_bisnis",
+      "title": "Surat Permohonan Perpanjangan Kontrak Bisnis",
+      "html": suratPermohonanPerpanjanganKontrakBisnis(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_kerahasiaan_bisnis",
+      "title": "Surat Pernyataan Kerahasiaan Bisnis (NDA)",
+      "html": suratPernyataanKerahasiaanBisnis(letter, image, account)
+    },
+    {
+      "key": "surat_pengembalian_barang",
+      "title": "Surat Pengembalian Barang",
+      "html": suratPengembalianBarang(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_kredit_usaha",
+      "title": "Surat Permohonan Kredit Usaha",
+      "html": suratPermohonanKreditUsaha(letter, image, account)
+    },
+    {
+      "key": "surat_perjanjian_jual_beli",
+      "title": "Surat Perjanjian Jual Beli",
+      "html": suratPerjanjianJualBeli(letter, image, account)
+    },
+    {
+      "key": "surat_pengajuan_tender",
+      "title": "Surat Pengajuan Tender",
+      "html": suratPengajuanTender(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_menjadi_supplier",
+      "title": "Surat Permohonan Menjadi Supplier",
+      "html": suratPermohonanMenjadiSupplier(letter, image, account)
     },
     // ─── Desa (8 new) ───
     {
@@ -1077,6 +1390,57 @@ List<Map<String, dynamic>> letterDataMap(String? image,
       "key": "surat_keterangan_ahli_waris",
       "title": "Surat Keterangan Ahli Waris",
       "html": suratKeteranganAhliWaris(letter, image, account)
+    },
+    // ─── Desa (10 new) ───
+    {
+      "key": "surat_keterangan_penghasilan_warga",
+      "title": "Surat Keterangan Penghasilan Warga",
+      "html": suratKeteranganPenghasilanWarga(letter, image, account)
+    },
+    {
+      "key": "surat_pengantar_skck",
+      "title": "Surat Pengantar SKCK",
+      "html": suratPengantarSkck(letter, image, account)
+    },
+    {
+      "key": "surat_keterangan_beda_nama",
+      "title": "Surat Keterangan Beda Nama",
+      "html": suratKeteranganBedaNama(letter, image, account)
+    },
+    {
+      "key": "surat_keterangan_janda_duda",
+      "title": "Surat Keterangan Janda/Duda",
+      "html": suratKeteranganJandaDuda(letter, image, account)
+    },
+    {
+      "key": "surat_keterangan_tanah",
+      "title": "Surat Keterangan Tanah",
+      "html": suratKeteranganTanah(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_bantuan_sosial",
+      "title": "Surat Permohonan Bantuan Sosial",
+      "html": suratPermohonanBantuanSosial(letter, image, account)
+    },
+    {
+      "key": "surat_keterangan_tidak_sengketa",
+      "title": "Surat Keterangan Tidak Sengketa",
+      "html": suratKeteranganTidakSengketa(letter, image, account)
+    },
+    {
+      "key": "surat_pengantar_izin_keramaian",
+      "title": "Surat Pengantar Izin Keramaian",
+      "html": suratPengantarIzinKeramaian(letter, image, account)
+    },
+    {
+      "key": "surat_keterangan_belum_pernah_menikah",
+      "title": "Surat Keterangan Belum Pernah Menikah",
+      "html": suratKeteranganBelumPernahMenikah(letter, image, account)
+    },
+    {
+      "key": "surat_keterangan_kehilangan",
+      "title": "Surat Keterangan Kehilangan",
+      "html": suratKeteranganKehilangan(letter, image, account)
     },
   ];
 }
