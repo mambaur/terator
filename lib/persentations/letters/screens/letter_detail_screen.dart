@@ -1,6 +1,11 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:html_editor_enhanced/html_editor.dart';
+import 'package:flutter_native_html_to_pdf/flutter_native_html_to_pdf.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/data/letter_data.dart';
 import 'package:terator/models/account_model.dart';
@@ -28,7 +33,8 @@ class LetterDetailScreen extends StatefulWidget {
 }
 
 class _LetterDetailScreenState extends State<LetterDetailScreen> {
-  final HtmlEditorController _previewController = HtmlEditorController();
+  bool _isLoading = true;
+  File? _pdfFile;
 
   // Dummy sample account so the preview shows realistic content
   AccountModel get _sampleAccount => AccountModel(
@@ -53,12 +59,55 @@ class _LetterDetailScreenState extends State<LetterDetailScreen> {
       );
 
   @override
+  void initState() {
+    super.initState();
+    // Defer until after first frame — the native PDF plugin's platform
+    // channel can race with build on first open and leave the Future pending.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _generatePdf());
+  }
+
+  Future<void> _generatePdf() async {
+    try {
+      final tempDir = await getTemporaryDirectory();
+      final previewHtml = LetterData.html(
+        widget.keyLetter,
+        account: _sampleAccount,
+      );
+      final html = '<div style="margin: 105px 90px">$previewHtml</div>';
+
+      // Single fixed filename — overwritten each open, deleted on dispose,
+      // so only one preview file exists at a time for this screen.
+      final generatedPdf = await HtmlToPdfConverter().convertHtmlToPdf(
+        html: html,
+        targetDirectory: tempDir.path,
+        targetName: 'letter_detail_preview',
+      );
+
+      if (mounted) {
+        setState(() {
+          _pdfFile = generatedPdf;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (kDebugMode) print('Preview error: $e');
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    if (_pdfFile != null && _pdfFile!.existsSync()) {
+      _pdfFile!.delete().catchError((_) => _pdfFile!);
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final bool isPremiumLetter = premiumLetterMap[widget.keyLetter] == true;
-    final String previewHtml = LetterData.html(
-      widget.keyLetter,
-      account: _sampleAccount,
-    );
 
     return Scaffold(
       backgroundColor: kSurface,
@@ -214,35 +263,17 @@ class _LetterDetailScreenState extends State<LetterDetailScreen> {
             height: 16,
           ),
 
-          // HTML Preview (read-only)
+          // PDF Preview (rendered from dummy account data)
           Expanded(
             child: Container(
               margin: const EdgeInsets.fromLTRB(20, 0, 20, 16),
               decoration: BoxDecoration(
-                color: kCardWhite,
+                color: kSurfaceVariant,
                 borderRadius: BorderRadius.circular(kRadiusLg),
                 boxShadow: kShadowSm,
               ),
               clipBehavior: Clip.antiAlias,
-              child: IgnorePointer(
-                child: HtmlEditor(
-                  controller: _previewController,
-                  callbacks: Callbacks(onInit: () {
-                    _previewController.setText(previewHtml);
-                  }),
-                  htmlToolbarOptions: const HtmlToolbarOptions(
-                    defaultToolbarButtons: [],
-                    toolbarPosition: ToolbarPosition.custom,
-                  ),
-                  htmlEditorOptions: const HtmlEditorOptions(
-                    disabled: true,
-                    shouldEnsureVisible: false,
-                  ),
-                  otherOptions: OtherOptions(
-                    height: MediaQuery.of(context).size.height,
-                  ),
-                ),
-              ),
+              child: _buildPreviewBody(),
             ),
           ),
         ],
@@ -309,6 +340,69 @@ class _LetterDetailScreenState extends State<LetterDetailScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildPreviewBody() {
+    if (_isLoading) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(color: kPrimary),
+            SizedBox(height: 16),
+            Text(
+              'Memuat preview...',
+              style: TextStyle(color: kTextSecondary, fontSize: 14),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_pdfFile == null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: const BoxDecoration(
+                color: kCardWhite,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.error_outline_rounded,
+                color: kTextMuted,
+                size: 48,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Gagal memuat preview',
+              style: TextStyle(
+                color: kTextPrimary,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Coba lagi nanti',
+              style: TextStyle(color: kTextMuted, fontSize: 13),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return PDFView(
+      filePath: _pdfFile!.path,
+      enableSwipe: true,
+      swipeHorizontal: true,
+      autoSpacing: false,
+      pageFling: false,
+      backgroundColor: Colors.transparent,
     );
   }
 }

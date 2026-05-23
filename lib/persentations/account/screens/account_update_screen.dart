@@ -54,8 +54,19 @@ class _AccountUpdateScreenState extends State<AccountUpdateScreen>
   final _letterCityWrittenController = TextEditingController();
 
   Future submit() async {
+    final invalidTab = _firstInvalidTab();
+    if (invalidTab != null) {
+      if (_tabController.index != invalidTab) {
+        _tabController.animateTo(invalidTab);
+        await Future.delayed(const Duration(milliseconds: 300));
+      }
+      _formKey.currentState?.validate();
+      CustomSnackbar.show(context,
+          type: SnackbarType.warning,
+          message: 'Periksa kembali isian yang wajib diisi.');
+      return;
+    }
     if (!_formKey.currentState!.validate()) {
-      _jumpToFirstInvalidTab();
       CustomSnackbar.show(context,
           type: SnackbarType.warning,
           message: 'Periksa kembali isian yang wajib diisi.');
@@ -102,7 +113,7 @@ class _AccountUpdateScreenState extends State<AccountUpdateScreen>
         type: SnackbarType.success, message: "Akun berhasil diupdate");
   }
 
-  void _jumpToFirstInvalidTab() {
+  int? _firstInvalidTab() {
     final requiredByTab = <List<TextEditingController>>[
       [_nameController, _placeAndDateOfBirthController, _genderController],
       <TextEditingController>[],
@@ -111,14 +122,12 @@ class _AccountUpdateScreenState extends State<AccountUpdateScreen>
     ];
     for (int i = 0; i < requiredByTab.length; i++) {
       for (final c in requiredByTab[i]) {
-        if (c.text.isEmpty) {
-          if (_tabController.index != i) {
-            _tabController.animateTo(i);
-          }
-          return;
+        if (c.text.trim().isEmpty) {
+          return i;
         }
       }
     }
+    return null;
   }
 
   void initData() {

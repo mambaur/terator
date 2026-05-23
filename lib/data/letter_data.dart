@@ -87,6 +87,16 @@ import 'package:terator/data/letter_functions/umum/surat_pernyataan_belum_menika
 import 'package:terator/data/letter_functions/umum/surat_pernyataan_cerai.dart';
 import 'package:terator/data/letter_functions/umum/surat_pernyataan_kebenaran_dokumen.dart';
 import 'package:terator/data/letter_functions/umum/surat_pernyataan_keluarga_tentang_kematian.dart';
+import 'package:terator/data/letter_functions/umum/surat_undangan_acara.dart';
+import 'package:terator/data/letter_functions/umum/surat_ucapan_terima_kasih.dart';
+import 'package:terator/data/letter_functions/umum/surat_permohonan_sumbangan.dart';
+import 'package:terator/data/letter_functions/umum/surat_permohonan_bantuan_dana_acara.dart';
+import 'package:terator/data/letter_functions/umum/surat_pengaduan_umum.dart';
+import 'package:terator/data/letter_functions/umum/surat_pernyataan_tidak_keberatan.dart';
+import 'package:terator/data/letter_functions/umum/surat_pernyataan_hibah.dart';
+import 'package:terator/data/letter_functions/umum/surat_wasiat.dart';
+import 'package:terator/data/letter_functions/umum/surat_pemberitahuan_pindah_alamat.dart';
+import 'package:terator/data/letter_functions/umum/surat_pernyataan_tidak_terlibat_kasus_hukum.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
 
@@ -385,6 +395,38 @@ class LetterData {
             "title": "Surat Pernyataan Keluarga Tentang Kematian"
           },
           {"key": "surat_permohonan_maaf", "title": "Surat Permohonan Maaf"},
+          // ─── 10 Surat Umum Baru ───
+          {"key": "surat_undangan_acara", "title": "Surat Undangan Acara"},
+          {
+            "key": "surat_ucapan_terima_kasih",
+            "title": "Surat Ucapan Terima Kasih"
+          },
+          {
+            "key": "surat_permohonan_sumbangan",
+            "title": "Surat Permohonan Sumbangan/Donasi"
+          },
+          {
+            "key": "surat_permohonan_bantuan_dana_acara",
+            "title": "Surat Permohonan Bantuan Dana Acara"
+          },
+          {
+            "key": "surat_pengaduan_umum",
+            "title": "Surat Pengaduan/Keluhan"
+          },
+          {
+            "key": "surat_pernyataan_tidak_keberatan",
+            "title": "Surat Pernyataan Tidak Keberatan"
+          },
+          {"key": "surat_pernyataan_hibah", "title": "Surat Pernyataan Hibah"},
+          {"key": "surat_wasiat", "title": "Surat Wasiat"},
+          {
+            "key": "surat_pemberitahuan_pindah_alamat",
+            "title": "Surat Pemberitahuan Pindah Alamat"
+          },
+          {
+            "key": "surat_pernyataan_tidak_terlibat_kasus_hukum",
+            "title": "Surat Pernyataan Tidak Sedang Terlibat Kasus Hukum"
+          },
         ]
       },
       {
@@ -727,6 +769,57 @@ List<Map<String, dynamic>> letterDataMap(String? image,
       "key": "surat_permohonan_maaf",
       "title": "Surat Permohonan Maaf",
       "html": suratPermohonanMaaf(letter, image, account)
+    },
+    // ─── Umum (10 new) ───
+    {
+      "key": "surat_undangan_acara",
+      "title": "Surat Undangan Acara",
+      "html": suratUndanganAcara(letter, image, account)
+    },
+    {
+      "key": "surat_ucapan_terima_kasih",
+      "title": "Surat Ucapan Terima Kasih",
+      "html": suratUcapanTerimaKasih(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_sumbangan",
+      "title": "Surat Permohonan Sumbangan/Donasi",
+      "html": suratPermohonanSumbangan(letter, image, account)
+    },
+    {
+      "key": "surat_permohonan_bantuan_dana_acara",
+      "title": "Surat Permohonan Bantuan Dana Acara",
+      "html": suratPermohonanBantuanDanaAcara(letter, image, account)
+    },
+    {
+      "key": "surat_pengaduan_umum",
+      "title": "Surat Pengaduan/Keluhan",
+      "html": suratPengaduanUmum(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_tidak_keberatan",
+      "title": "Surat Pernyataan Tidak Keberatan",
+      "html": suratPernyataanTidakKeberatan(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_hibah",
+      "title": "Surat Pernyataan Hibah",
+      "html": suratPernyataanHibah(letter, image, account)
+    },
+    {
+      "key": "surat_wasiat",
+      "title": "Surat Wasiat",
+      "html": suratWasiat(letter, image, account)
+    },
+    {
+      "key": "surat_pemberitahuan_pindah_alamat",
+      "title": "Surat Pemberitahuan Pindah Alamat",
+      "html": suratPemberitahuanPindahAlamat(letter, image, account)
+    },
+    {
+      "key": "surat_pernyataan_tidak_terlibat_kasus_hukum",
+      "title": "Surat Pernyataan Tidak Sedang Terlibat Kasus Hukum",
+      "html": suratPernyataanTidakTerlibatKasusHukum(letter, image, account)
     },
     // ─── Desa ───
     {

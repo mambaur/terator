@@ -74,6 +74,7 @@ class _LetterScreenState extends State<LetterScreen> {
                             style: const TextStyle(fontSize: 14),
                             decoration: InputDecoration(
                               isDense: true,
+                              filled: false,
                               border: InputBorder.none,
                               focusedBorder: InputBorder.none,
                               enabledBorder: InputBorder.none,
@@ -215,8 +216,7 @@ class _LetterScreenState extends State<LetterScreen> {
                                         if (letter["subtitle"] != null) ...[
                                           const SizedBox(height: 6),
                                           Container(
-                                            padding:
-                                                const EdgeInsets.symmetric(
+                                            padding: const EdgeInsets.symmetric(
                                               horizontal: 8,
                                               vertical: 3,
                                             ),
