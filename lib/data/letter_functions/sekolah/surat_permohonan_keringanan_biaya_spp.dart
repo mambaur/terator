@@ -1,9 +1,42 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanKeringananBiayaSppVariables = [
+  LetterVariable(
+      key: 'kepala_sekolah_rektor_dekan', label: 'Kepala Sekolah/Rektor/Dekan'),
+  LetterVariable(
+      key: 'pekerjaan_orang_tua_wali', label: 'Pekerjaan Orang Tua/Wali'),
+  LetterVariable(
+      key: 'penghasilan_per_bulan',
+      label: 'Penghasilan per Bulan',
+      type: LetterVariableType.currency),
+  LetterVariable(
+      key: 'semester',
+      label: 'Semester',
+      type: LetterVariableType.choice,
+      options: ['Ganjil', 'Genap']),
+  LetterVariable(key: 'tahun_ajaran', label: 'Tahun Ajaran'),
+  LetterVariable(
+      key: 'nominal_spp_saat_ini',
+      label: 'Nominal SPP Saat Ini',
+      type: LetterVariableType.currency),
+  LetterVariable(
+      key: 'nominal_yang_diharapkan',
+      label: 'Nominal yang Diharapkan',
+      type: LetterVariableType.currency),
+  LetterVariable(
+      key: 'alasan',
+      label: 'Alasan',
+      type: LetterVariableType.multiline,
+      hint:
+          'mis. PHK/Penurunan Penghasilan/Sakit/Tanggungan Keluarga yang Banyak'),
+];
 
 String suratPermohonanKeringananBiayaSpp(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -16,7 +49,7 @@ String suratPermohonanKeringananBiayaSpp(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Kepala Sekolah/Rektor/Dekan)</b>
+      ${fillVar(vars, 'kepala_sekolah_rektor_dekan', '... (Kepala Sekolah/Rektor/Dekan)')}
       <br>
       ${account?.educationInstitution ?? ''}
       <br>
@@ -68,12 +101,12 @@ String suratPermohonanKeringananBiayaSpp(
           <tr>
             <td style="white-space: nowrap">Pekerjaan Orang Tua</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Pekerjaan Orang Tua/Wali)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'pekerjaan_orang_tua_wali', '... (Pekerjaan Orang Tua/Wali)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Penghasilan Orang Tua</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>Rp ... (Penghasilan per Bulan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'penghasilan_per_bulan', 'Rp ... (Penghasilan per Bulan)', prefix: 'Rp ')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat</td>
@@ -89,10 +122,10 @@ String suratPermohonanKeringananBiayaSpp(
       </table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini mengajukan permohonan keringanan biaya SPP/UKT untuk <b>Semester ... (Ganjil/Genap)</b> <b>Tahun Ajaran ... (Tahun Ajaran)</b>. Adapun besaran SPP/UKT yang saat ini ditetapkan adalah <b>Rp ... (Nominal SPP Saat Ini)</b>, dan saya memohon dengan hormat agar dapat diberikan keringanan menjadi <b>Rp ... (Nominal yang Diharapkan)</b>.
+      Dengan ini mengajukan permohonan keringanan biaya SPP/UKT untuk ${fillVar(vars, 'semester', 'Semester ... (Ganjil/Genap)', prefix: 'Semester ')} ${fillVar(vars, 'tahun_ajaran', 'Tahun Ajaran ... (Tahun Ajaran)', prefix: 'Tahun Ajaran ')}. Adapun besaran SPP/UKT yang saat ini ditetapkan adalah ${fillVar(vars, 'nominal_spp_saat_ini', 'Rp ... (Nominal SPP Saat Ini)', prefix: 'Rp ')}, dan saya memohon dengan hormat agar dapat diberikan keringanan menjadi ${fillVar(vars, 'nominal_yang_diharapkan', 'Rp ... (Nominal yang Diharapkan)', prefix: 'Rp ')}.
     </p>
     <p style="text-align: justify; ">
-      Permohonan ini saya ajukan dikarenakan kondisi ekonomi keluarga yang saat ini kurang memungkinkan, antara lain dengan alasan <b>... (Alasan, mis. PHK/Penurunan Penghasilan/Sakit/Tanggungan Keluarga yang Banyak)</b>.
+      Permohonan ini saya ajukan dikarenakan kondisi ekonomi keluarga yang saat ini kurang memungkinkan, antara lain dengan alasan ${fillVar(vars, 'alasan', '... (Alasan, mis. PHK/Penurunan Penghasilan/Sakit/Tanggungan Keluarga yang Banyak)')}.
     </p>
     <p style="text-align: justify; ">
       Sebagai bahan pertimbangan, saya melampirkan dokumen pendukung berupa Surat Keterangan Tidak Mampu dari Kelurahan, slip gaji/keterangan penghasilan, serta Kartu Keluarga.

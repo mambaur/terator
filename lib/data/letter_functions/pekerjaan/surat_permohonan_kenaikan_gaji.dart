@@ -1,9 +1,37 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanKenaikanGajiVariables = [
+  LetterVariable(key: 'nama_pimpinan_hrd', label: 'Nama Pimpinan/HRD'),
+  LetterVariable(key: 'nama_perusahaan', label: 'Nama Perusahaan'),
+  LetterVariable(key: 'nik_nip_karyawan', label: 'NIK/NIP Karyawan'),
+  LetterVariable(key: 'jabatan_saat_ini', label: 'Jabatan Saat Ini'),
+  LetterVariable(key: 'divisi_departemen', label: 'Divisi/Departemen'),
+  LetterVariable(
+      key: 'tanggal_mulai_bekerja',
+      label: 'Tanggal Mulai Bekerja',
+      type: LetterVariableType.date),
+  LetterVariable(key: 'lama_bekerja', label: 'Lama Bekerja'),
+  LetterVariable(
+      key: 'gaji_saat_ini',
+      label: 'Gaji Saat Ini',
+      type: LetterVariableType.currency),
+  LetterVariable(
+      key: 'gaji_yang_diharapkan',
+      label: 'Gaji yang Diharapkan',
+      type: LetterVariableType.currency),
+  LetterVariable(
+      key: 'alasan_pertimbangan',
+      label: 'Alasan/Pertimbangan',
+      type: LetterVariableType.multiline,
+      hint: 'mis. Prestasi/Lama Kerja/Tambahan Tanggung Jawab'),
+];
 
 String suratPermohonanKenaikanGaji(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -16,9 +44,9 @@ String suratPermohonanKenaikanGaji(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama Pimpinan/HRD)</b>
+      ${fillVar(vars, 'nama_pimpinan_hrd', '... (Nama Pimpinan/HRD)')}
       <br>
-      <b>... (Nama Perusahaan)</b>
+      ${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')}
       <br>
       di Tempat
     </p>
@@ -38,22 +66,22 @@ String suratPermohonanKenaikanGaji(
           <tr>
             <td style="white-space: nowrap">NIK/NIP Karyawan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (NIK/NIP Karyawan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nik_nip_karyawan', '... (NIK/NIP Karyawan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Jabatan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Jabatan Saat Ini)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'jabatan_saat_ini', '... (Jabatan Saat Ini)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Divisi/Departemen</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Divisi/Departemen)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'divisi_departemen', '... (Divisi/Departemen)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Mulai Bekerja</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Tanggal Mulai Bekerja)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'tanggal_mulai_bekerja', '... (Tanggal Mulai Bekerja)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat</td>
@@ -69,13 +97,13 @@ String suratPermohonanKenaikanGaji(
       </table>
     </p>
     <p style="text-align: justify; ">
-      Melalui surat ini, dengan segala kerendahan hati saya bermaksud mengajukan permohonan kenaikan gaji kepada Bapak/Ibu Pimpinan. Selama <b>... (Lama Bekerja)</b> bekerja di <b>... (Nama Perusahaan)</b>, saya telah berusaha memberikan kinerja terbaik serta memenuhi seluruh tanggung jawab yang dipercayakan.
+      Melalui surat ini, dengan segala kerendahan hati saya bermaksud mengajukan permohonan kenaikan gaji kepada Bapak/Ibu Pimpinan. Selama ${fillVar(vars, 'lama_bekerja', '... (Lama Bekerja)')} bekerja di ${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')}, saya telah berusaha memberikan kinerja terbaik serta memenuhi seluruh tanggung jawab yang dipercayakan.
     </p>
     <p style="text-align: justify; ">
-      Adapun gaji pokok yang saya terima saat ini sebesar <b>Rp ... (Gaji Saat Ini)</b> per bulan. Sehubungan dengan kebutuhan hidup yang semakin meningkat serta pertimbangan masa kerja dan kontribusi saya, saya memohon dengan hormat agar gaji saya dapat dinaikkan menjadi <b>Rp ... (Gaji yang Diharapkan)</b> per bulan.
+      Adapun gaji pokok yang saya terima saat ini sebesar ${fillVar(vars, 'gaji_saat_ini', 'Rp ... (Gaji Saat Ini)', prefix: 'Rp ')} per bulan. Sehubungan dengan kebutuhan hidup yang semakin meningkat serta pertimbangan masa kerja dan kontribusi saya, saya memohon dengan hormat agar gaji saya dapat dinaikkan menjadi ${fillVar(vars, 'gaji_yang_diharapkan', 'Rp ... (Gaji yang Diharapkan)', prefix: 'Rp ')} per bulan.
     </p>
     <p style="text-align: justify; ">
-      Sebagai bahan pertimbangan, berikut alasan pengajuan permohonan ini: <b>... (Alasan/Pertimbangan, mis. Prestasi/Lama Kerja/Tambahan Tanggung Jawab)</b>.
+      Sebagai bahan pertimbangan, berikut alasan pengajuan permohonan ini: ${fillVar(vars, 'alasan_pertimbangan', '... (Alasan/Pertimbangan, mis. Prestasi/Lama Kerja/Tambahan Tanggung Jawab)')}.
     </p>
     <p style="text-align: justify; ">
       Demikian surat permohonan ini saya sampaikan. Atas perhatian dan kebijaksanaan Bapak/Ibu Pimpinan, saya ucapkan terima kasih.

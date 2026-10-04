@@ -6,13 +6,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_html_to_pdf/flutter_native_html_to_pdf.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:terator/core/platform/html_preview.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/data/letter_data.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/persentations/bookmarks/cubit/bookmark_cubit.dart';
+import 'package:terator/persentations/kop_surat/screens/kop_surat_screen.dart';
 import 'package:terator/persentations/letters/screens/letter_choose_account_screen.dart';
+import 'package:terator/persentations/letters/screens/letter_variable_form_screen.dart';
 import 'package:terator/persentations/subscription/cubit/subscription_cubit.dart';
 import 'package:terator/persentations/subscription/widgets/premium_gate.dart';
+import 'package:terator/repositories/kop_surat_repository.dart';
 import 'package:terator/utils/custom_snackbar.dart';
 
 class LetterDetailScreen extends StatefulWidget {
@@ -33,8 +37,12 @@ class LetterDetailScreen extends StatefulWidget {
 }
 
 class _LetterDetailScreenState extends State<LetterDetailScreen> {
+  final KopSuratRepository _kopRepo = KopSuratRepository();
   bool _isLoading = true;
   File? _pdfFile;
+  // Web has no native PDF renderer — the HTML is shown directly instead.
+  String? _webHtml;
+  bool _kopEnabled = false;
 
   // Dummy sample account so the preview shows realistic content
   AccountModel get _sampleAccount => AccountModel(
@@ -63,17 +71,39 @@ class _LetterDetailScreenState extends State<LetterDetailScreen> {
     super.initState();
     // Defer until after first frame — the native PDF plugin's platform
     // channel can race with build on first open and leave the Future pending.
-    WidgetsBinding.instance.addPostFrameCallback((_) => _generatePdf());
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final enabled = await _kopRepo.enabledLetters();
+      if (mounted) {
+        setState(() => _kopEnabled = enabled.contains(widget.keyLetter));
+      }
+      _generatePdf();
+    });
   }
 
   Future<void> _generatePdf() async {
+    final isPremium = context.read<SubscriptionCubit>().state.isPremium;
     try {
-      final tempDir = await getTemporaryDirectory();
+      final kopHtml = await _kopRepo.htmlForLetter(
+        widget.keyLetter,
+        isPremium: isPremium,
+      );
       final previewHtml = LetterData.html(
         widget.keyLetter,
         account: _sampleAccount,
       );
-      final html = '<div style="margin: 105px 90px">$previewHtml</div>';
+      final html = '<div style="margin: 105px 90px">$kopHtml$previewHtml</div>';
+
+      if (kIsWeb) {
+        if (mounted) {
+          setState(() {
+            _webHtml = html;
+            _isLoading = false;
+          });
+        }
+        return;
+      }
+
+      final tempDir = await getTemporaryDirectory();
 
       // Single fixed filename — overwritten each open, deleted on dispose,
       // so only one preview file exists at a time for this screen.
@@ -95,6 +125,50 @@ class _LetterDetailScreenState extends State<LetterDetailScreen> {
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  Future<void> _toggleKop(bool value) async {
+    if (value) {
+      if (!context.read<SubscriptionCubit>().state.isPremium) {
+        PremiumGate.show(context);
+        return;
+      }
+      if (!(await _kopRepo.get()).isConfigured) {
+        if (!mounted) return;
+        CustomSnackbar.show(context,
+            type: SnackbarType.warning,
+            message: 'Atur kop surat terlebih dahulu');
+        await Navigator.push(
+            context, MaterialPageRoute(builder: (_) => const KopSuratScreen()));
+        if (!(await _kopRepo.get()).isConfigured) return;
+      }
+    }
+    await _kopRepo.setEnabled(widget.keyLetter, value);
+    if (!mounted) return;
+    setState(() {
+      _kopEnabled = value;
+      _isLoading = true;
+    });
+    _generatePdf();
+  }
+
+  void _useTemplate() {
+    final variables = LetterData.variables(widget.keyLetter);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (builder) => variables.isEmpty
+            ? LetterChooseAccountScreen(
+                keyLetter: widget.keyLetter,
+                title: widget.title,
+              )
+            : LetterVariableFormScreen(
+                keyLetter: widget.keyLetter,
+                title: widget.title,
+                variables: variables,
+              ),
+      ),
+    );
   }
 
   @override
@@ -158,75 +232,6 @@ class _LetterDetailScreenState extends State<LetterDetailScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Header info chip row
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
-            color: kPrimary,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (widget.categoryTitle != null)
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.18),
-                      borderRadius: BorderRadius.circular(kRadiusSm),
-                    ),
-                    child: Text(
-                      widget.categoryTitle!,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                if (widget.categoryTitle != null) const SizedBox(width: 8),
-                if (widget.subtitle != null)
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.18),
-                      borderRadius: BorderRadius.circular(kRadiusSm),
-                    ),
-                    child: Text(
-                      widget.subtitle!,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                // const Spacer(),
-                if (isPremiumLetter)
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFFD97706), Color(0xFFF59E0B)],
-                      ),
-                      borderRadius: BorderRadius.circular(kRadiusSm),
-                    ),
-                    child: const Text(
-                      'PRO',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-
           // Preview label
           // Padding(
           //   padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
@@ -259,9 +264,7 @@ class _LetterDetailScreenState extends State<LetterDetailScreen> {
           //     ],
           //   ),
           // ),
-          SizedBox(
-            height: 16,
-          ),
+          _buildKopSwitch(),
 
           // PDF Preview (rendered from dummy account data)
           Expanded(
@@ -324,15 +327,7 @@ class _LetterDetailScreenState extends State<LetterDetailScreen> {
                       PremiumGate.show(context);
                       return;
                     }
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (builder) => LetterChooseAccountScreen(
-                          keyLetter: widget.keyLetter,
-                          title: widget.title,
-                        ),
-                      ),
-                    );
+                    _useTemplate();
                   },
                 ),
               );
@@ -340,6 +335,82 @@ class _LetterDetailScreenState extends State<LetterDetailScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildKopSwitch() {
+    return BlocBuilder<SubscriptionCubit, SubscriptionState>(
+      builder: (context, subState) {
+        return Container(
+          margin: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+          padding: const EdgeInsets.fromLTRB(14, 6, 8, 6),
+          decoration: AppTheme.cardDecoration(radius: kRadiusMd),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFD97706).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(kRadiusSm),
+                ),
+                child: const Icon(Icons.article_rounded,
+                    color: Color(0xFFD97706), size: 20),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Text(
+                          'Gunakan Kop Surat',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            color: kTextPrimary,
+                          ),
+                        ),
+                        if (!subState.isPremium) ...[
+                          const SizedBox(width: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFFD97706), Color(0xFFF59E0B)],
+                              ),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Text(
+                              'PRO',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 9,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const Text(
+                      'Tampilkan kop surat di bagian atas surat ini',
+                      style: TextStyle(fontSize: 11, color: kTextSecondary),
+                    ),
+                  ],
+                ),
+              ),
+              Switch(
+                value: _kopEnabled && subState.isPremium,
+                activeTrackColor: kPrimary,
+                onChanged: _toggleKop,
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -359,6 +430,8 @@ class _LetterDetailScreenState extends State<LetterDetailScreen> {
         ),
       );
     }
+
+    if (kIsWeb && _webHtml != null) return HtmlPreview(html: _webHtml!);
 
     if (_pdfFile == null) {
       return Center(

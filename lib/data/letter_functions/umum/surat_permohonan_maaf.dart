@@ -1,9 +1,19 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanMaafVariables = [
+  LetterVariable(key: 'nama_perusahaan', label: 'Nama Perusahaan'),
+  LetterVariable(
+      key: 'alamat', label: 'Alamat', type: LetterVariableType.multiline),
+  LetterVariable(key: 'penerima', label: 'Penerima'),
+  LetterVariable(key: 'kesalahan', label: 'Kesalahan'),
+];
 
 String suratPermohonanMaaf(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   // String dateNow =
   //     DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
 
@@ -20,9 +30,9 @@ String suratPermohonanMaaf(
       <br>
       Bapak/Ibu Pimpinan
       <br>
-      <b>... (Nama Perusahaan)</b>
+      ${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')}
       <br>
-      <b>... (Alamat)</b>
+      ${fillVar(vars, 'alamat', '... (Alamat)')}
       <br>
     </p>
     <p><br></p>
@@ -68,10 +78,10 @@ String suratPermohonanMaaf(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Bersamaan surat ini, saya bermaksud untuk menyampaikan permohonan maaf kepada <b>... (Penerima)</b>.
+      Bersamaan surat ini, saya bermaksud untuk menyampaikan permohonan maaf kepada ${fillVar(vars, 'penerima', '... (Penerima)')}.
     </p>
     <p style="text-align: justify; ">
-      Sehubungan dengan kesalahan yang telah saya lakukan yaitu <b>... (Kesalahan)</b>.
+      Sehubungan dengan kesalahan yang telah saya lakukan yaitu ${fillVar(vars, 'kesalahan', '... (Kesalahan)')}.
     </p>
     <p style="text-align: justify; ">
       Demikian surat permohonan maaf ini saya buat sebagai bentuk penyesalan saya terhadap kelalaian yang telah saya lakukan. Semoba Bapak/Ibu/Saudara berkenan untuk memaafkan saya.

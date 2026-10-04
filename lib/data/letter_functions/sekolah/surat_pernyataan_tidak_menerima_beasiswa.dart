@@ -1,9 +1,15 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanTidakMenerimaBeasiswaVariables = [
+  LetterVariable(key: 'nama_beasiswa', label: 'Nama beasiswa'),
+];
 
 String suratPernyataanTidakMenerimaBeasiswa(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   // String dateNow =
   //     DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
 
@@ -65,7 +71,7 @@ String suratPernyataanTidakMenerimaBeasiswa(
       Surat pernyataan ini saya buat dengan sebenar-benarnya dengan penuh kesadaran, tanpa paksaan dan tekanan dari pihak manapun. Saya bersedia menerima sanksi sesuai hukum yang berlaku apabila saya terbukti sedang menerima beasiswa dari sumber lain.
     </p>
     <p style="text-align: justify; ">
-      Demikian surat pernyataan ini saya buat untuk persyaratan permohonan Beasiswa <b>... (nama beasiswa)</b>.
+      Demikian surat pernyataan ini saya buat untuk persyaratan permohonan Beasiswa ${fillVar(vars, 'nama_beasiswa', '... (nama beasiswa)')}.
     </p>
     <p><br></p>
     <table>

@@ -1,9 +1,19 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanKerahasiaanPerusahaanVariables = [
+  LetterVariable(key: 'nomor_ktp_nik', label: 'Nomor KTP/NIK'),
+  LetterVariable(key: 'nik_nip_karyawan', label: 'NIK/NIP Karyawan'),
+  LetterVariable(key: 'jabatan', label: 'Jabatan'),
+  LetterVariable(key: 'divisi_departemen', label: 'Divisi/Departemen'),
+  LetterVariable(key: 'nama_perusahaan', label: 'Nama Perusahaan'),
+];
 
 String suratPernyataanKerahasiaanPerusahaan(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -30,22 +40,22 @@ String suratPernyataanKerahasiaanPerusahaan(
           <tr>
             <td style="white-space: nowrap">No. KTP/NIK</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nomor KTP/NIK)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nomor_ktp_nik', '... (Nomor KTP/NIK)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">NIK/NIP Karyawan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (NIK/NIP Karyawan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nik_nip_karyawan', '... (NIK/NIP Karyawan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Jabatan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Jabatan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'jabatan', '... (Jabatan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Divisi/Departemen</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Divisi/Departemen)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'divisi_departemen', '... (Divisi/Departemen)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat</td>
@@ -61,7 +71,7 @@ String suratPernyataanKerahasiaanPerusahaan(
       </table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini menyatakan dengan sesungguhnya bahwa selama bekerja maupun setelah berakhirnya hubungan kerja dengan <b>... (Nama Perusahaan)</b>, saya berkomitmen untuk:
+      Dengan ini menyatakan dengan sesungguhnya bahwa selama bekerja maupun setelah berakhirnya hubungan kerja dengan ${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')}, saya berkomitmen untuk:
     </p>
     <p style="text-align: justify; ">
       1. <b>Menjaga kerahasiaan</b> seluruh informasi, data, dokumen, strategi bisnis, rahasia dagang, daftar pelanggan, formula, sistem, maupun materi lain yang bersifat rahasia milik perusahaan;

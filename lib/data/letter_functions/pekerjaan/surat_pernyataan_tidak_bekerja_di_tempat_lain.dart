@@ -1,9 +1,18 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanTidakBekerjaDiTempatLainVariables = [
+  LetterVariable(key: 'nomor_ktp_nik', label: 'Nomor KTP/NIK'),
+  LetterVariable(
+      key: 'nama_perusahaan_instansi_yang_dituju',
+      label: 'Nama Perusahaan/Instansi yang Dituju'),
+];
 
 String suratPernyataanTidakBekerjaDiTempatLain(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -45,7 +54,7 @@ String suratPernyataanTidakBekerjaDiTempatLain(
           <tr>
             <td style="white-space: nowrap">No. KTP/NIK</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nomor KTP/NIK)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nomor_ktp_nik', '... (Nomor KTP/NIK)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat</td>
@@ -61,7 +70,7 @@ String suratPernyataanTidakBekerjaDiTempatLain(
       </table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini menyatakan dengan sebenar-benarnya bahwa saya saat ini <b>TIDAK SEDANG BEKERJA</b> dan/atau <b>TIDAK SEDANG TERIKAT KONTRAK KERJA</b> dengan instansi, perusahaan, maupun pihak manapun selain dengan <b>... (Nama Perusahaan/Instansi yang Dituju)</b>.
+      Dengan ini menyatakan dengan sebenar-benarnya bahwa saya saat ini <b>TIDAK SEDANG BEKERJA</b> dan/atau <b>TIDAK SEDANG TERIKAT KONTRAK KERJA</b> dengan instansi, perusahaan, maupun pihak manapun selain dengan ${fillVar(vars, 'nama_perusahaan_instansi_yang_dituju', '... (Nama Perusahaan/Instansi yang Dituju)')}.
     </p>
     <p style="text-align: justify; ">
       Apabila di kemudian hari pernyataan ini terbukti tidak benar, maka saya bersedia:

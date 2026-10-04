@@ -1,9 +1,26 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanTidakMenuntutVariables = [
+  LetterVariable(key: 'pekerjaan', label: 'Pekerjaan'),
+  LetterVariable(key: 'nomor_ktp_nik', label: 'Nomor KTP/NIK'),
+  LetterVariable(
+      key: 'uraian_peristiwa_kejadian',
+      label: 'Uraian Peristiwa/Kejadian',
+      type: LetterVariableType.multiline),
+  LetterVariable(
+      key: 'tanggal_kejadian',
+      label: 'Tanggal Kejadian',
+      type: LetterVariableType.date),
+  LetterVariable(key: 'lokasi_kejadian', label: 'Lokasi Kejadian'),
+  LetterVariable(key: 'nama_pihak_kedua', label: 'Nama Pihak Kedua'),
+];
 
 String suratPernyataanTidakMenuntut(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -35,12 +52,12 @@ String suratPernyataanTidakMenuntut(
           <tr>
             <td style="white-space: nowrap">Pekerjaan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Pekerjaan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'pekerjaan', '... (Pekerjaan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">No. KTP/NIK</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nomor KTP/NIK)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nomor_ktp_nik', '... (Nomor KTP/NIK)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat</td>
@@ -57,7 +74,7 @@ String suratPernyataanTidakMenuntut(
       Selanjutnya disebut sebagai <b>PIHAK PERTAMA</b>.
     </p>
     <p style="text-align: justify; ">
-      Dengan ini menyatakan dengan sesungguhnya bahwa sehubungan dengan peristiwa <b>... (Uraian Peristiwa/Kejadian)</b> yang terjadi pada tanggal <b>... (Tanggal Kejadian)</b> di <b>... (Lokasi Kejadian)</b> yang melibatkan saya dengan <b>... (Nama Pihak Kedua)</b>, maka:
+      Dengan ini menyatakan dengan sesungguhnya bahwa sehubungan dengan peristiwa ${fillVar(vars, 'uraian_peristiwa_kejadian', '... (Uraian Peristiwa/Kejadian)')} yang terjadi pada tanggal ${fillVar(vars, 'tanggal_kejadian', '... (Tanggal Kejadian)')} di ${fillVar(vars, 'lokasi_kejadian', '... (Lokasi Kejadian)')} yang melibatkan saya dengan ${fillVar(vars, 'nama_pihak_kedua', '... (Nama Pihak Kedua)')}, maka:
     </p>
     <p style="text-align: justify; ">
       1. Saya selaku PIHAK PERTAMA <b>TIDAK AKAN MENUNTUT</b> baik secara pidana maupun perdata kepada PIHAK KEDUA atas peristiwa tersebut, karena permasalahan telah diselesaikan secara kekeluargaan dengan baik dan damai.

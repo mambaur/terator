@@ -1,9 +1,37 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPemberitahuanKenaikanHargaVariables = [
+  LetterVariable(key: 'nama_pelanggan_mitra', label: 'Nama Pelanggan/Mitra'),
+  LetterVariable(
+      key: 'alamat', label: 'Alamat', type: LetterVariableType.multiline),
+  LetterVariable(key: 'nama_perusahaan', label: 'Nama Perusahaan'),
+  LetterVariable(
+      key: 'tanggal_berlaku',
+      label: 'Tanggal Berlaku',
+      type: LetterVariableType.date),
+  LetterVariable(key: 'nama_produk_jasa', label: 'Nama Produk/Jasa'),
+  LetterVariable(
+      key: 'harga_lama',
+      label: 'Harga Lama',
+      type: LetterVariableType.currency),
+  LetterVariable(
+      key: 'harga_baru',
+      label: 'Harga Baru',
+      type: LetterVariableType.currency),
+  LetterVariable(
+      key: 'alasan_kenaikan_harga',
+      label: 'Alasan Kenaikan Harga',
+      type: LetterVariableType.multiline,
+      hint:
+          'misal: kenaikan biaya bahan baku / inflasi / penyesuaian operasional'),
+];
 
 String suratPemberitahuanKenaikanHarga(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,9 +40,9 @@ String suratPemberitahuanKenaikanHarga(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama Pelanggan/Mitra)</b>
+      ${fillVar(vars, 'nama_pelanggan_mitra', '... (Nama Pelanggan/Mitra)')}
       <br>
-      di <b>... (Alamat)</b>
+      di ${fillVar(vars, 'alamat', '... (Alamat)')}
     </p>
     <p><br></p>
     <p>Perihal: <b>Pemberitahuan Kenaikan Harga</b></p>
@@ -23,7 +51,7 @@ String suratPemberitahuanKenaikanHarga(
       Dengan Hormat,
     </p>
     <p style="text-align: justify; ">
-      Melalui surat ini, kami dari <b>... (Nama Perusahaan)</b> ingin memberitahukan bahwa terhitung mulai tanggal <b>... (Tanggal Berlaku)</b>, akan terjadi penyesuaian harga pada produk/jasa kami sebagai berikut:
+      Melalui surat ini, kami dari ${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')} ingin memberitahukan bahwa terhitung mulai tanggal ${fillVar(vars, 'tanggal_berlaku', '... (Tanggal Berlaku)')}, akan terjadi penyesuaian harga pada produk/jasa kami sebagai berikut:
     </p>
     <p>
       <table border="0" style="width:100%">
@@ -31,23 +59,23 @@ String suratPemberitahuanKenaikanHarga(
 					<tr>
 						<td style="white-space: nowrap">Nama Produk/Jasa</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Nama Produk/Jasa)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nama_produk_jasa', '... (Nama Produk/Jasa)')}</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap">Harga Lama</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>Rp ... (Harga Lama)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'harga_lama', 'Rp ... (Harga Lama)', prefix: 'Rp ')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Harga Baru</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>Rp ... (Harga Baru)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'harga_baru', 'Rp ... (Harga Baru)', prefix: 'Rp ')}</td>
 					</tr>
 				</tbody>
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Penyesuaian harga ini dilakukan sehubungan dengan <b>... (Alasan Kenaikan Harga, misal: kenaikan biaya bahan baku / inflasi / penyesuaian operasional)</b>.
+      Penyesuaian harga ini dilakukan sehubungan dengan ${fillVar(vars, 'alasan_kenaikan_harga', '... (Alasan Kenaikan Harga, misal: kenaikan biaya bahan baku / inflasi / penyesuaian operasional)')}.
     </p>
     <p style="text-align: justify; ">
       Kami berharap hal ini tidak mengurangi kepercayaan Bapak/Ibu terhadap produk dan layanan kami. Kami tetap berkomitmen untuk menjaga kualitas terbaik.

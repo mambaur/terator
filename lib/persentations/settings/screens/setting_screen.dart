@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/persentations/ads/widgets/banner_ad_widget.dart';
+import 'package:terator/persentations/faq/screens/faq_screen.dart';
+import 'package:terator/persentations/kop_surat/screens/kop_surat_screen.dart';
+import 'package:terator/persentations/onboarding/screens/onboarding_screen.dart';
 import 'package:terator/persentations/settings/screens/about_screen.dart';
 import 'package:terator/persentations/settings/screens/disclaimer_screen.dart';
 import 'package:terator/persentations/subscription/cubit/subscription_cubit.dart';
@@ -57,6 +61,60 @@ class _SettingScreenState extends State<SettingScreen> {
             builder: (context, state) {
               return _buildPremiumStatusCard(context, state);
             },
+          ),
+          const SizedBox(height: 16),
+
+          // ─── Fitur Group ───
+          Container(
+            decoration: AppTheme.cardDecoration(),
+            child: Column(
+              children: [
+                BlocBuilder<SubscriptionCubit, SubscriptionState>(
+                  builder: (context, state) {
+                    return _buildSettingTile(
+                      icon: Icons.article_rounded,
+                      color: const Color(0xFFD97706),
+                      title: 'Kop Surat',
+                      showProBadge: !state.isPremium,
+                      onTap: () {
+                        if (!state.isPremium) {
+                          PremiumGate.show(context);
+                          return;
+                        }
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (builder) {
+                          return const KopSuratScreen();
+                        }));
+                      },
+                    );
+                  },
+                ),
+                _divider(),
+                _buildSettingTile(
+                  icon: Icons.help_rounded,
+                  color: const Color(0xFFEC4899),
+                  title: 'FAQ',
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (builder) {
+                      return const FaqScreen();
+                    }));
+                  },
+                ),
+                _divider(),
+                _buildSettingTile(
+                  icon: Icons.school_rounded,
+                  color: kInfoBlue,
+                  title: 'Panduan Aplikasi',
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (builder) {
+                      return const OnboardingScreen(fromSettings: true);
+                    }));
+                  },
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 16),
 
@@ -218,23 +276,13 @@ class _SettingScreenState extends State<SettingScreen> {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: isPremium
-                ? [const Color(0xFFD97706), const Color(0xFFF59E0B)]
-                : kGradientPrimary,
+          gradient: const LinearGradient(
+            colors: kGradientPrimary,
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(kRadiusLg),
-          boxShadow: isPremium
-              ? [
-                  BoxShadow(
-                    color: const Color(0xFFD97706).withValues(alpha: 0.3),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
-              : kShadowPrimary,
+          boxShadow: kShadowPrimary,
         ),
         child: Row(
           children: [
@@ -245,9 +293,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 borderRadius: BorderRadius.circular(kRadiusSm),
               ),
               child: Icon(
-                isPremium
-                    ? Icons.workspace_premium_rounded
-                    : Icons.diamond_outlined,
+                LucideIcons.crown,
                 color: Colors.white,
                 size: 24,
               ),
@@ -258,7 +304,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    isPremium ? 'Premium Aktif ✓' : 'Akun Gratis',
+                    isPremium ? 'Premium Aktif' : 'Akun Gratis',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
@@ -321,7 +367,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                       borderRadius: BorderRadius.circular(kRadiusSm),
                     ),
-                    child: const Icon(Icons.star_rounded,
+                    child: const Icon(LucideIcons.crown,
                         color: Colors.white, size: 20),
                   ),
                   const SizedBox(width: 14),
@@ -355,10 +401,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           letterSpacing: 0.5,
                         ),
                       ),
-                    )
-                  else
-                    const Icon(Icons.check_circle_rounded,
-                        color: kSuccess, size: 20),
+                    ),
                   const SizedBox(width: 4),
                   const Icon(Icons.arrow_forward_ios_rounded,
                       color: kTextMuted, size: 14),
@@ -376,6 +419,7 @@ class _SettingScreenState extends State<SettingScreen> {
     required Color color,
     required String title,
     required VoidCallback onTap,
+    bool showProBadge = false,
   }) {
     return Material(
       color: Colors.transparent,
@@ -404,6 +448,28 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                 ),
               ),
+              if (showProBadge) ...[
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFD97706), Color(0xFFF59E0B)],
+                    ),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Text(
+                    'PRO',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+              ],
               const Icon(Icons.arrow_forward_ios_rounded,
                   color: kTextMuted, size: 14),
             ],

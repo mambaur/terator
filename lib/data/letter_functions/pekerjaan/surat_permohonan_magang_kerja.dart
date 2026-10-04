@@ -1,9 +1,18 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanMagangKerjaVariables = [
+  LetterVariable(key: 'nama_instansi', label: 'Nama Instansi'),
+  LetterVariable(
+      key: 'alamat', label: 'Alamat', type: LetterVariableType.multiline),
+  LetterVariable(key: 'instansi', label: 'Instansi'),
+];
 
 String suratPermohonanMagangKerja(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   // String dateNow =
   //     DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
 
@@ -36,9 +45,9 @@ String suratPermohonanMagangKerja(
       <br>
       Kepala Bagian HRD
       <br>
-      <b>... (Nama Instansi)</b>
+      ${fillVar(vars, 'nama_instansi', '... (Nama Instansi)')}
       <br>
-      <b>... (Alamat)</b>
+      ${fillVar(vars, 'alamat', '... (Alamat)')}
       <br>
     </p>
     <p><br></p>
@@ -46,7 +55,7 @@ String suratPermohonanMagangKerja(
       Dengan Hormat,
     </p>
     <p style="text-align: justify; ">
-      Sehubungan dengan informasi tentang lowongan magang di <b>... (Instansi)</b>, maka saya yang bertanda tangan di bawah ini :
+      Sehubungan dengan informasi tentang lowongan magang di ${fillVar(vars, 'instansi', '... (Instansi)')}, maka saya yang bertanda tangan di bawah ini :
     </p>
     <p>
       <table border="0" style="width:100%">

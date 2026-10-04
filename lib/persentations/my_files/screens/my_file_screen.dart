@@ -12,14 +12,20 @@ import 'package:share_plus/share_plus.dart';
 import 'package:terator/core/generator.dart';
 import 'package:terator/core/loading_overlay.dart';
 import 'package:terator/core/styles.dart';
+import 'package:terator/data/letter_categories.dart';
+import 'package:terator/data/letter_data.dart';
 import 'package:terator/models/letter_model.dart';
 import 'package:terator/persentations/ads/widgets/banner_ad_widget.dart';
 import 'package:terator/persentations/my_files/cubits/file_cubit/file_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:terator/persentations/my_files/screens/letter_preview_screen.dart';
 import 'package:terator/persentations/my_files/screens/my_file_edit_screen.dart';
+import 'package:terator/persentations/subscription/cubit/subscription_cubit.dart';
+import 'package:terator/persentations/subscription/widgets/premium_gate.dart';
+import 'package:terator/repositories/kop_surat_repository.dart';
 import 'package:terator/repositories/letter_repository.dart';
 import 'package:terator/utils/custom_snackbar.dart';
+import 'package:terator/utils/search_field.dart';
 
 enum StatusAd { initial, loaded }
 
@@ -33,8 +39,36 @@ class MyFileScreen extends StatefulWidget {
 class _MyFileScreenState extends State<MyFileScreen> {
   final LetterRepository _letterRepo = LetterRepository();
   final ScrollController _scrollController = ScrollController();
+  String _query = '';
+
+  /// Index into `LetterData.listLetters()`, or null for "Semua".
+  int? _categoryIndex;
+
+  bool get _isFiltering => _query.trim().isNotEmpty || _categoryIndex != null;
+
+  void _applyFilter() {
+    List<String>? names;
+    if (_categoryIndex != null) {
+      final letters =
+          LetterData.listLetters()[_categoryIndex!]['letters'] as List<dynamic>;
+      names = letters.map((l) => l['title'].toString()).toList();
+    }
+    context.read<FileCubit>().applyFilter(query: _query, templateNames: names);
+  }
+
+  void _selectCategory(int? index) {
+    setState(() => _categoryIndex = index);
+    _applyFilter();
+  }
 
   void convert(String htmlData, String name) async {
+    if (kIsWeb) {
+      Navigator.pop(context);
+      CustomSnackbar.show(context,
+          type: SnackbarType.warning,
+          message: "Export PDF tidak tersedia di web");
+      return;
+    }
     LoadingOverlay.show(context);
     var targetPath = await _localPath;
     var targetFileName = name;
@@ -56,6 +90,13 @@ class _MyFileScreenState extends State<MyFileScreen> {
   }
 
   Future<void> shareFile(String htmlData, String name) async {
+    if (kIsWeb) {
+      Navigator.pop(context);
+      CustomSnackbar.show(context,
+          type: SnackbarType.warning,
+          message: "Export PDF tidak tersedia di web");
+      return;
+    }
     LoadingOverlay.show(context);
     var targetPath = await _localPath;
     var targetFileName = name;
@@ -120,10 +161,17 @@ class _MyFileScreenState extends State<MyFileScreen> {
 
   @override
   void initState() {
-    context.read<FileCubit>().getFiles(isInit: true);
+    // Fresh screen = no filter (the cubit is global and may hold an old one).
+    context.read<FileCubit>().applyFilter();
 
     _scrollController.addListener(onScroll);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -141,6 +189,16 @@ class _MyFileScreenState extends State<MyFileScreen> {
               parent: BouncingScrollPhysics()),
           slivers: [
             SliverToBoxAdapter(
+              child: SearchField(
+                hint: 'Cari nama file atau jenis surat...',
+                onSearch: (q) {
+                  setState(() => _query = q);
+                  _applyFilter();
+                },
+              ),
+            ),
+            SliverToBoxAdapter(child: _buildCategoryChips()),
+            SliverToBoxAdapter(
               child: BannerAdWidget(
                 placement: BannerPlacement.myFilePage,
               ),
@@ -151,7 +209,7 @@ class _MyFileScreenState extends State<MyFileScreen> {
                   if (state.status == FileStatusCubit.success) {
                     if (state.letters!.isEmpty) {
                       return SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.65,
+                        height: MediaQuery.of(context).size.height * 0.5,
                         child: Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -162,26 +220,32 @@ class _MyFileScreenState extends State<MyFileScreen> {
                                   color: kViolet.withValues(alpha: 0.08),
                                   shape: BoxShape.circle,
                                 ),
-                                child: const Icon(
-                                  Icons.folder_open_rounded,
+                                child: Icon(
+                                  _isFiltering
+                                      ? Icons.search_off_rounded
+                                      : Icons.folder_open_rounded,
                                   size: 56,
                                   color: kViolet,
                                 ),
                               ),
                               const SizedBox(height: 20),
-                              const Text(
-                                'Belum Ada File',
-                                style: TextStyle(
+                              Text(
+                                _isFiltering
+                                    ? 'Surat Tidak Ditemukan'
+                                    : 'Belum Ada File',
+                                style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 18,
                                   color: kTextPrimary,
                                 ),
                               ),
                               const SizedBox(height: 6),
-                              const Text(
-                                'Generate surat pertamamu\ndi menu Beranda!',
+                              Text(
+                                _isFiltering
+                                    ? 'Coba kata kunci atau kategori lain'
+                                    : 'Generate surat pertamamu\ndi menu Beranda!',
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: kTextSecondary,
                                   fontSize: 14,
                                 ),
@@ -194,7 +258,7 @@ class _MyFileScreenState extends State<MyFileScreen> {
                     return ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
-                      padding: const EdgeInsets.only(top: 16),
+                      padding: const EdgeInsets.only(top: 12),
                       itemCount: state.hasReachMax
                           ? state.letters!.length
                           : state.letters!.length + 1,
@@ -318,6 +382,140 @@ class _MyFileScreenState extends State<MyFileScreen> {
     );
   }
 
+  Widget _buildCategoryChips() {
+    return SizedBox(
+      height: 52,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 4),
+        children: [
+          _categoryChip(
+            label: 'Semua',
+            icon: Icons.apps_rounded,
+            color: kPrimary,
+            selected: _categoryIndex == null,
+            onTap: () => _selectCategory(null),
+          ),
+          for (final cat in letterCategories)
+            _categoryChip(
+              label: cat['label'],
+              icon: cat['icon'],
+              color: (cat['gradient'] as List<Color>).first,
+              selected: _categoryIndex == cat['index'],
+              onTap: () => _selectCategory(cat['index']),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _categoryChip({
+    required String label,
+    required IconData icon,
+    required Color color,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: selected ? color : kCardWhite,
+            borderRadius: BorderRadius.circular(kRadiusFull),
+            border: Border.all(color: selected ? color : Colors.grey.shade200),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 16, color: selected ? Colors.white : color),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: selected ? Colors.white : kTextPrimary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Adds or removes the kop on a saved letter and persists the new HTML.
+  /// Returns whether the change was applied.
+  Future<bool> _setKop(LetterModel letter, bool enabled) async {
+    final html = KopSuratRepository.stripKop(letter.html ?? '');
+    String kop = '';
+    if (enabled) {
+      if (!context.read<SubscriptionCubit>().state.isPremium) {
+        await PremiumGate.show(context);
+        return false;
+      }
+      kop = await KopSuratRepository().configuredHtml();
+      if (kop.isEmpty) {
+        CustomSnackbar.show(context,
+            type: SnackbarType.warning,
+            message: 'Atur kop surat dulu di Pengaturan → Kop Surat');
+        return false;
+      }
+    }
+    final newHtml = '$kop$html';
+    await _letterRepo.update({'id': letter.id, 'html': newHtml});
+    letter.html = newHtml;
+    return true;
+  }
+
+  Widget _buildKopSwitch(LetterModel letter, StateSetter setSheetState) {
+    final enabled = KopSuratRepository.hasKop(letter.html ?? '');
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
+      decoration: BoxDecoration(
+        color: kBgLavender,
+        borderRadius: BorderRadius.circular(kRadiusMd),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.article_rounded, color: kPrimary, size: 20),
+          const SizedBox(width: 10),
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Gunakan Kop Surat',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    color: kTextPrimary,
+                  ),
+                ),
+                Text(
+                  'Berlaku untuk preview, edit, berbagi & download',
+                  style: TextStyle(fontSize: 11, color: kTextSecondary),
+                ),
+              ],
+            ),
+          ),
+          Switch(
+            value: enabled,
+            activeTrackColor: kPrimary,
+            onChanged: (value) async {
+              if (await _setKop(letter, value)) setSheetState(() {});
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _showDetailFileModal(LetterModel letter) {
     return AppTheme.showModernBottomSheet(
       context: context,
@@ -337,7 +535,12 @@ class _MyFileScreenState extends State<MyFileScreen> {
             letter.name ?? '',
             style: const TextStyle(color: kTextSecondary, fontSize: 13),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
+          StatefulBuilder(
+            builder: (context, setSheetState) =>
+                _buildKopSwitch(letter, setSheetState),
+          ),
+          const SizedBox(height: 4),
           _buildActionTile(
             icon: Icons.visibility_rounded,
             color: kViolet,

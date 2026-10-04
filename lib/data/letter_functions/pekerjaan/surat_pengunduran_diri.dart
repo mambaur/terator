@@ -1,9 +1,22 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPengunduranDiriVariables = [
+  LetterVariable(key: 'divisi', label: 'Divisi'),
+  LetterVariable(key: 'nama_perusahaan', label: 'Nama Perusahaan'),
+  LetterVariable(
+      key: 'alamat_perusahaan',
+      label: 'Alamat Perusahaan',
+      type: LetterVariableType.multiline),
+  LetterVariable(key: 'jabatan', label: 'Jabatan'),
+  LetterVariable(key: 'pimpinan', label: 'Pimpinan'),
+];
 
 String suratPengunduranDiri(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   // String dateNow =
   //     DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
@@ -16,11 +29,11 @@ String suratPengunduranDiri(
     <p>
       Kepada Yth.
       <br>
-      Kepala Bagian <b>... (Divisi)</b>
+      Kepala Bagian ${fillVar(vars, 'divisi', '... (Divisi)')}
       <br>
-      <b>... (Nama Perusahaan)</b>
+      ${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')}
       <br>
-      <b>... (Alamat Perusahaan)</b>
+      ${fillVar(vars, 'alamat_perusahaan', '... (Alamat Perusahaan)')}
     </p>
     <p>
       Dengan Hormat,
@@ -55,16 +68,16 @@ String suratPengunduranDiri(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Melalui surat pernyataan ini, saya berniat untuk mengajukan permohonan pengunduran diri saya dari jabatan <b>... (Jabatan)</b> di perusahaan <b>... (Nama perusahaan)</b> terhitung mulai tanggal $dateNow2.
+      Melalui surat pernyataan ini, saya berniat untuk mengajukan permohonan pengunduran diri saya dari jabatan ${fillVar(vars, 'jabatan', '... (Jabatan)')} di perusahaan ${fillVar(vars, 'nama_perusahaan', '... (Nama perusahaan)')} terhitung mulai tanggal $dateNow2.
     </p>
     <p style="text-align: justify; ">
-      Sebelumnya, saya dengan rasa syukur yang sebesar-besarnya berterima kasih kepada <b>... (Pimpinan)</b> karena sudah memberikan saya kesempatan untuk dapat bekerja, belajar, dan berkembang di perusahaan ini
+      Sebelumnya, saya dengan rasa syukur yang sebesar-besarnya berterima kasih kepada ${fillVar(vars, 'pimpinan', '... (Pimpinan)')} karena sudah memberikan saya kesempatan untuk dapat bekerja, belajar, dan berkembang di perusahaan ini
     </p>
     <p style="text-align: justify; ">
       Selain itu, saya juga ingin berterima kasih pada rekan-rekan kerja saya di sini yang telah berjuang bersama dalam mencapai target perusahaan.
     </p>
     <p style="text-align: justify; ">
-      Saya memohon maaf atas segala kesalahan dan kekurangan yang saya lakukan selama menjadi bagian dari <b>... (Divisi)</b> Semoga perusahaan ini dapat terus berkembang dan semakin maju.
+      Saya memohon maaf atas segala kesalahan dan kekurangan yang saya lakukan selama menjadi bagian dari ${fillVar(vars, 'divisi', '... (Divisi)')} Semoga perusahaan ini dapat terus berkembang dan semakin maju.
     </p>
     <p style="text-align: justify; ">
       Demikian surat pengunduran diri ini saya buat dengan kesadaran dan tanpa tekanan dari pihak manapun.

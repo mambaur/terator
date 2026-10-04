@@ -16,28 +16,42 @@ class AccountCubit extends Cubit<AccountState> {
 
   int _page = 1;
   bool hasReachMax = false;
+  int _total = 0;
+
+  // Active search from the Akun Surat search bar; kept so pagination and
+  // refreshes stay within it.
+  String _query = '';
+
+  /// Sets the search text and reloads.
+  Future<void> applyFilter({String query = ''}) {
+    _query = query;
+    return getAccounts(isInit: true);
+  }
 
   Future<void> getAccounts({bool isInit = false}) async {
     if (isInit) {
-      emit(const AccountState(status: AccountStatusCubit.loading));
+      emit(AccountState(status: AccountStatusCubit.loading, total: _total));
       _page = 1;
+      _total = await _accountRepo.count();
       List<AccountModel> response =
-          await _accountRepo.all(page: _page, limit: _limit);
+          await _accountRepo.all(page: _page, limit: _limit, query: _query);
       _data = response;
       hasReachMax = _data.length < _limit ? true : false;
       return emit(AccountState(
           status: AccountStatusCubit.success,
           hasReachMax: hasReachMax,
+          total: _total,
           accounts: _data));
     } else {
       _page++;
       List<AccountModel> response =
-          await _accountRepo.all(page: _page, limit: _limit);
+          await _accountRepo.all(page: _page, limit: _limit, query: _query);
       _data.addAll(response);
       hasReachMax = (response).length < _limit ? true : false;
       return emit(AccountState(
           status: AccountStatusCubit.success,
           hasReachMax: hasReachMax,
+          total: _total,
           accounts: _data));
     }
   }

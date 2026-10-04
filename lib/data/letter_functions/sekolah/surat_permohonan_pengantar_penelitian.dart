@@ -1,9 +1,31 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanPengantarPenelitianVariables = [
+  LetterVariable(
+      key: 'dekan_ketua_program_studi', label: 'Dekan/Ketua Program Studi'),
+  LetterVariable(
+      key: 'semester_saat_ini',
+      label: 'Semester Saat Ini',
+      type: LetterVariableType.number),
+  LetterVariable(key: 'judul_penelitian', label: 'Judul Penelitian'),
+  LetterVariable(
+      key: 'nama_instansi_lokasi_penelitian',
+      label: 'Nama Instansi/Lokasi Penelitian'),
+  LetterVariable(
+      key: 'alamat_lengkap_lokasi',
+      label: 'Alamat Lengkap Lokasi',
+      type: LetterVariableType.multiline),
+  LetterVariable(
+      key: 'tanggal_mulai_s_d_selesai', label: 'Tanggal Mulai s/d Selesai'),
+  LetterVariable(key: 'nama_dosen_pembimbing', label: 'Nama Dosen Pembimbing'),
+];
 
 String suratPermohonanPengantarPenelitian(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -16,7 +38,7 @@ String suratPermohonanPengantarPenelitian(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Dekan/Ketua Program Studi)</b>
+      ${fillVar(vars, 'dekan_ketua_program_studi', '... (Dekan/Ketua Program Studi)')}
       <br>
       ${account?.educationInstitution ?? ''}
       <br>
@@ -58,7 +80,7 @@ String suratPermohonanPengantarPenelitian(
           <tr>
             <td style="white-space: nowrap">Semester</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Semester Saat Ini)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'semester_saat_ini', '... (Semester Saat Ini)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat</td>
@@ -82,27 +104,27 @@ String suratPermohonanPengantarPenelitian(
           <tr>
             <td style="white-space: nowrap">Judul Penelitian</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Judul Penelitian)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'judul_penelitian', '... (Judul Penelitian)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Tempat Penelitian</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nama Instansi/Lokasi Penelitian)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nama_instansi_lokasi_penelitian', '... (Nama Instansi/Lokasi Penelitian)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat Lokasi</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Alamat Lengkap Lokasi)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'alamat_lengkap_lokasi', '... (Alamat Lengkap Lokasi)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Tanggal Pelaksanaan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Tanggal Mulai s/d Selesai)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'tanggal_mulai_s_d_selesai', '... (Tanggal Mulai s/d Selesai)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Dosen Pembimbing</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nama Dosen Pembimbing)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nama_dosen_pembimbing', '... (Nama Dosen Pembimbing)')}</td>
           </tr>
         </tbody>
       </table>

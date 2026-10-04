@@ -18,16 +18,39 @@ class AccountRepository {
         where: '${dbInstance.accountId} = ?', whereArgs: [id]);
   }
 
-  Future<List<AccountModel>> all({int? limit, int? page}) async {
+  /// Total number of saved accounts (unfiltered); used for the free-tier
+  /// account limit.
+  Future<int> count() async {
+    Database db = await dbInstance.init;
+    final data = await db
+        .rawQuery('SELECT COUNT(*) AS total FROM ${dbInstance.accountTable}');
+    return int.tryParse(data.first['total'].toString()) ?? 0;
+  }
+
+  /// [query] matches name, address, telephone or email.
+  Future<List<AccountModel>> all({int? limit, int? page, String? query}) async {
     try {
       // Setup pagination
       limit ??= 10;
       int offset = (limit * (page ?? 1)) - limit;
 
+      String whereSql = '';
+      final args = <Object?>[];
+      if (query != null && query.trim().isNotEmpty) {
+        final columns = [
+          dbInstance.accountName,
+          dbInstance.accountAddress,
+          dbInstance.accountTelephone,
+          dbInstance.accountEmail,
+        ];
+        whereSql = 'WHERE ${columns.map((c) => '$c LIKE ?').join(' OR ')}';
+        args.addAll(List.filled(columns.length, '%${query.trim()}%'));
+      }
+
       Database db = await dbInstance.init;
       final data = await db.rawQuery(
-          'SELECT *  FROM ${dbInstance.accountTable} ORDER BY ${dbInstance.accountTable}.${dbInstance.accountUpdatedAt} DESC LIMIT $limit OFFSET $offset',
-          []);
+          'SELECT *  FROM ${dbInstance.accountTable} $whereSql ORDER BY ${dbInstance.accountTable}.${dbInstance.accountUpdatedAt} DESC LIMIT $limit OFFSET $offset',
+          args);
 
       List<AccountModel> listAccounts = [];
       if (data.isNotEmpty) {

@@ -1,9 +1,17 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratKeteranganTidakMampuVariables = [
+  LetterVariable(key: 'nama_kelurahan', label: 'Nama Kelurahan'),
+  LetterVariable(key: 'kebutuhan', label: 'Kebutuhan'),
+  LetterVariable(key: 'nama_kepala_lurah', label: 'Nama Kepala Lurah'),
+];
 
 String suratKeteranganTidakMampu(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   // String dateNow =
   //     DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
 
@@ -18,7 +26,7 @@ String suratKeteranganTidakMampu(
     </p>
     <p><br></p>
     <p style="text-align: justify; ">
-      Yang bertanda tangan di bawah ini Kepala Kelurahan <b>... (Alamat)</b> menerangkan bahwa :
+      Yang bertanda tangan di bawah ini Kepala Kelurahan ${fillVar(vars, 'nama_kelurahan', '... (Alamat)')} menerangkan bahwa :
     </p>
     <p>
       <table border="0" style="width:100%">
@@ -57,13 +65,13 @@ String suratKeteranganTidakMampu(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Warga tersebut diatas adalah benar penduduk <b>... (Alamat)</b> yang bertempat tinggal di alamat tersebut diatas.
+      Warga tersebut diatas adalah benar penduduk ${fillVar(vars, 'nama_kelurahan', '... (Alamat)')} yang bertempat tinggal di alamat tersebut diatas.
     </p>
     <p style="text-align: justify; ">
       Berdasarkan Pengantar dari Ketua RT/RW setempat yang menurut sepengetahuan kami, bahwa benar yang bersangkutan tergolong orang yang tidak mampu/miskin.
     </p>
     <p style="text-align: justify; ">
-      Surat keterangan ini kami berikan atas permintaan yang bersangkutan untuk dipergunakan sebagai <b>... (Kebutuhan)</b>.
+      Surat keterangan ini kami berikan atas permintaan yang bersangkutan untuk dipergunakan sebagai ${fillVar(vars, 'kebutuhan', '... (Kebutuhan)')}.
     </p>
     <p style="text-align: justify; ">
       Demikian surat keterangan ini kami buat dengan sesungguhnya untuk dapat dipergunakan seperlunya.
@@ -81,7 +89,7 @@ String suratKeteranganTidakMampu(
             </p>
             $image
             <p>
-              <span style="white-space: nowrap"><b>... (Nama Kepala Lurah)</b></span>
+              <span style="white-space: nowrap">${fillVar(vars, 'nama_kepala_lurah', '... (Nama Kepala Lurah)')}</span>
             </p>
           </td>
         </tr>

@@ -1,9 +1,19 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanKesehatanMentalVariables = [
+  LetterVariable(
+      key: 'tujuan',
+      label: 'Tujuan',
+      hint:
+          'misal: persyaratan kerja / kepemilikan senjata api / pendaftaran CPNS'),
+];
 
 String suratPernyataanKesehatanMental(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -62,7 +72,7 @@ String suratPernyataanKesehatanMental(
       <li>Mampu berpikir, bertindak, dan mengambil keputusan secara wajar</li>
     </ul>
     <p style="text-align: justify; ">
-      Surat pernyataan ini saya buat untuk keperluan <b>... (Tujuan, misal: persyaratan kerja / kepemilikan senjata api / pendaftaran CPNS)</b>.
+      Surat pernyataan ini saya buat untuk keperluan ${fillVar(vars, 'tujuan', '... (Tujuan, misal: persyaratan kerja / kepemilikan senjata api / pendaftaran CPNS)')}.
     </p>
     <p style="text-align: justify; ">
       Apabila di kemudian hari pernyataan ini terbukti tidak benar, saya bersedia menerima sanksi sesuai ketentuan yang berlaku.

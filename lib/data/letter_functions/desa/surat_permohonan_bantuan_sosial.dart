@@ -1,9 +1,34 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanBantuanSosialVariables = [
+  LetterVariable(key: 'nama_pejabat_instansi', label: 'Nama Pejabat/Instansi'),
+  LetterVariable(key: 'pekerjaan', label: 'Pekerjaan'),
+  LetterVariable(
+      key: 'jenis_bantuan',
+      label: 'Jenis Bantuan',
+      hint: 'misal: bantuan pangan / bantuan tunai / bantuan kesehatan'),
+  LetterVariable(
+      key: 'alasan_permohonan',
+      label: 'Alasan Permohonan',
+      type: LetterVariableType.multiline,
+      hint:
+          'misal: kondisi ekonomi yang sulit / terdampak bencana alam / kepala keluarga meninggal dunia'),
+  LetterVariable(
+      key: 'jumlah_tanggungan',
+      label: 'Jumlah Tanggungan',
+      type: LetterVariableType.number),
+  LetterVariable(
+      key: 'nominal_penghasilan',
+      label: 'Nominal Penghasilan',
+      type: LetterVariableType.currency),
+];
 
 String suratPermohonanBantuanSosial(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,7 +37,7 @@ String suratPermohonanBantuanSosial(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama Pejabat/Instansi)</b>
+      ${fillVar(vars, 'nama_pejabat_instansi', '... (Nama Pejabat/Instansi)')}
       <br>
       di Tempat
     </p>
@@ -46,7 +71,7 @@ String suratPermohonanBantuanSosial(
           <tr>
 						<td style="white-space: nowrap">Pekerjaan</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Pekerjaan)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'pekerjaan', '... (Pekerjaan)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Alamat</td>
@@ -62,10 +87,10 @@ String suratPermohonanBantuanSosial(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini mengajukan permohonan bantuan sosial berupa <b>... (Jenis Bantuan, misal: bantuan pangan / bantuan tunai / bantuan kesehatan)</b> dikarenakan <b>... (Alasan Permohonan, misal: kondisi ekonomi yang sulit / terdampak bencana alam / kepala keluarga meninggal dunia)</b>.
+      Dengan ini mengajukan permohonan bantuan sosial berupa ${fillVar(vars, 'jenis_bantuan', '... (Jenis Bantuan, misal: bantuan pangan / bantuan tunai / bantuan kesehatan)')} dikarenakan ${fillVar(vars, 'alasan_permohonan', '... (Alasan Permohonan, misal: kondisi ekonomi yang sulit / terdampak bencana alam / kepala keluarga meninggal dunia)')}.
     </p>
     <p style="text-align: justify; ">
-      Saya memiliki tanggungan sebanyak <b>... (Jumlah Tanggungan)</b> orang dengan penghasilan rata-rata sebesar <b>Rp ... (Nominal Penghasilan)</b> per bulan.
+      Saya memiliki tanggungan sebanyak ${fillVar(vars, 'jumlah_tanggungan', '... (Jumlah Tanggungan)')} orang dengan penghasilan rata-rata sebesar ${fillVar(vars, 'nominal_penghasilan', 'Rp ... (Nominal Penghasilan)', prefix: 'Rp ')} per bulan.
     </p>
     <p style="text-align: justify; ">
       Sebagai bahan pertimbangan, saya lampirkan fotokopi KTP, Kartu Keluarga, dan surat keterangan tidak mampu dari RT/RW setempat.

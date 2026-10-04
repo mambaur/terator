@@ -1,9 +1,21 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanAlergiObatVariables = [
+  LetterVariable(key: 'nama_obat_1', label: 'Nama Obat 1'),
+  LetterVariable(key: 'nama_obat_2', label: 'Nama Obat 2'),
+  LetterVariable(key: 'nama_obat_3', label: 'Nama Obat 3'),
+  LetterVariable(
+      key: 'jenis_reaksi_alergi',
+      label: 'Jenis Reaksi Alergi',
+      hint: 'misal: gatal-gatal, sesak napas, bengkak'),
+];
 
 String suratPernyataanAlergiObat(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -49,12 +61,12 @@ String suratPernyataanAlergiObat(
       Dengan ini menyatakan bahwa saya memiliki riwayat alergi terhadap obat-obatan berikut:
     </p>
     <ul>
-      <li><b>... (Nama Obat 1)</b></li>
-      <li><b>... (Nama Obat 2)</b></li>
-      <li><b>... (Nama Obat 3)</b></li>
+      <li>${fillVar(vars, 'nama_obat_1', '... (Nama Obat 1)')}</li>
+      <li>${fillVar(vars, 'nama_obat_2', '... (Nama Obat 2)')}</li>
+      <li>${fillVar(vars, 'nama_obat_3', '... (Nama Obat 3)')}</li>
     </ul>
     <p style="text-align: justify; ">
-      Reaksi alergi yang pernah saya alami antara lain <b>... (Jenis Reaksi Alergi, misal: gatal-gatal, sesak napas, bengkak)</b>.
+      Reaksi alergi yang pernah saya alami antara lain ${fillVar(vars, 'jenis_reaksi_alergi', '... (Jenis Reaksi Alergi, misal: gatal-gatal, sesak napas, bengkak)')}.
     </p>
     <p style="text-align: justify; ">
       Surat pernyataan ini saya buat agar menjadi perhatian bagi tenaga medis dalam memberikan pengobatan kepada saya.

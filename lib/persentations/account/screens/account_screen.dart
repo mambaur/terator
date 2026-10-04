@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:terator/core/loading_overlay.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/models/account_model.dart';
@@ -12,6 +13,7 @@ import 'package:terator/persentations/ads/widgets/banner_ad_widget.dart';
 import 'package:terator/persentations/subscription/cubit/subscription_cubit.dart';
 import 'package:terator/repositories/account_repository.dart';
 import 'package:terator/utils/custom_snackbar.dart';
+import 'package:terator/utils/search_field.dart';
 
 import '../../subscription/widgets/premium_gate.dart';
 
@@ -27,6 +29,7 @@ class AccountScreen extends StatefulWidget {
 class _AccountScreenState extends State<AccountScreen> {
   final ScrollController _scrollController = ScrollController();
   final AccountRepository _accountRepo = AccountRepository();
+  String _query = '';
 
   void onScroll() {
     double maxScroll = _scrollController.position.maxScrollExtent;
@@ -53,7 +56,8 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   void initState() {
-    context.read<AccountCubit>().getAccounts(isInit: true);
+    // Fresh screen = no search (the cubit is global and may hold an old one).
+    context.read<AccountCubit>().applyFilter();
 
     _scrollController.addListener(onScroll);
     super.initState();
@@ -74,6 +78,15 @@ class _AccountScreenState extends State<AccountScreen> {
               parent: BouncingScrollPhysics()),
           slivers: [
             SliverToBoxAdapter(
+              child: SearchField(
+                hint: 'Cari nama, alamat, telepon, atau email...',
+                onSearch: (q) {
+                  setState(() => _query = q);
+                  context.read<AccountCubit>().applyFilter(query: q);
+                },
+              ),
+            ),
+            SliverToBoxAdapter(
               child: BannerAdWidget(
                 placement: BannerPlacement.accountPage,
               ),
@@ -84,7 +97,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   if (state.status == AccountStatusCubit.success) {
                     if (state.accounts!.isEmpty) {
                       return SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.65,
+                        height: MediaQuery.of(context).size.height * 0.5,
                         child: Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -95,26 +108,32 @@ class _AccountScreenState extends State<AccountScreen> {
                                   color: kPrimary.withValues(alpha: 0.08),
                                   shape: BoxShape.circle,
                                 ),
-                                child: const Icon(
-                                  Icons.person_add_alt_1_rounded,
+                                child: Icon(
+                                  _query.trim().isNotEmpty
+                                      ? Icons.search_off_rounded
+                                      : Icons.person_add_alt_1_rounded,
                                   size: 56,
                                   color: kPrimary,
                                 ),
                               ),
                               const SizedBox(height: 20),
-                              const Text(
-                                'Belum Ada Akun',
-                                style: TextStyle(
+                              Text(
+                                _query.trim().isNotEmpty
+                                    ? 'Akun Tidak Ditemukan'
+                                    : 'Belum Ada Akun',
+                                style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 18,
                                   color: kTextPrimary,
                                 ),
                               ),
                               const SizedBox(height: 6),
-                              const Text(
-                                'Tambahkan akun surat dengan\nmenekan tombol + di bawah',
+                              Text(
+                                _query.trim().isNotEmpty
+                                    ? 'Coba kata kunci lain'
+                                    : 'Tambahkan akun surat dengan\nmenekan tombol + di bawah',
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: kTextSecondary,
                                   fontSize: 14,
                                 ),
@@ -128,7 +147,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     return ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
-                      padding: const EdgeInsets.only(top: 16),
+                      padding: const EdgeInsets.only(top: 12),
                       itemCount: state.hasReachMax
                           ? state.accounts!.length
                           : state.accounts!.length + 1,
@@ -239,7 +258,8 @@ class _AccountScreenState extends State<AccountScreen> {
         builder: (context, stateAccount) {
           int accountCount = 0;
           if (stateAccount.status == AccountStatusCubit.success) {
-            accountCount = (stateAccount.accounts ?? []).length;
+            // Unfiltered total, so searching can't bypass the free limit.
+            accountCount = stateAccount.total;
           }
           return BlocBuilder<SubscriptionCubit, SubscriptionState>(
             builder: (context, state) {
@@ -255,7 +275,8 @@ class _AccountScreenState extends State<AccountScreen> {
                   alignment: Alignment.topLeft,
                   backgroundColor: Color(0xFFF59E0B),
                   label: Icon(
-                    Icons.diamond,
+                    LucideIcons.crown,
+                    size: 14,
                     color: Colors.white,
                   ),
                   child: FloatingActionButton(

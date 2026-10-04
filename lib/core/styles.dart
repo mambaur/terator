@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
 
 // ═══════════════════════════════════════════════════
 // Legacy Bootstrap Colors (kept for compatibility)
@@ -276,7 +278,7 @@ class AppTheme {
       isScrollControlled: true,
       context: context,
       builder: (BuildContext context) {
-        return Padding(
+        final sheet = Padding(
           padding:
               EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: Container(
@@ -304,6 +306,24 @@ class AppTheme {
                 child,
               ],
             ),
+          ),
+        );
+        if (!kIsWeb) return sheet;
+        // Web: the barrier lies over the HTML editor iframe, which swallows
+        // its taps, so the sheet fills the screen with its own tap-to-close
+        // area, all inside a PointerInterceptor that keeps the iframe from
+        // taking taps/focus. PointerInterceptor is a no-op on mobile.
+        return PointerInterceptor(
+          child: Column(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => Navigator.pop(context),
+                ),
+              ),
+              sheet,
+            ],
           ),
         );
       },

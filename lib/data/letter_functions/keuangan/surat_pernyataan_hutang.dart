@@ -1,9 +1,26 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanHutangVariables = [
+  LetterVariable(key: 'nama_pemberi_pinjaman', label: 'Nama Pemberi Pinjaman'),
+  LetterVariable(
+      key: 'alamat', label: 'Alamat', type: LetterVariableType.multiline),
+  LetterVariable(
+      key: 'nominal_hutang',
+      label: 'Nominal Hutang',
+      type: LetterVariableType.currency),
+  LetterVariable(key: 'terbilang', label: 'Terbilang'),
+  LetterVariable(
+      key: 'tanggal_jatuh_tempo',
+      label: 'Tanggal Jatuh Tempo',
+      type: LetterVariableType.date),
+];
 
 String suratPernyataanHutang(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -49,18 +66,18 @@ String suratPernyataanHutang(
 					<tr>
 						<td style="white-space: nowrap">Nama</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Nama Pemberi Pinjaman)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nama_pemberi_pinjaman', '... (Nama Pemberi Pinjaman)')}</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap">Alamat</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Alamat)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'alamat', '... (Alamat)')}</td>
 					</tr>
 				</tbody>
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Sebesar <b>Rp ... (Nominal Hutang)</b> (<b>... Terbilang</b>) yang akan saya lunasi selambat-lambatnya pada tanggal <b>... (Tanggal Jatuh Tempo)</b>.
+      Sebesar ${fillVar(vars, 'nominal_hutang', 'Rp ... (Nominal Hutang)', prefix: 'Rp ')} (${fillVar(vars, 'terbilang', '... Terbilang')}) yang akan saya lunasi selambat-lambatnya pada tanggal ${fillVar(vars, 'tanggal_jatuh_tempo', '... (Tanggal Jatuh Tempo)')}.
     </p>
     <p style="text-align: justify; ">
       Apabila saya tidak dapat melunasi hutang tersebut pada waktu yang telah ditentukan, maka saya bersedia menerima sanksi sesuai dengan kesepakatan yang berlaku.

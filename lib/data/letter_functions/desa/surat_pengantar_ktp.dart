@@ -1,9 +1,16 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPengantarKtpVariables = [
+  LetterVariable(key: 'alamat_rt_rw', label: 'Alamat RT/RW'),
+  LetterVariable(key: 'nama_ketua_rt_rw', label: 'Nama Ketua RT/RW'),
+];
 
 String suratPengantarKtp(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,7 +19,7 @@ String suratPengantarKtp(
     </p>
     <p><br></p>
     <p style="text-align: justify; ">
-      Yang bertanda tangan di bawah ini Ketua RT/RW <b>... (Alamat RT/RW)</b>, menerangkan bahwa:
+      Yang bertanda tangan di bawah ini Ketua RT/RW ${fillVar(vars, 'alamat_rt_rw', '... (Alamat RT/RW)')}, menerangkan bahwa:
     </p>
     <p>
       <table border="0" style="width:100%">
@@ -89,7 +96,7 @@ String suratPengantarKtp(
           <td style="width: 100%">&nbsp;</td>
           <td style="vertical-align:top;text-align:center;">
             <p>
-              <span style="white-space: nowrap"><b>... (Nama Ketua RT/RW)</b></span>
+              <span style="white-space: nowrap">${fillVar(vars, 'nama_ketua_rt_rw', '... (Nama Ketua RT/RW)')}</span>
             </p>
           </td>
         </tr>

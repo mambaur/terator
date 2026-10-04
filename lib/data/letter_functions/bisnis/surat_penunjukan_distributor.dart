@@ -1,9 +1,28 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPenunjukanDistributorVariables = [
+  LetterVariable(key: 'jabatan', label: 'Jabatan'),
+  LetterVariable(key: 'nama_perusahaan', label: 'Nama Perusahaan'),
+  LetterVariable(
+      key: 'nama_perwakilan_distributor', label: 'Nama Perwakilan Distributor'),
+  LetterVariable(
+      key: 'nama_perusahaan_distributor', label: 'Nama Perusahaan Distributor'),
+  LetterVariable(
+      key: 'alamat_distributor',
+      label: 'Alamat Distributor',
+      type: LetterVariableType.multiline),
+  LetterVariable(key: 'nama_produk', label: 'Nama Produk'),
+  LetterVariable(key: 'wilayah_distribusi', label: 'Wilayah Distribusi'),
+  LetterVariable(key: 'jangka_waktu', label: 'Jangka Waktu'),
+  LetterVariable(key: 'nama_distributor', label: 'Nama Distributor'),
+];
 
 String suratPenunjukanDistributor(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -25,12 +44,12 @@ String suratPenunjukanDistributor(
 					<tr>
 						<td style="white-space: nowrap">Jabatan</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Jabatan)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'jabatan', '... (Jabatan)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Perusahaan</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Nama Perusahaan)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Alamat</td>
@@ -49,26 +68,26 @@ String suratPenunjukanDistributor(
 					<tr>
 						<td style="white-space: nowrap">Nama</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Nama Perwakilan Distributor)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nama_perwakilan_distributor', '... (Nama Perwakilan Distributor)')}</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap">Perusahaan</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Nama Perusahaan Distributor)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nama_perusahaan_distributor', '... (Nama Perusahaan Distributor)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Alamat</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Alamat Distributor)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'alamat_distributor', '... (Alamat Distributor)')}</td>
 					</tr>
 				</tbody>
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Selanjutnya disebut <b>PIHAK KEDUA</b>, sebagai distributor resmi untuk produk <b>... (Nama Produk)</b> di wilayah <b>... (Wilayah Distribusi)</b> dengan ketentuan sebagai berikut:
+      Selanjutnya disebut <b>PIHAK KEDUA</b>, sebagai distributor resmi untuk produk ${fillVar(vars, 'nama_produk', '... (Nama Produk)')} di wilayah ${fillVar(vars, 'wilayah_distribusi', '... (Wilayah Distribusi)')} dengan ketentuan sebagai berikut:
     </p>
     <ul>
-      <li>Jangka waktu penunjukan berlaku selama <b>... (Jangka Waktu)</b> terhitung sejak tanggal surat ini ditandatangani.</li>
+      <li>Jangka waktu penunjukan berlaku selama ${fillVar(vars, 'jangka_waktu', '... (Jangka Waktu)')} terhitung sejak tanggal surat ini ditandatangani.</li>
       <li>Pihak Kedua wajib menjaga kualitas dan reputasi produk Pihak Pertama.</li>
       <li>Harga jual mengikuti ketentuan yang ditetapkan oleh Pihak Pertama.</li>
       <li>Pihak Kedua tidak diperkenankan mendistribusikan produk sejenis dari perusahaan lain tanpa persetujuan tertulis dari Pihak Pertama.</li>
@@ -103,7 +122,7 @@ String suratPenunjukanDistributor(
         <tr>
           <td style="vertical-align:top;text-align:center;">
             <p>
-              <span style="white-space: nowrap"><b>... (Nama Distributor)</b></span>
+              <span style="white-space: nowrap">${fillVar(vars, 'nama_distributor', '... (Nama Distributor)')}</span>
             </p>
           </td>
           <td style="width: 100%">&nbsp;</td>

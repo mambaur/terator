@@ -1,9 +1,25 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratUcapanTerimaKasihVariables = [
+  LetterVariable(key: 'nama_penerima', label: 'Nama Penerima'),
+  LetterVariable(
+      key: 'jabatan_instansi_penerima', label: 'Jabatan/Instansi Penerima'),
+  LetterVariable(
+      key: 'hal_yang_diapresiasi',
+      label: 'Hal yang Diapresiasi',
+      type: LetterVariableType.multiline,
+      hint: 'mis. Bantuan/Dukungan/Partisipasi/Kerjasama dalam Acara'),
+  LetterVariable(
+      key: 'kegiatan_acara_tujuan_yang_dicapai',
+      label: 'Kegiatan/Acara/Tujuan yang Dicapai'),
+];
 
 String suratUcapanTerimaKasih(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -16,19 +32,19 @@ String suratUcapanTerimaKasih(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama Penerima)</b>
+      ${fillVar(vars, 'nama_penerima', '... (Nama Penerima)')}
       <br>
-      <b>... (Jabatan/Instansi Penerima)</b>
+      ${fillVar(vars, 'jabatan_instansi_penerima', '... (Jabatan/Instansi Penerima)')}
       <br>
       di Tempat
     </p>
     <p><br></p>
     <p style="text-align: justify; ">Dengan hormat,</p>
     <p style="text-align: justify; ">
-      Puji syukur kami panjatkan kepada Tuhan Yang Maha Esa atas segala rahmat dan karunia-Nya. Melalui surat ini, perkenankanlah kami menyampaikan rasa terima kasih yang sebesar-besarnya kepada Bapak/Ibu atas <b>... (Hal yang Diapresiasi, mis. Bantuan/Dukungan/Partisipasi/Kerjasama dalam Acara)</b> yang telah diberikan.
+      Puji syukur kami panjatkan kepada Tuhan Yang Maha Esa atas segala rahmat dan karunia-Nya. Melalui surat ini, perkenankanlah kami menyampaikan rasa terima kasih yang sebesar-besarnya kepada Bapak/Ibu atas ${fillVar(vars, 'hal_yang_diapresiasi', '... (Hal yang Diapresiasi, mis. Bantuan/Dukungan/Partisipasi/Kerjasama dalam Acara)')} yang telah diberikan.
     </p>
     <p style="text-align: justify; ">
-      Dukungan, perhatian, dan kerja sama yang Bapak/Ibu berikan sangat berarti dan memberikan kontribusi nyata terhadap <b>... (Kegiatan/Acara/Tujuan yang Dicapai)</b>. Tanpa adanya dukungan tersebut, niscaya kegiatan ini tidak akan dapat berjalan dengan lancar dan baik.
+      Dukungan, perhatian, dan kerja sama yang Bapak/Ibu berikan sangat berarti dan memberikan kontribusi nyata terhadap ${fillVar(vars, 'kegiatan_acara_tujuan_yang_dicapai', '... (Kegiatan/Acara/Tujuan yang Dicapai)')}. Tanpa adanya dukungan tersebut, niscaya kegiatan ini tidak akan dapat berjalan dengan lancar dan baik.
     </p>
     <p style="text-align: justify; ">
       Kami menyadari bahwa apa yang Bapak/Ibu lakukan merupakan bentuk kepedulian yang luar biasa. Semoga segala kebaikan tersebut mendapatkan balasan yang berlipat ganda dari Tuhan Yang Maha Esa.

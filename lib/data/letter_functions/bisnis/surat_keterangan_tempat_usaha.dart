@@ -1,9 +1,22 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratKeteranganTempatUsahaVariables = [
+  LetterVariable(key: 'nama_desa', label: 'Nama Desa'),
+  LetterVariable(key: 'nama_kecamatan', label: 'Nama Kecamatan'),
+  LetterVariable(key: 'nama_kabupaten', label: 'Nama Kabupaten'),
+  LetterVariable(key: 'jenis_usaha', label: 'Jenis Usaha'),
+  LetterVariable(key: 'nama_jalan', label: 'Nama Jalan'),
+  LetterVariable(key: 'kebutuhan', label: 'Kebutuhan'),
+  LetterVariable(
+      key: 'nama_kepala_desa_lurah', label: 'Nama Kepala Desa / Lurah'),
+];
 
 String suratKeteranganTempatUsaha(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   // String dateNow =
   //     DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
 
@@ -18,7 +31,7 @@ String suratKeteranganTempatUsaha(
     </p>
     <p><br></p>
     <p style="text-align: justify; ">
-      Yang bertanda tangan dibawah ini Kepala Desa <b>... (Nama Desa)</b> Kecamatan <b>... (Nama Kecamatan)</b> Kabupaten <b>... (Nama Kabupaten)</b> menerangkan bahwa:
+      Yang bertanda tangan dibawah ini Kepala Desa ${fillVar(vars, 'nama_desa', '... (Nama Desa)')} Kecamatan ${fillVar(vars, 'nama_kecamatan', '... (Nama Kecamatan)')} Kabupaten ${fillVar(vars, 'nama_kabupaten', '... (Nama Kabupaten)')} menerangkan bahwa:
     </p>
     <p>
       <table border="0" style="width:100%">
@@ -42,10 +55,10 @@ String suratKeteranganTempatUsaha(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Orang tersebut diatas adalah benar- benar mempunyai usaha <b>... (Usaha anda)</b> Yang terletak di Jln/Dsn <b>... (Nama Jalan)</b> Kelurahan/Desa <b>... (Nama Desa)</b> Kecamatan <b>... (Nama Kecamatan)</b> Kabupaten <b>... (Nama Kabupaten)</b>.
+      Orang tersebut diatas adalah benar- benar mempunyai usaha ${fillVar(vars, 'jenis_usaha', '... (Usaha anda)')} Yang terletak di Jln/Dsn ${fillVar(vars, 'nama_jalan', '... (Nama Jalan)')} Kelurahan/Desa ${fillVar(vars, 'nama_desa', '... (Nama Desa)')} Kecamatan ${fillVar(vars, 'nama_kecamatan', '... (Nama Kecamatan)')} Kabupaten ${fillVar(vars, 'nama_kabupaten', '... (Nama Kabupaten)')}.
     </p>
     <p style="text-align: justify; ">
-      Demikian Surat Keterangan ini kami buat dengan sebenarnya, dan dapat Dipergunakan sebagai <b>... (Kebutuhan)</b>.
+      Demikian Surat Keterangan ini kami buat dengan sebenarnya, dan dapat Dipergunakan sebagai ${fillVar(vars, 'kebutuhan', '... (Kebutuhan)')}.
     </p>
     <p><br></p>
     <table>
@@ -60,7 +73,7 @@ String suratKeteranganTempatUsaha(
             </p>
             $image
             <p>
-              <span style="white-space: nowrap"><b>... (Nama Kepala Desa / Lurah)</b></span>
+              <span style="white-space: nowrap">${fillVar(vars, 'nama_kepala_desa_lurah', '... (Nama Kepala Desa / Lurah)')}</span>
             </p>
           </td>
         </tr>

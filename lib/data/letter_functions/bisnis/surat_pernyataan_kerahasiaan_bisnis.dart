@@ -1,9 +1,20 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanKerahasiaanBisnisVariables = [
+  LetterVariable(key: 'jabatan', label: 'Jabatan'),
+  LetterVariable(key: 'nama_perusahaan', label: 'Nama Perusahaan'),
+  LetterVariable(
+      key: 'nama_perusahaan_pihak_pemilik_informasi',
+      label: 'Nama Perusahaan/Pihak Pemilik Informasi'),
+  LetterVariable(key: 'jangka_waktu', label: 'Jangka Waktu'),
+];
 
 String suratPernyataanKerahasiaanBisnis(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -27,12 +38,12 @@ String suratPernyataanKerahasiaanBisnis(
 					<tr>
 						<td style="white-space: nowrap">Jabatan</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Jabatan)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'jabatan', '... (Jabatan)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Perusahaan</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Nama Perusahaan)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Alamat</td>
@@ -43,7 +54,7 @@ String suratPernyataanKerahasiaanBisnis(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini menyatakan bahwa saya bersedia menjaga kerahasiaan seluruh informasi bisnis yang bersifat rahasia milik <b>... (Nama Perusahaan/Pihak Pemilik Informasi)</b>, yang meliputi namun tidak terbatas pada:
+      Dengan ini menyatakan bahwa saya bersedia menjaga kerahasiaan seluruh informasi bisnis yang bersifat rahasia milik ${fillVar(vars, 'nama_perusahaan_pihak_pemilik_informasi', '... (Nama Perusahaan/Pihak Pemilik Informasi)')}, yang meliputi namun tidak terbatas pada:
     </p>
     <ul>
       <li>Data keuangan dan strategi bisnis</li>
@@ -53,7 +64,7 @@ String suratPernyataanKerahasiaanBisnis(
       <li>Informasi teknologi dan sistem informasi</li>
     </ul>
     <p style="text-align: justify; ">
-      Kewajiban kerahasiaan ini berlaku selama <b>... (Jangka Waktu)</b> terhitung sejak tanggal surat ini ditandatangani.
+      Kewajiban kerahasiaan ini berlaku selama ${fillVar(vars, 'jangka_waktu', '... (Jangka Waktu)')} terhitung sejak tanggal surat ini ditandatangani.
     </p>
     <p style="text-align: justify; ">
       Apabila saya terbukti melanggar ketentuan kerahasiaan ini, saya bersedia menerima sanksi sesuai dengan ketentuan hukum yang berlaku dan bersedia mengganti kerugian yang ditimbulkan.

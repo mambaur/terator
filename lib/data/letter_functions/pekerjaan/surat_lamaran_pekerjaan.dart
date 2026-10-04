@@ -1,9 +1,18 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratLamaranPekerjaanVariables = [
+  LetterVariable(key: 'nama_perusahaan', label: 'Nama Perusahaan'),
+  LetterVariable(
+      key: 'alamat', label: 'Alamat', type: LetterVariableType.multiline),
+  LetterVariable(key: 'jabatan', label: 'Jabatan'),
+];
 
 String suratLamaranPekerjaan(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   // String dateNow =
   //     DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
 
@@ -20,9 +29,9 @@ String suratLamaranPekerjaan(
       <br>
       Bapak/Ibu Pimpinan
       <br>
-      <b>... (Nama Perusahaan)</b>
+      ${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')}
       <br>
-      <b>... (Alamat)</b>
+      ${fillVar(vars, 'alamat', '... (Alamat)')}
       <br>
     </p>
     <p><br></p>
@@ -74,7 +83,7 @@ String suratLamaranPekerjaan(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Dengan surat lamaran ini saya mengajukan permohonan kerja di perusahaan yang Bapak/Ibu pimpin untuk menempati posisi <b> ... (Jabatan)</b>.
+      Dengan surat lamaran ini saya mengajukan permohonan kerja di perusahaan yang Bapak/Ibu pimpin untuk menempati posisi  ${fillVar(vars, 'jabatan', '... (Jabatan)')}.
     </p>
     <p style="text-align: justify; ">
       Sebagai bahan pertimbangan, saya telah melampirkan beberapa berkas penting sebagai berikut:

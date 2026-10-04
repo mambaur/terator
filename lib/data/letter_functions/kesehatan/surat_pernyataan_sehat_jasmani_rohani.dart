@@ -1,9 +1,15 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanSehatJasmaniRohaniVariables = [
+  LetterVariable(key: 'tujuan_surat', label: 'Tujuan Surat'),
+];
 
 String suratPernyataanSehatJasmaniRohani(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   // String dateNow =
   //     DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
 
@@ -52,7 +58,7 @@ String suratPernyataanSehatJasmaniRohani(
       Dengan ini menyatakan bahwa kondisi saya dalam keadaan sehat jasmani dan rohani sebagaimana bukti terlampir.
     </p>
     <p style="text-align: justify; ">
-      Demikian surat pernyataan ini dibuat dengan sesungguhnya untuk dapat mengikuti <b>... (Tujuan Surat)</b>. Bilamana dikemudian hari dapat dibuktikan pernyataan ini tidak benar, maka saya bersedia menerima sanksi hukum sesuai peraturan perundang-undangan yang berlaku.
+      Demikian surat pernyataan ini dibuat dengan sesungguhnya untuk dapat mengikuti ${fillVar(vars, 'tujuan_surat', '... (Tujuan Surat)')}. Bilamana dikemudian hari dapat dibuktikan pernyataan ini tidak benar, maka saya bersedia menerima sanksi hukum sesuai peraturan perundang-undangan yang berlaku.
     <p><br></p>
     <table>
       <tbody>

@@ -34,8 +34,8 @@ class _AboutScreenState extends State<AboutScreen> {
         children: [
           // ─── Logo Section ───
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 32),
-            decoration: AppTheme.cardDecoration(),
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 16),
             child: Column(
               children: [
                 Container(

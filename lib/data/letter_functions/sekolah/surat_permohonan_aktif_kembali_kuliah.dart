@@ -1,9 +1,31 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanAktifKembaliKuliahVariables = [
+  LetterVariable(
+      key: 'dekan_ketua_program_studi', label: 'Dekan/Ketua Program Studi'),
+  LetterVariable(key: 'nomor_surat_cuti', label: 'Nomor Surat Cuti'),
+  LetterVariable(
+      key: 'tanggal_surat_cuti',
+      label: 'Tanggal Surat Cuti',
+      type: LetterVariableType.date),
+  LetterVariable(
+      key: 'semester',
+      label: 'Semester',
+      type: LetterVariableType.choice,
+      options: ['Ganjil', 'Genap']),
+  LetterVariable(key: 'tahun_akademik', label: 'Tahun Akademik'),
+  LetterVariable(
+      key: 'lampiran',
+      label: 'Lampiran',
+      hint: 'mis. Salinan Surat Cuti Akademik/Bukti Pembayaran SPP'),
+];
 
 String suratPermohonanAktifKembaliKuliah(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -16,7 +38,7 @@ String suratPermohonanAktifKembaliKuliah(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Dekan/Ketua Program Studi)</b>
+      ${fillVar(vars, 'dekan_ketua_program_studi', '... (Dekan/Ketua Program Studi)')}
       <br>
       ${account?.educationInstitution ?? ''}
       <br>
@@ -69,13 +91,13 @@ String suratPermohonanAktifKembaliKuliah(
       </table>
     </p>
     <p style="text-align: justify; ">
-      Sehubungan dengan telah berakhirnya masa cuti akademik saya sesuai Surat Cuti Akademik Nomor <b>... (Nomor Surat Cuti)</b> tanggal <b>... (Tanggal Surat Cuti)</b>, melalui surat ini saya bermaksud mengajukan permohonan untuk dapat <b>aktif kembali</b> sebagai mahasiswa pada <b>Semester ... (Ganjil/Genap)</b> <b>Tahun Akademik ... (Tahun Akademik)</b>.
+      Sehubungan dengan telah berakhirnya masa cuti akademik saya sesuai Surat Cuti Akademik Nomor ${fillVar(vars, 'nomor_surat_cuti', '... (Nomor Surat Cuti)')} tanggal ${fillVar(vars, 'tanggal_surat_cuti', '... (Tanggal Surat Cuti)')}, melalui surat ini saya bermaksud mengajukan permohonan untuk dapat <b>aktif kembali</b> sebagai mahasiswa pada ${fillVar(vars, 'semester', 'Semester ... (Ganjil/Genap)', prefix: 'Semester ')} ${fillVar(vars, 'tahun_akademik', 'Tahun Akademik ... (Tahun Akademik)', prefix: 'Tahun Akademik ')}.
     </p>
     <p style="text-align: justify; ">
       Saya menyatakan dalam keadaan sehat jasmani dan rohani serta siap untuk melanjutkan studi dengan penuh tanggung jawab. Saya juga bersedia memenuhi seluruh kewajiban administratif maupun akademik yang berlaku.
     </p>
     <p style="text-align: justify; ">
-      Sebagai bahan pertimbangan, saya melampirkan dokumen pendukung berupa <b>... (Lampiran, mis. Salinan Surat Cuti Akademik/Bukti Pembayaran SPP)</b>.
+      Sebagai bahan pertimbangan, saya melampirkan dokumen pendukung berupa ${fillVar(vars, 'lampiran', '... (Lampiran, mis. Salinan Surat Cuti Akademik/Bukti Pembayaran SPP)')}.
     </p>
     <p style="text-align: justify; ">
       Demikian surat permohonan ini saya sampaikan. Atas perhatian dan kebijaksanaan Bapak/Ibu, saya ucapkan terima kasih.

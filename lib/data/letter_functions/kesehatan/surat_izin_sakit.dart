@@ -1,9 +1,29 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
 
-String suratIzinSakit(
-    LetterModel? letter, String? img, AccountModel? account) {
+const List<LetterVariable> suratIzinSakitVariables = [
+  LetterVariable(
+      key: 'nama_pimpinan_kepala_sekolah',
+      label: 'Nama Pimpinan/Kepala Sekolah'),
+  LetterVariable(key: 'jenis_penyakit', label: 'Jenis Penyakit'),
+  LetterVariable(
+      key: 'jumlah_hari',
+      label: 'Jumlah Hari',
+      type: LetterVariableType.number),
+  LetterVariable(
+      key: 'tanggal_mulai',
+      label: 'Tanggal Mulai',
+      type: LetterVariableType.date),
+  LetterVariable(
+      key: 'tanggal_selesai',
+      label: 'Tanggal Selesai',
+      type: LetterVariableType.date),
+];
+
+String suratIzinSakit(LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,7 +32,7 @@ String suratIzinSakit(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama Pimpinan/Kepala Sekolah)</b>
+      ${fillVar(vars, 'nama_pimpinan_kepala_sekolah', '... (Nama Pimpinan/Kepala Sekolah)')}
       <br>
       di Tempat
     </p>
@@ -40,7 +60,7 @@ String suratIzinSakit(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini menyampaikan bahwa saya tidak dapat masuk kerja/sekolah karena sakit <b>... (Jenis Penyakit)</b> selama <b>... (Jumlah Hari)</b> hari, terhitung mulai tanggal <b>... (Tanggal Mulai)</b> sampai dengan <b>... (Tanggal Selesai)</b>.
+      Dengan ini menyampaikan bahwa saya tidak dapat masuk kerja/sekolah karena sakit ${fillVar(vars, 'jenis_penyakit', '... (Jenis Penyakit)')} selama ${fillVar(vars, 'jumlah_hari', '... (Jumlah Hari)')} hari, terhitung mulai tanggal ${fillVar(vars, 'tanggal_mulai', '... (Tanggal Mulai)')} sampai dengan ${fillVar(vars, 'tanggal_selesai', '... (Tanggal Selesai)')}.
     </p>
     <p style="text-align: justify; ">
       Sebagai bukti, saya lampirkan surat keterangan dokter.

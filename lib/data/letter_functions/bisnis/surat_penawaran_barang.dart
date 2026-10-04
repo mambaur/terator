@@ -1,9 +1,23 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPenawaranBarangVariables = [
+  LetterVariable(key: 'nama_perusahaan_klien', label: 'Nama Perusahaan/Klien'),
+  LetterVariable(
+      key: 'alamat', label: 'Alamat', type: LetterVariableType.multiline),
+  LetterVariable(key: 'nama_perusahaan', label: 'Nama Perusahaan'),
+  LetterVariable(key: 'pajak_ongkir_dll', label: 'Pajak/Ongkir/dll'),
+  LetterVariable(
+      key: 'tanggal_berlaku',
+      label: 'Tanggal Berlaku',
+      type: LetterVariableType.date),
+];
 
 String suratPenawaranBarang(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,9 +26,9 @@ String suratPenawaranBarang(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama Perusahaan/Klien)</b>
+      ${fillVar(vars, 'nama_perusahaan_klien', '... (Nama Perusahaan/Klien)')}
       <br>
-      di <b>... (Alamat)</b>
+      di ${fillVar(vars, 'alamat', '... (Alamat)')}
     </p>
     <p><br></p>
     <p>Perihal: <b>Penawaran Barang/Jasa</b></p>
@@ -23,7 +37,7 @@ String suratPenawaranBarang(
       Dengan Hormat,
     </p>
     <p style="text-align: justify; ">
-      Perkenalkan, kami dari <b>... (Nama Perusahaan)</b> bermaksud menawarkan produk/jasa kami kepada Bapak/Ibu. Adapun rincian penawaran sebagai berikut:
+      Perkenalkan, kami dari ${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')} bermaksud menawarkan produk/jasa kami kepada Bapak/Ibu. Adapun rincian penawaran sebagai berikut:
     </p>
     <p>
       <table border="1" style="width:100%; border-collapse: collapse;">
@@ -55,7 +69,7 @@ String suratPenawaranBarang(
       </table>
     </p>
     <p style="text-align: justify; ">
-      Harga di atas sudah termasuk <b>... (Pajak/Ongkir/dll)</b>. Penawaran ini berlaku sampai dengan <b>... (Tanggal Berlaku)</b>.
+      Harga di atas sudah termasuk ${fillVar(vars, 'pajak_ongkir_dll', '... (Pajak/Ongkir/dll)')}. Penawaran ini berlaku sampai dengan ${fillVar(vars, 'tanggal_berlaku', '... (Tanggal Berlaku)')}.
     </p>
     <p style="text-align: justify; ">
       Demikian surat penawaran ini kami sampaikan. Atas perhatian dan kerjasamanya kami ucapkan terima kasih.

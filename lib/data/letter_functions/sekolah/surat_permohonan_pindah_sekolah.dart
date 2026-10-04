@@ -1,9 +1,16 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanPindahSekolahVariables = [
+  LetterVariable(key: 'nama_sekolah', label: 'Nama Sekolah'),
+  LetterVariable(key: 'asal_sekolah', label: 'Asal Sekolah'),
+];
 
 String suratPermohonanPindahSekolah(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   // String dateNow =
   //     DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
 
@@ -20,7 +27,7 @@ String suratPermohonanPindahSekolah(
     <p>
       Kepada Yth.
       <br>
-      Kepala ${account?.educationInstitution != null && account?.educationInstitution != '' ? account?.educationInstitution : '<b>... (Nama Sekolah)</b>'}
+      Kepala ${account?.educationInstitution != null && account?.educationInstitution != '' ? account?.educationInstitution : fillVar(vars, 'nama_sekolah', '... (Nama Sekolah)')}
       <br>
       Di Tempat
     </p>
@@ -58,7 +65,7 @@ String suratPermohonanPindahSekolah(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Mengajukan permohonan pindah dari ${account?.educationInstitution != null && account?.educationInstitution != '' ? account?.educationInstitution : '<b>... (Asal Sekolah)</b>'} ke <b>SMA Budi Mulia Jakarta</b>. Hal ini sehubungan dengan <b>pindah tugas kedua orang tua ke Jakarta</b>.
+      Mengajukan permohonan pindah dari ${account?.educationInstitution != null && account?.educationInstitution != '' ? account?.educationInstitution : fillVar(vars, 'asal_sekolah', '... (Asal Sekolah)')} ke <b>SMA Budi Mulia Jakarta</b>. Hal ini sehubungan dengan <b>pindah tugas kedua orang tua ke Jakarta</b>.
     </p>
     <p style="text-align: justify; ">
       Kami berharap pihak sekolah mempertimbangkan permohonan di atas. Terima kasih atas perhatiannya.

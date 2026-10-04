@@ -1,9 +1,31 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratKeteranganAhliWarisVariables = [
+  LetterVariable(key: 'nama_desa_kelurahan', label: 'Nama Desa/Kelurahan'),
+  LetterVariable(key: 'nama_almarhum_ah', label: 'Nama Almarhum/ah'),
+  LetterVariable(key: 'nik', label: 'NIK'),
+  LetterVariable(
+      key: 'alamat_terakhir',
+      label: 'Alamat Terakhir',
+      type: LetterVariableType.multiline),
+  LetterVariable(
+      key: 'tanggal_meninggal',
+      label: 'Tanggal Meninggal',
+      type: LetterVariableType.date),
+  LetterVariable(key: 'nama_ahli_waris_1', label: 'Nama Ahli Waris 1'),
+  LetterVariable(key: 'hubungan_ahli_waris_1', label: 'Hubungan Ahli Waris 1'),
+  LetterVariable(key: 'nama_ahli_waris_2', label: 'Nama Ahli Waris 2'),
+  LetterVariable(key: 'hubungan_ahli_waris_2', label: 'Hubungan Ahli Waris 2'),
+  LetterVariable(key: 'ahli_waris_lainnya', label: 'Ahli Waris Lainnya'),
+  LetterVariable(key: 'nama_kepala_desa', label: 'Nama Kepala Desa'),
+];
 
 String suratKeteranganAhliWaris(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,7 +34,7 @@ String suratKeteranganAhliWaris(
     </p>
     <p><br></p>
     <p style="text-align: justify; ">
-      Yang bertanda tangan di bawah ini Kepala Desa/Lurah <b>... (Nama Desa/Kelurahan)</b>, menerangkan bahwa:
+      Yang bertanda tangan di bawah ini Kepala Desa/Lurah ${fillVar(vars, 'nama_desa_kelurahan', '... (Nama Desa/Kelurahan)')}, menerangkan bahwa:
     </p>
     <p>
       <table border="0" style="width:100%">
@@ -20,22 +42,22 @@ String suratKeteranganAhliWaris(
 					<tr>
 						<td style="white-space: nowrap">Nama Almarhum/ah</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Nama Almarhum/ah)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nama_almarhum_ah', '... (Nama Almarhum/ah)')}</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap">NIK</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (NIK)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nik', '... (NIK)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Alamat Terakhir</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Alamat)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'alamat_terakhir', '... (Alamat)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Tanggal Meninggal</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Tanggal)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'tanggal_meninggal', '... (Tanggal)')}</td>
 					</tr>
 				</tbody>
 			</table>
@@ -45,9 +67,9 @@ String suratKeteranganAhliWaris(
     </p>
     <p>
       <ol>
-        <li><b>... (Nama Ahli Waris 1)</b> — <b>... (Hubungan)</b></li>
-        <li><b>... (Nama Ahli Waris 2)</b> — <b>... (Hubungan)</b></li>
-        <li><b>... (Tambahkan jika ada)</b></li>
+        <li>${fillVar(vars, 'nama_ahli_waris_1', '... (Nama Ahli Waris 1)')} — ${fillVar(vars, 'hubungan_ahli_waris_1', '... (Hubungan)')}</li>
+        <li>${fillVar(vars, 'nama_ahli_waris_2', '... (Nama Ahli Waris 2)')} — ${fillVar(vars, 'hubungan_ahli_waris_2', '... (Hubungan)')}</li>
+        <li>${fillVar(vars, 'ahli_waris_lainnya', '... (Tambahkan jika ada)')}</li>
       </ol>
     </p>
     <p style="text-align: justify; ">
@@ -86,7 +108,7 @@ String suratKeteranganAhliWaris(
           <td style="width: 100%">&nbsp;</td>
           <td style="vertical-align:top;text-align:center;">
             <p>
-              <span style="white-space: nowrap"><b>... (Nama Kepala Desa)</b></span>
+              <span style="white-space: nowrap">${fillVar(vars, 'nama_kepala_desa', '... (Nama Kepala Desa)')}</span>
             </p>
           </td>
         </tr>

@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_file_saver/flutter_file_saver.dart';
 import 'package:flutter_native_html_to_pdf/flutter_native_html_to_pdf.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -16,6 +17,8 @@ import 'package:terator/core/styles.dart';
 import 'package:terator/data/letter_data.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/persentations/navbar.dart';
+import 'package:terator/persentations/subscription/cubit/subscription_cubit.dart';
+import 'package:terator/repositories/kop_surat_repository.dart';
 import 'package:terator/repositories/letter_repository.dart';
 import 'package:terator/utils/custom_snackbar.dart';
 
@@ -24,12 +27,14 @@ class LetterEditorScreen extends StatefulWidget {
   final String keyLetter;
   final String title;
   final bool withSignature;
+  final Map<String, String> vars;
   const LetterEditorScreen(
       {super.key,
       required this.account,
       required this.keyLetter,
       required this.withSignature,
-      required this.title});
+      required this.title,
+      this.vars = const {}});
 
   @override
   State<LetterEditorScreen> createState() => _LetterEditorScreenState();
@@ -45,17 +50,22 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
   void convert(String htmlData, String name) async {
     try {
       LoadingOverlay.show(context);
-      var targetPath = await _localPath;
-      var targetFileName = name;
-      var html = '<div style="margin: 105px 90px">$htmlData</div>';
+      // Web is dev-only: no native PDF export, just save the HTML.
+      if (!kIsWeb) {
+        var targetPath = await _localPath;
+        var targetFileName = name;
+        var html = '<div style="margin: 105px 90px">$htmlData</div>';
 
-      File generatedPdfFile = await HtmlToPdfConverter().convertHtmlToPdf(
-          html: html, targetDirectory: targetPath!, targetName: targetFileName);
+        File generatedPdfFile = await HtmlToPdfConverter().convertHtmlToPdf(
+            html: html,
+            targetDirectory: targetPath!,
+            targetName: targetFileName);
 
-      await FlutterFileSaver().writeFileAsBytes(
-        fileName: "$targetFileName - ${getRandomString(5).toUpperCase()}.pdf",
-        bytes: await generatedPdfFile.readAsBytes(),
-      );
+        await FlutterFileSaver().writeFileAsBytes(
+          fileName: "$targetFileName - ${getRandomString(5).toUpperCase()}.pdf",
+          bytes: await generatedPdfFile.readAsBytes(),
+        );
+      }
 
       await store(htmlData);
       LoadingOverlay.hide();
@@ -123,51 +133,70 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
         showBack: true,
         context: context,
       ),
-      body: HtmlEditor(
-        controller: controller,
-        callbacks: Callbacks(onInit: () {
-          String text = LetterData.html(widget.keyLetter,
-              account: widget.account,
-              image: widget.withSignature
-                  ? "<img style='width:100%;' src='data:image/png;base64,${widget.account.signatureImage}'>"
-                  : null);
-          controller.setText("$text<br><br><br>");
-        }),
-        htmlToolbarOptions: const HtmlToolbarOptions(defaultToolbarButtons: [
-          FontSettingButtons(fontName: false),
-          FontButtons(),
-          ColorButtons(),
-          ListButtons(listStyles: false),
-          ParagraphButtons(
-              textDirection: false, lineHeight: false, caseConverter: false)
-        ]),
-        htmlEditorOptions: const HtmlEditorOptions(
-          hint: "Tulis surat disini...",
-        ),
-        otherOptions: OtherOptions(
-          height: MediaQuery.of(context).size.height,
+      // Editor sized to the space left between app bar and save bar, so
+      // nothing overlaps it: on web the editor is an iframe that swallows
+      // clicks on Flutter widgets drawn above it.
+      body: LayoutBuilder(
+        builder: (context, constraints) => HtmlEditor(
+          controller: controller,
+          callbacks: Callbacks(onInit: () async {
+            String text = LetterData.html(widget.keyLetter,
+                account: widget.account,
+                vars: widget.vars,
+                image: widget.withSignature
+                    ? "<img style='width:100%;' src='data:image/png;base64,${widget.account.signatureImage}'>"
+                    : null);
+            final kop = await KopSuratRepository().htmlForLetter(
+              widget.keyLetter,
+              isPremium: context.read<SubscriptionCubit>().state.isPremium,
+            );
+            controller.setText("$kop$text<br><br><br>");
+          }),
+          htmlToolbarOptions: const HtmlToolbarOptions(defaultToolbarButtons: [
+            FontSettingButtons(fontName: false),
+            FontButtons(),
+            ColorButtons(),
+            ListButtons(listStyles: false),
+            ParagraphButtons(
+                textDirection: false, lineHeight: false, caseConverter: false)
+          ]),
+          htmlEditorOptions: const HtmlEditorOptions(
+            hint: "Tulis surat disini...",
+          ),
+          otherOptions: OtherOptions(
+            height: constraints.maxHeight,
+          ),
         ),
       ),
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(colors: kGradientPrimary),
-          borderRadius: BorderRadius.circular(kRadiusMd),
-          boxShadow: kShadowPrimary,
-        ),
-        child: FloatingActionButton(
-          onPressed: () async {
-            _showSubmitModal();
-          },
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          child: const Icon(Icons.save_rounded, color: Colors.white),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 12,
+                offset: const Offset(0, -2),
+              ),
+            ],
+          ),
+          child: AppTheme.gradientButton(
+            label: 'Simpan Surat',
+            icon: Icons.save_rounded,
+            onTap: _showSubmitModal,
+            padding: const EdgeInsets.symmetric(vertical: 15),
+          ),
         ),
       ),
     );
   }
 
-  Future<void> _showSubmitModal() {
-    return AppTheme.showModernBottomSheet(
+  Future<void> _showSubmitModal() async {
+    // On web the editor iframe keeps keyboard focus, which leaves the
+    // file-name field unusable; disable it while the sheet is open.
+    if (kIsWeb) controller.disable();
+    await AppTheme.showModernBottomSheet(
       context: context,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,6 +229,12 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
                     style: TextStyle(fontSize: 12, color: kTextSecondary),
                   ),
                 ],
+              ),
+              const Spacer(),
+              IconButton(
+                tooltip: 'Tutup',
+                icon: const Icon(Icons.close_rounded, color: kTextMuted),
+                onPressed: () => Navigator.pop(context),
               ),
             ],
           ),
@@ -255,5 +290,6 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
         ],
       ),
     );
+    if (kIsWeb) controller.enable();
   }
 }

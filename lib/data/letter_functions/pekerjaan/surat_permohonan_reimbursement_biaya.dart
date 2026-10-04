@@ -1,9 +1,40 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanReimbursementBiayaVariables = [
+  LetterVariable(
+      key: 'nama_pimpinan_hrd_bagian_keuangan',
+      label: 'Nama Pimpinan/HRD/Bagian Keuangan'),
+  LetterVariable(key: 'nama_perusahaan', label: 'Nama Perusahaan'),
+  LetterVariable(key: 'nik_nip_karyawan', label: 'NIK/NIP Karyawan'),
+  LetterVariable(key: 'jabatan', label: 'Jabatan'),
+  LetterVariable(key: 'divisi_departemen', label: 'Divisi/Departemen'),
+  LetterVariable(
+      key: 'jenis_pengeluaran',
+      label: 'Jenis Pengeluaran',
+      hint: 'mis. Transportasi/Akomodasi/Konsumsi/Medis'),
+  LetterVariable(
+      key: 'uraian_keperluan',
+      label: 'Uraian Keperluan',
+      type: LetterVariableType.multiline),
+  LetterVariable(
+      key: 'tanggal_pengeluaran',
+      label: 'Tanggal Pengeluaran',
+      type: LetterVariableType.date),
+  LetterVariable(
+      key: 'total_biaya',
+      label: 'Total Biaya',
+      type: LetterVariableType.currency),
+  LetterVariable(key: 'jumlah_dalam_huruf', label: 'Jumlah dalam Huruf'),
+  LetterVariable(key: 'nama_bank', label: 'Nama Bank'),
+  LetterVariable(key: 'nomor_rekening', label: 'Nomor Rekening'),
+];
 
 String suratPermohonanReimbursementBiaya(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -16,9 +47,9 @@ String suratPermohonanReimbursementBiaya(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama Pimpinan/HRD/Bagian Keuangan)</b>
+      ${fillVar(vars, 'nama_pimpinan_hrd_bagian_keuangan', '... (Nama Pimpinan/HRD/Bagian Keuangan)')}
       <br>
-      <b>... (Nama Perusahaan)</b>
+      ${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')}
       <br>
       di Tempat
     </p>
@@ -38,17 +69,17 @@ String suratPermohonanReimbursementBiaya(
           <tr>
             <td style="white-space: nowrap">NIK/NIP Karyawan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (NIK/NIP Karyawan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nik_nip_karyawan', '... (NIK/NIP Karyawan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Jabatan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Jabatan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'jabatan', '... (Jabatan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Divisi/Departemen</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Divisi/Departemen)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'divisi_departemen', '... (Divisi/Departemen)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">No. Telp</td>
@@ -67,27 +98,27 @@ String suratPermohonanReimbursementBiaya(
           <tr>
             <td style="white-space: nowrap">Jenis Pengeluaran</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Jenis Pengeluaran, mis. Transportasi/Akomodasi/Konsumsi/Medis)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'jenis_pengeluaran', '... (Jenis Pengeluaran, mis. Transportasi/Akomodasi/Konsumsi/Medis)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Keperluan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Uraian Keperluan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'uraian_keperluan', '... (Uraian Keperluan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Tanggal Pengeluaran</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Tanggal Pengeluaran)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'tanggal_pengeluaran', '... (Tanggal Pengeluaran)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Total Biaya</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>Rp ... (Total Biaya)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'total_biaya', 'Rp ... (Total Biaya)', prefix: 'Rp ')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Terbilang</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Jumlah dalam Huruf) Rupiah</b></td>
+            <td style="width: 100%">${fillVar(vars, 'jumlah_dalam_huruf', '... (Jumlah dalam Huruf) Rupiah', suffix: ' Rupiah')}</td>
           </tr>
         </tbody>
       </table>
@@ -101,12 +132,12 @@ String suratPermohonanReimbursementBiaya(
           <tr>
             <td style="white-space: nowrap">Nama Bank</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nama Bank)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nama_bank', '... (Nama Bank)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Nomor Rekening</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nomor Rekening)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nomor_rekening', '... (Nomor Rekening)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Atas Nama</td>

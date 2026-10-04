@@ -1,9 +1,15 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPersetujuanSuamiIstriVariables = [
+  LetterVariable(key: 'tujuan_persetujuan', label: 'Tujuan Persetujuan'),
+];
 
 String suratPersetujuanSuamiIstri(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   // String dateNow =
   //     DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
 
@@ -78,7 +84,7 @@ String suratPersetujuanSuamiIstri(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Untuk mengikuti <b>... (Tujuan Persetujuan)<b/>.
+      Untuk mengikuti ${fillVar(vars, 'tujuan_persetujuan', '... (Tujuan Persetujuan)')}.
     </p>
     <p style="text-align: justify; ">
       Demikian persetujuan ini diberikan untuk dipergunakan sebagaimana mestinya.

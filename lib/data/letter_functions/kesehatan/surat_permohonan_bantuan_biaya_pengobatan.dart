@@ -1,9 +1,20 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanBantuanBiayaPengobatanVariables = [
+  LetterVariable(key: 'pihak_yang_dituju', label: 'Pihak yang Dituju'),
+  LetterVariable(key: 'nama_pasien', label: 'Nama Pasien'),
+  LetterVariable(key: 'nama_rumah_sakit', label: 'Nama Rumah Sakit'),
+  LetterVariable(key: 'jenis_penyakit', label: 'Jenis Penyakit'),
+  LetterVariable(
+      key: 'nominal', label: 'Nominal', type: LetterVariableType.currency),
+];
 
 String suratPermohonanBantuanBiayaPengobatan(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,7 +23,7 @@ String suratPermohonanBantuanBiayaPengobatan(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Pihak yang Dituju)</b>
+      ${fillVar(vars, 'pihak_yang_dituju', '... (Pihak yang Dituju)')}
       <br>
       di Tempat
     </p>
@@ -47,10 +58,10 @@ String suratPermohonanBantuanBiayaPengobatan(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini mengajukan permohonan bantuan biaya pengobatan untuk <b>... (Nama Pasien)</b> yang sedang menjalani perawatan di <b>... (Nama Rumah Sakit)</b> karena menderita <b>... (Jenis Penyakit)</b>.
+      Dengan ini mengajukan permohonan bantuan biaya pengobatan untuk ${fillVar(vars, 'nama_pasien', '... (Nama Pasien)')} yang sedang menjalani perawatan di ${fillVar(vars, 'nama_rumah_sakit', '... (Nama Rumah Sakit)')} karena menderita ${fillVar(vars, 'jenis_penyakit', '... (Jenis Penyakit)')}.
     </p>
     <p style="text-align: justify; ">
-      Adapun total biaya yang dibutuhkan adalah sebesar <b>Rp ... (Nominal)</b>. Mengingat kondisi ekonomi keluarga yang kurang mampu, kami sangat membutuhkan bantuan dari Bapak/Ibu.
+      Adapun total biaya yang dibutuhkan adalah sebesar ${fillVar(vars, 'nominal', 'Rp ... (Nominal)', prefix: 'Rp ')}. Mengingat kondisi ekonomi keluarga yang kurang mampu, kami sangat membutuhkan bantuan dari Bapak/Ibu.
     </p>
     <p style="text-align: justify; ">
       Demikian surat permohonan ini saya buat dengan sebenar-benarnya. Atas perhatian dan bantuannya saya ucapkan terima kasih.

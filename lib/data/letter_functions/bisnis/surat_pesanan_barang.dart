@@ -1,9 +1,26 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPesananBarangVariables = [
+  LetterVariable(
+      key: 'nama_supplier_perusahaan', label: 'Nama Supplier/Perusahaan'),
+  LetterVariable(
+      key: 'alamat', label: 'Alamat', type: LetterVariableType.multiline),
+  LetterVariable(
+      key: 'tanggal_kirim',
+      label: 'Tanggal Kirim',
+      type: LetterVariableType.date),
+  LetterVariable(
+      key: 'alamat_pengiriman',
+      label: 'Alamat Pengiriman',
+      type: LetterVariableType.multiline),
+];
 
 String suratPesananBarang(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,9 +29,9 @@ String suratPesananBarang(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama Supplier/Perusahaan)</b>
+      ${fillVar(vars, 'nama_supplier_perusahaan', '... (Nama Supplier/Perusahaan)')}
       <br>
-      di <b>... (Alamat)</b>
+      di ${fillVar(vars, 'alamat', '... (Alamat)')}
     </p>
     <p><br></p>
     <p>Perihal: <b>Pesanan Barang</b></p>
@@ -52,7 +69,7 @@ String suratPesananBarang(
       </table>
     </p>
     <p style="text-align: justify; ">
-      Mohon pesanan tersebut dapat dikirimkan selambat-lambatnya tanggal <b>... (Tanggal Kirim)</b> ke alamat <b>... (Alamat Pengiriman)</b>.
+      Mohon pesanan tersebut dapat dikirimkan selambat-lambatnya tanggal ${fillVar(vars, 'tanggal_kirim', '... (Tanggal Kirim)')} ke alamat ${fillVar(vars, 'alamat_pengiriman', '... (Alamat Pengiriman)')}.
     </p>
     <p style="text-align: justify; ">
       Pembayaran akan kami lakukan sesuai dengan ketentuan yang telah disepakati. Demikian surat pesanan ini kami buat.

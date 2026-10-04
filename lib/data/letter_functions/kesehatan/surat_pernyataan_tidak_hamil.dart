@@ -1,9 +1,15 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanTidakHamilVariables = [
+  LetterVariable(key: 'tujuan_surat', label: 'Tujuan Surat'),
+];
 
 String suratPernyataanTidakHamil(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -49,7 +55,7 @@ String suratPernyataanTidakHamil(
       Dengan ini menyatakan bahwa saya dalam keadaan tidak sedang hamil, sebagaimana hasil pemeriksaan medis terlampir.
     </p>
     <p style="text-align: justify; ">
-      Surat pernyataan ini dibuat untuk keperluan <b>... (Tujuan Surat)</b>. Apabila di kemudian hari pernyataan ini tidak benar, saya bersedia menerima sanksi sesuai ketentuan yang berlaku.
+      Surat pernyataan ini dibuat untuk keperluan ${fillVar(vars, 'tujuan_surat', '... (Tujuan Surat)')}. Apabila di kemudian hari pernyataan ini tidak benar, saya bersedia menerima sanksi sesuai ketentuan yang berlaku.
     </p>
     <p><br></p>
     <table>

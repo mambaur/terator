@@ -1,9 +1,40 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
 
-String suratWasiat(
-    LetterModel? letter, String? img, AccountModel? account) {
+const List<LetterVariable> suratWasiatVariables = [
+  LetterVariable(key: 'pekerjaan', label: 'Pekerjaan'),
+  LetterVariable(key: 'nomor_ktp_nik', label: 'Nomor KTP/NIK'),
+  LetterVariable(
+      key: 'rincian_harta_1',
+      label: 'Rincian Harta 1',
+      type: LetterVariableType.multiline,
+      hint: 'mis. Tanah seluas ... m² di alamat ...'),
+  LetterVariable(
+      key: 'rincian_harta_2',
+      label: 'Rincian Harta 2',
+      type: LetterVariableType.multiline,
+      hint: 'mis. Kendaraan/Tabungan/Saham'),
+  LetterVariable(
+      key: 'rincian_harta_lainnya',
+      label: 'Rincian Harta Lainnya',
+      type: LetterVariableType.multiline),
+  LetterVariable(
+      key: 'nama_penerima_wasiat_1', label: 'Nama Penerima Wasiat 1'),
+  LetterVariable(key: 'hubungan_ahli_waris_1', label: 'Hubungan Ahli Waris 1'),
+  LetterVariable(key: 'bagian_ahli_waris_1', label: 'Bagian Ahli Waris 1'),
+  LetterVariable(
+      key: 'nama_penerima_wasiat_2', label: 'Nama Penerima Wasiat 2'),
+  LetterVariable(key: 'hubungan_ahli_waris_2', label: 'Hubungan Ahli Waris 2'),
+  LetterVariable(key: 'bagian_ahli_waris_2', label: 'Bagian Ahli Waris 2'),
+  LetterVariable(key: 'nama_pelaksana_wasiat', label: 'Nama Pelaksana Wasiat'),
+  LetterVariable(key: 'nama_saksi_1', label: 'Nama Saksi 1'),
+  LetterVariable(key: 'nama_saksi_2', label: 'Nama Saksi 2'),
+];
+
+String suratWasiat(LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -45,12 +76,12 @@ String suratWasiat(
           <tr>
             <td style="white-space: nowrap">Pekerjaan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Pekerjaan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'pekerjaan', '... (Pekerjaan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">No. KTP/NIK</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nomor KTP/NIK)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nomor_ktp_nik', '... (Nomor KTP/NIK)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat</td>
@@ -74,11 +105,11 @@ String suratWasiat(
       Adapun harta yang saya wasiatkan adalah sebagai berikut:
     </p>
     <p style="text-align: justify; ">
-      1. <b>... (Rincian Harta 1, mis. Tanah seluas ... m² di alamat ...)</b>
+      1. ${fillVar(vars, 'rincian_harta_1', '... (Rincian Harta 1, mis. Tanah seluas ... m² di alamat ...)')}
       <br>
-      2. <b>... (Rincian Harta 2, mis. Kendaraan/Tabungan/Saham)</b>
+      2. ${fillVar(vars, 'rincian_harta_2', '... (Rincian Harta 2, mis. Kendaraan/Tabungan/Saham)')}
       <br>
-      3. <b>... (Rincian Harta Lainnya)</b>
+      3. ${fillVar(vars, 'rincian_harta_lainnya', '... (Rincian Harta Lainnya)')}
     </p>
     <p style="text-align: justify; ">
       <b>Pasal 3 — Penerima Wasiat</b>
@@ -91,32 +122,32 @@ String suratWasiat(
           <tr>
             <td style="white-space: nowrap">Nama Penerima 1</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nama Penerima Wasiat 1)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nama_penerima_wasiat_1', '... (Nama Penerima Wasiat 1)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Hubungan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Hubungan dengan Pewaris)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'hubungan_ahli_waris_1', '... (Hubungan dengan Pewaris)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Bagian yang Diterima</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Bagian/Persentase yang Diterima)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'bagian_ahli_waris_1', '... (Bagian/Persentase yang Diterima)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Nama Penerima 2</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nama Penerima Wasiat 2)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nama_penerima_wasiat_2', '... (Nama Penerima Wasiat 2)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Hubungan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Hubungan dengan Pewaris)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'hubungan_ahli_waris_2', '... (Hubungan dengan Pewaris)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Bagian yang Diterima</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Bagian/Persentase yang Diterima)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'bagian_ahli_waris_2', '... (Bagian/Persentase yang Diterima)')}</td>
           </tr>
         </tbody>
       </table>
@@ -124,7 +155,7 @@ String suratWasiat(
     <p style="text-align: justify; ">
       <b>Pasal 4 — Pelaksana Wasiat</b>
       <br>
-      Saya menunjuk <b>... (Nama Pelaksana Wasiat)</b> sebagai pelaksana wasiat yang bertugas untuk menjalankan isi wasiat ini dengan adil dan sesuai dengan ketentuan yang berlaku.
+      Saya menunjuk ${fillVar(vars, 'nama_pelaksana_wasiat', '... (Nama Pelaksana Wasiat)')} sebagai pelaksana wasiat yang bertugas untuk menjalankan isi wasiat ini dengan adil dan sesuai dengan ketentuan yang berlaku.
     </p>
     <p style="text-align: justify; ">
       <b>Pasal 5 — Penutup</b>
@@ -171,7 +202,7 @@ String suratWasiat(
             <span style="white-space: nowrap">Saksi 1,</span>
             <br><br><br><br><br>
             <p>
-              <span style="white-space: nowrap">( <b>... (Nama Saksi 1)</b> )</span>
+              <span style="white-space: nowrap">( ${fillVar(vars, 'nama_saksi_1', '... (Nama Saksi 1)')} )</span>
             </p>
           </td>
           <td style="width: 100%">&nbsp;</td>
@@ -179,7 +210,7 @@ String suratWasiat(
             <span style="white-space: nowrap">Saksi 2,</span>
             <br><br><br><br><br>
             <p>
-              <span style="white-space: nowrap">( <b>... (Nama Saksi 2)</b> )</span>
+              <span style="white-space: nowrap">( ${fillVar(vars, 'nama_saksi_2', '... (Nama Saksi 2)')} )</span>
             </p>
           </td>
         </tr>

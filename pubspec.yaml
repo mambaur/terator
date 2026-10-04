@@ -2,7 +2,7 @@ name: terator
 description: Template Surat Generator.
 
 publish_to: 'none'
-version: 1.5.0+13
+version: 1.6.0+14
 
 environment:
   sdk: '>=2.18.2 <3.0.0'
@@ -34,6 +34,12 @@ dependencies:
   purchases_ui_flutter: ^9.16.0
   
   cupertino_icons: ^1.0.2
+  shared_preferences: ^2.5.5
+  image_picker: ^1.2.3
+  sqflite_common_ffi_web: ^1.2.0
+  web: ^1.1.1
+  lucide_icons_flutter: ^3.1.21
+  pointer_interceptor: ^0.10.1+3
 
 dev_dependencies:
   flutter_test:

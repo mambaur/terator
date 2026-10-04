@@ -1,26 +1,54 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratUndanganAcaraVariables = [
+  LetterVariable(key: 'nomor_surat', label: 'Nomor Surat'),
+  LetterVariable(key: 'nama_acara', label: 'Nama Acara'),
+  LetterVariable(key: 'nama_yang_diundang', label: 'Nama yang Diundang'),
+  LetterVariable(
+      key: 'hari_tanggal_pelaksanaan',
+      label: 'Hari, Tanggal Pelaksanaan',
+      type: LetterVariableType.dateWithDay),
+  LetterVariable(
+      key: 'pukul', label: 'Pukul', hint: 'mis. 09.00 WIB s/d Selesai'),
+  LetterVariable(key: 'nama_tempat', label: 'Nama Tempat'),
+  LetterVariable(
+      key: 'alamat_lengkap',
+      label: 'Alamat Lengkap',
+      type: LetterVariableType.multiline),
+  LetterVariable(
+      key: 'rincian_tema_acara',
+      label: 'Rincian/Tema Acara',
+      type: LetterVariableType.multiline),
+  LetterVariable(
+      key: 'dress_code',
+      label: 'Dress Code',
+      hint: 'mis. Rapi/Batik/Bebas Sopan'),
+  LetterVariable(key: 'jabatan', label: 'Jabatan', hint: 'mis. Ketua Panitia'),
+];
 
 String suratUndanganAcara(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
     <p style="text-align: right; ">${account?.letterCityWritten ?? ''}, $dateNow2</p>
     <p><br></p>
     <p>
-      Nomor&nbsp;&nbsp;&nbsp;&nbsp;: <b>... (Nomor Surat)</b>
+      Nomor&nbsp;&nbsp;&nbsp;&nbsp;: ${fillVar(vars, 'nomor_surat', '... (Nomor Surat)')}
       <br>
       Lampiran&nbsp;: -
       <br>
-      Perihal&nbsp;&nbsp;&nbsp;: <b>Undangan ... (Nama Acara)</b>
+      Perihal&nbsp;&nbsp;&nbsp;: ${fillVar(vars, 'nama_acara', 'Undangan ... (Nama Acara)', prefix: 'Undangan ')}
     </p>
     <p><br></p>
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama yang Diundang)</b>
+      ${fillVar(vars, 'nama_yang_diundang', '... (Nama yang Diundang)')}
       <br>
       di Tempat
     </p>
@@ -32,7 +60,7 @@ String suratUndanganAcara(
       Salam sejahtera kami sampaikan, semoga Bapak/Ibu/Saudara/i senantiasa dalam keadaan sehat dan dilimpahkan rahmat oleh Tuhan Yang Maha Esa.
     </p>
     <p style="text-align: justify; ">
-      Sehubungan dengan akan diadakannya <b>... (Nama Acara)</b>, dengan ini kami selaku panitia/penyelenggara bermaksud mengundang Bapak/Ibu/Saudara/i untuk hadir pada:
+      Sehubungan dengan akan diadakannya ${fillVar(vars, 'nama_acara', '... (Nama Acara)')}, dengan ini kami selaku panitia/penyelenggara bermaksud mengundang Bapak/Ibu/Saudara/i untuk hadir pada:
     </p>
     <p>
       <table border="0" style="width:100%">
@@ -40,32 +68,32 @@ String suratUndanganAcara(
           <tr>
             <td style="white-space: nowrap">Hari/Tanggal</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Hari, Tanggal Pelaksanaan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'hari_tanggal_pelaksanaan', '... (Hari, Tanggal Pelaksanaan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Waktu</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Pukul, mis. 09.00 WIB s/d Selesai)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'pukul', '... (Pukul, mis. 09.00 WIB s/d Selesai)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Tempat</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nama Tempat)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nama_tempat', '... (Nama Tempat)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Alamat Lengkap)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'alamat_lengkap', '... (Alamat Lengkap)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Acara</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Rincian/Tema Acara)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'rincian_tema_acara', '... (Rincian/Tema Acara)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Dress Code</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Dress Code, mis. Rapi/Batik/Bebas Sopan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'dress_code', '... (Dress Code, mis. Rapi/Batik/Bebas Sopan)')}</td>
           </tr>
         </tbody>
       </table>
@@ -100,7 +128,7 @@ String suratUndanganAcara(
             <p>
               <span style="white-space: nowrap">( ${account?.name ?? ''} )</span>
               <br>
-              <span style="white-space: nowrap"><b>... (Jabatan, mis. Ketua Panitia)</b></span>
+              <span style="white-space: nowrap">${fillVar(vars, 'jabatan', '... (Jabatan, mis. Ketua Panitia)')}</span>
             </p>
           </td>
         </tr>

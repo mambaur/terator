@@ -1,9 +1,25 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratIzinPerawatanAnakVariables = [
+  LetterVariable(
+      key: 'nama_rumah_sakit_klinik', label: 'Nama Rumah Sakit/Klinik'),
+  LetterVariable(key: 'nama_anak', label: 'Nama Anak'),
+  LetterVariable(
+      key: 'tempat_tgl_lahir_anak', label: 'Tempat / Tgl. Lahir Anak'),
+  LetterVariable(
+      key: 'jenis_kelamin_anak',
+      label: 'Jenis Kelamin Anak',
+      type: LetterVariableType.choice,
+      options: ['Laki-laki', 'Perempuan']),
+  LetterVariable(key: 'jenis_perawatan', label: 'Jenis Perawatan'),
+];
 
 String suratIzinPerawatanAnak(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -36,7 +52,7 @@ String suratIzinPerawatanAnak(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Memberikan izin kepada pihak rumah sakit / klinik <b>... (Nama Rumah Sakit/Klinik)</b> untuk melakukan perawatan medis terhadap anak saya:
+      Memberikan izin kepada pihak rumah sakit / klinik ${fillVar(vars, 'nama_rumah_sakit_klinik', '... (Nama Rumah Sakit/Klinik)')} untuk melakukan perawatan medis terhadap anak saya:
     </p>
     <p>
       <table border="0" style="width:100%">
@@ -44,22 +60,22 @@ String suratIzinPerawatanAnak(
 					<tr>
 						<td style="white-space: nowrap">Nama Anak</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Nama Anak)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nama_anak', '... (Nama Anak)')}</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap">Tempat / Tgl. Lahir</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Tempat / Tgl. Lahir Anak)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'tempat_tgl_lahir_anak', '... (Tempat / Tgl. Lahir Anak)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Jenis Kelamin</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Jenis Kelamin Anak)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'jenis_kelamin_anak', '... (Jenis Kelamin Anak)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Jenis Perawatan</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Jenis Perawatan)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'jenis_perawatan', '... (Jenis Perawatan)')}</td>
 					</tr>
 				</tbody>
 			</table>

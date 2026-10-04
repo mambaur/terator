@@ -1,9 +1,16 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanBeaSiswaVariables = [
+  LetterVariable(key: 'nama_institusi', label: 'Nama Institusi'),
+  LetterVariable(key: 'nama_beasiswa', label: 'Nama Beasiswa'),
+];
 
 String suratPermohonanBeaSiswa(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   // String dateNow =
   //     DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
 
@@ -33,7 +40,7 @@ String suratPermohonanBeaSiswa(
     <p>
       Kepada Yth.
       <br>
-      Kepala ${account?.educationInstitution != null && account?.educationInstitution != '' ? account?.educationInstitution : '<b>... (Nama Institusi)</b>'}
+      Kepala ${account?.educationInstitution != null && account?.educationInstitution != '' ? account?.educationInstitution : fillVar(vars, 'nama_institusi', '... (Nama Institusi)')}
       <br>
       ${account?.educationAddress ?? ''}
     </p>
@@ -42,7 +49,7 @@ String suratPermohonanBeaSiswa(
       Dengan Hormat,
     </p>
     <p style="text-align: justify; ">
-      Bersamaan adanya informasi Beasiswa <b>... (Nama Beasiswa)</b>, saya yang bertanda tangan di bawah ini:
+      Bersamaan adanya informasi Beasiswa ${fillVar(vars, 'nama_beasiswa', '... (Nama Beasiswa)')}, saya yang bertanda tangan di bawah ini:
     </p>
     <p>
       <table border="0" style="width:100%">

@@ -1,9 +1,28 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanTidakKeberatanVariables = [
+  LetterVariable(key: 'pekerjaan', label: 'Pekerjaan'),
+  LetterVariable(key: 'nomor_ktp_nik', label: 'Nomor KTP/NIK'),
+  LetterVariable(
+      key: 'uraian_hal_yang_tidak_dikeberatkan',
+      label: 'Uraian Hal yang Tidak Dikeberatkan',
+      type: LetterVariableType.multiline,
+      hint: 'mis. Penggunaan Lahan/Pembangunan/Pengangkatan/Penggunaan Nama'),
+  LetterVariable(
+      key: 'nama_pihak_yang_bersangkutan',
+      label: 'Nama Pihak yang Bersangkutan'),
+  LetterVariable(
+      key: 'pertimbangan_alasan_tidak_keberatan',
+      label: 'Pertimbangan/Alasan Tidak Keberatan',
+      type: LetterVariableType.multiline),
+];
 
 String suratPernyataanTidakKeberatan(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -40,12 +59,12 @@ String suratPernyataanTidakKeberatan(
           <tr>
             <td style="white-space: nowrap">Pekerjaan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Pekerjaan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'pekerjaan', '... (Pekerjaan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">No. KTP/NIK</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nomor KTP/NIK)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nomor_ktp_nik', '... (Nomor KTP/NIK)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat</td>
@@ -61,13 +80,13 @@ String suratPernyataanTidakKeberatan(
       </table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini menyatakan dengan sebenar-benarnya bahwa saya <b>TIDAK KEBERATAN</b> atas <b>... (Uraian Hal yang Tidak Dikeberatkan, mis. Penggunaan Lahan/Pembangunan/Pengangkatan/Penggunaan Nama)</b> yang dilakukan oleh <b>... (Nama Pihak yang Bersangkutan)</b>.
+      Dengan ini menyatakan dengan sebenar-benarnya bahwa saya <b>TIDAK KEBERATAN</b> atas ${fillVar(vars, 'uraian_hal_yang_tidak_dikeberatkan', '... (Uraian Hal yang Tidak Dikeberatkan, mis. Penggunaan Lahan/Pembangunan/Pengangkatan/Penggunaan Nama)')} yang dilakukan oleh ${fillVar(vars, 'nama_pihak_yang_bersangkutan', '... (Nama Pihak yang Bersangkutan)')}.
     </p>
     <p style="text-align: justify; ">
       Pernyataan tidak keberatan ini saya berikan secara sukarela, tanpa paksaan dari pihak manapun, serta dalam keadaan sadar dan sehat jasmani maupun rohani.
     </p>
     <p style="text-align: justify; ">
-      Sebagai dasar pertimbangan, hal-hal yang saya pertimbangkan adalah: <b>... (Pertimbangan/Alasan Tidak Keberatan)</b>.
+      Sebagai dasar pertimbangan, hal-hal yang saya pertimbangkan adalah: ${fillVar(vars, 'pertimbangan_alasan_tidak_keberatan', '... (Pertimbangan/Alasan Tidak Keberatan)')}.
     </p>
     <p style="text-align: justify; ">
       Saya juga menyatakan bahwa di kemudian hari saya tidak akan mengajukan tuntutan, gugatan, ataupun keberatan dalam bentuk apapun terkait dengan hal yang saya nyatakan di atas. Apabila di kemudian hari pernyataan ini terbukti tidak benar, maka saya bersedia mempertanggungjawabkan sepenuhnya secara hukum.

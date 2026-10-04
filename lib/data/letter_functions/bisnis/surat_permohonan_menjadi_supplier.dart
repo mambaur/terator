@@ -1,9 +1,27 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanMenjadiSupplierVariables = [
+  LetterVariable(
+      key: 'nama_pimpinan_bagian_pengadaan',
+      label: 'Nama Pimpinan/Bagian Pengadaan'),
+  LetterVariable(
+      key: 'nama_perusahaan_tujuan', label: 'Nama Perusahaan Tujuan'),
+  LetterVariable(
+      key: 'alamat', label: 'Alamat', type: LetterVariableType.multiline),
+  LetterVariable(key: 'jabatan', label: 'Jabatan'),
+  LetterVariable(key: 'nama_perusahaan', label: 'Nama Perusahaan'),
+  LetterVariable(key: 'bidang_usaha', label: 'Bidang Usaha'),
+  LetterVariable(key: 'jenis_produk_jasa', label: 'Jenis Produk/Jasa'),
+  LetterVariable(key: 'lama_pengalaman', label: 'Lama Pengalaman'),
+  LetterVariable(key: 'kapasitas', label: 'Kapasitas'),
+];
 
 String suratPermohonanMenjadiSupplier(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,11 +30,11 @@ String suratPermohonanMenjadiSupplier(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama Pimpinan/Bagian Pengadaan)</b>
+      ${fillVar(vars, 'nama_pimpinan_bagian_pengadaan', '... (Nama Pimpinan/Bagian Pengadaan)')}
       <br>
-      <b>... (Nama Perusahaan Tujuan)</b>
+      ${fillVar(vars, 'nama_perusahaan_tujuan', '... (Nama Perusahaan Tujuan)')}
       <br>
-      di <b>... (Alamat)</b>
+      di ${fillVar(vars, 'alamat', '... (Alamat)')}
     </p>
     <p><br></p>
     <p>Perihal: <b>Permohonan Menjadi Supplier/Pemasok</b></p>
@@ -38,17 +56,17 @@ String suratPermohonanMenjadiSupplier(
 					<tr>
 						<td style="white-space: nowrap">Jabatan</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Jabatan)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'jabatan', '... (Jabatan)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Nama Perusahaan</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Nama Perusahaan)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Bidang Usaha</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Bidang Usaha)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'bidang_usaha', '... (Bidang Usaha)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Alamat</td>
@@ -69,10 +87,10 @@ String suratPermohonanMenjadiSupplier(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini mengajukan permohonan untuk menjadi supplier/pemasok di perusahaan Bapak/Ibu. Perusahaan kami menyediakan produk/jasa berupa <b>... (Jenis Produk/Jasa)</b> yang telah berpengalaman selama <b>... (Lama Pengalaman)</b>.
+      Dengan ini mengajukan permohonan untuk menjadi supplier/pemasok di perusahaan Bapak/Ibu. Perusahaan kami menyediakan produk/jasa berupa ${fillVar(vars, 'jenis_produk_jasa', '... (Jenis Produk/Jasa)')} yang telah berpengalaman selama ${fillVar(vars, 'lama_pengalaman', '... (Lama Pengalaman)')}.
     </p>
     <p style="text-align: justify; ">
-      Kami memiliki kapasitas produksi/penyediaan sebesar <b>... (Kapasitas)</b> per bulan dan siap memenuhi kebutuhan perusahaan Bapak/Ibu dengan harga yang kompetitif serta kualitas terjamin.
+      Kami memiliki kapasitas produksi/penyediaan sebesar ${fillVar(vars, 'kapasitas', '... (Kapasitas)')} per bulan dan siap memenuhi kebutuhan perusahaan Bapak/Ibu dengan harga yang kompetitif serta kualitas terjamin.
     </p>
     <p style="text-align: justify; ">
       Sebagai bahan pertimbangan, kami lampirkan company profile, daftar harga, katalog produk, dan dokumen legalitas perusahaan.

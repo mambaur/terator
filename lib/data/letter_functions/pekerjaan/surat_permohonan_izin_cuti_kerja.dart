@@ -1,9 +1,22 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanIzinCutiKerjaVariables = [
+  LetterVariable(key: 'divisi', label: 'Divisi'),
+  LetterVariable(key: 'nama_perusahaan', label: 'Nama Perusahaan'),
+  LetterVariable(
+      key: 'alasan', label: 'Alasan', type: LetterVariableType.multiline),
+  LetterVariable(
+      key: 'tanggal_cuti',
+      label: 'Tanggal Cuti',
+      type: LetterVariableType.date),
+];
 
 String suratPermohonanIzinCutiKerja(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   // String dateNow =
   //     DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
@@ -32,9 +45,9 @@ String suratPermohonanIzinCutiKerja(
     <p>
       Kepada Yth.
       <br>
-      Kepala Bagian <b>... (Divisi)</b>
+      Kepala Bagian ${fillVar(vars, 'divisi', '... (Divisi)')}
       <br>
-      <b>... (Nama Perusahaan)</b>
+      ${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')}
       <br>
       di Tempat
     </p>
@@ -72,7 +85,7 @@ String suratPermohonanIzinCutiKerja(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini, saya ingin mengajukan permohonan cuti untuk <b>... (Alasan)</b>. Saya mengajukan permohonan cuti ini terhitung mulai dari tanggal $dateNow2 sampai tanggal <b>... (Tanggal Cuti)</b>.
+      Dengan ini, saya ingin mengajukan permohonan cuti untuk ${fillVar(vars, 'alasan', '... (Alasan)')}. Saya mengajukan permohonan cuti ini terhitung mulai dari tanggal $dateNow2 sampai tanggal ${fillVar(vars, 'tanggal_cuti', '... (Tanggal Cuti)')}.
     </p>
     <p style="text-align: justify; ">
       Demikian surat permohonan cuti tahunan ini saya ajukan. Atas perhatian dan izinnya, saya ucapkan banyak terima kasih.

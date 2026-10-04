@@ -1,9 +1,17 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanBebasPlagiarismeVariables = [
+  LetterVariable(
+      key: 'judul_karya_ilmiah_tugas_akhir_skripsi',
+      label: 'Judul Karya Ilmiah/Tugas Akhir/Skripsi'),
+];
 
 String suratPernyataanBebasPlagiarisme(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -59,7 +67,7 @@ String suratPernyataanBebasPlagiarisme(
       Dengan ini menyatakan dengan sebenar-benarnya bahwa karya ilmiah/tugas akhir saya yang berjudul:
     </p>
     <p style="text-align: center; ">
-      <b>"... (Judul Karya Ilmiah/Tugas Akhir/Skripsi)"</b>
+      ${fillVar(vars, 'judul_karya_ilmiah_tugas_akhir_skripsi', '"... (Judul Karya Ilmiah/Tugas Akhir/Skripsi)"', prefix: '"', suffix: '"')}
     </p>
     <p style="text-align: justify; ">
       adalah benar-benar merupakan hasil karya saya sendiri, bukan merupakan duplikasi, plagiasi, ataupun pengambilan karya orang lain tanpa menyebutkan sumber yang sah, kecuali pada bagian-bagian yang sumbernya telah saya cantumkan sesuai dengan kaidah penulisan ilmiah yang berlaku.

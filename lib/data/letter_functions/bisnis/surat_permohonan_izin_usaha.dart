@@ -1,9 +1,21 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanIzinUsahaVariables = [
+  LetterVariable(key: 'nama_kabupaten_kota', label: 'Nama Kabupaten/Kota'),
+  LetterVariable(key: 'nama_usaha', label: 'Nama Usaha'),
+  LetterVariable(key: 'jenis_usaha', label: 'Jenis Usaha'),
+  LetterVariable(
+      key: 'alamat_usaha',
+      label: 'Alamat Usaha',
+      type: LetterVariableType.multiline),
+];
 
 String suratPermohonanIzinUsaha(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -14,7 +26,7 @@ String suratPermohonanIzinUsaha(
       <br>
       Kepala Dinas Perizinan
       <br>
-      <b>... (Nama Kabupaten/Kota)</b>
+      ${fillVar(vars, 'nama_kabupaten_kota', '... (Nama Kabupaten/Kota)')}
       <br>
       di Tempat
     </p>
@@ -62,17 +74,17 @@ String suratPermohonanIzinUsaha(
 					<tr>
 						<td style="white-space: nowrap">Nama Usaha</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Nama Usaha)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nama_usaha', '... (Nama Usaha)')}</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap">Jenis Usaha</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Jenis)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'jenis_usaha', '... (Jenis)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Lokasi Usaha</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Alamat Usaha)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'alamat_usaha', '... (Alamat Usaha)')}</td>
 					</tr>
 				</tbody>
 			</table>

@@ -1,9 +1,36 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanDispensasiVariables = [
+  LetterVariable(
+      key: 'kepala_sekolah_wali_kelas_dosen',
+      label: 'Kepala Sekolah/Wali Kelas/Dosen'),
+  LetterVariable(
+      key: 'jenis_dispensasi',
+      label: 'Jenis Dispensasi',
+      hint:
+          'mis. Tidak Mengikuti Pelajaran/Meninggalkan Kelas Lebih Awal/Datang Terlambat'),
+  LetterVariable(
+      key: 'hari_tanggal',
+      label: 'Hari, Tanggal',
+      type: LetterVariableType.dateWithDay),
+  LetterVariable(
+      key: 'waktu', label: 'Waktu', hint: 'mis. Pukul 09.00 - 12.00 WIB'),
+  LetterVariable(
+      key: 'mata_pelajaran_mata_kuliah', label: 'Mata Pelajaran/Mata Kuliah'),
+  LetterVariable(
+      key: 'alasan',
+      label: 'Alasan',
+      type: LetterVariableType.multiline,
+      hint:
+          'mis. Mengikuti Lomba/Acara Keluarga/Kegiatan Organisasi/Pemeriksaan Kesehatan'),
+];
 
 String suratPermohonanDispensasi(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -16,7 +43,7 @@ String suratPermohonanDispensasi(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Kepala Sekolah/Wali Kelas/Dosen)</b>
+      ${fillVar(vars, 'kepala_sekolah_wali_kelas_dosen', '... (Kepala Sekolah/Wali Kelas/Dosen)')}
       <br>
       ${account?.educationInstitution ?? ''}
       <br>
@@ -64,7 +91,7 @@ String suratPermohonanDispensasi(
       </table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini bermaksud mengajukan permohonan dispensasi <b>... (Jenis Dispensasi, mis. Tidak Mengikuti Pelajaran/Meninggalkan Kelas Lebih Awal/Datang Terlambat)</b> pada:
+      Dengan ini bermaksud mengajukan permohonan dispensasi ${fillVar(vars, 'jenis_dispensasi', '... (Jenis Dispensasi, mis. Tidak Mengikuti Pelajaran/Meninggalkan Kelas Lebih Awal/Datang Terlambat)')} pada:
     </p>
     <p>
       <table border="0" style="width:100%">
@@ -72,23 +99,23 @@ String suratPermohonanDispensasi(
           <tr>
             <td style="white-space: nowrap">Hari/Tanggal</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Hari, Tanggal)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'hari_tanggal', '... (Hari, Tanggal)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Waktu</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Waktu, mis. Pukul 09.00 - 12.00 WIB)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'waktu', '... (Waktu, mis. Pukul 09.00 - 12.00 WIB)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Mata Pelajaran/Kuliah</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Mata Pelajaran/Mata Kuliah)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'mata_pelajaran_mata_kuliah', '... (Mata Pelajaran/Mata Kuliah)')}</td>
           </tr>
         </tbody>
       </table>
     </p>
     <p style="text-align: justify; ">
-      Adapun alasan permohonan dispensasi ini adalah <b>... (Alasan, mis. Mengikuti Lomba/Acara Keluarga/Kegiatan Organisasi/Pemeriksaan Kesehatan)</b>.
+      Adapun alasan permohonan dispensasi ini adalah ${fillVar(vars, 'alasan', '... (Alasan, mis. Mengikuti Lomba/Acara Keluarga/Kegiatan Organisasi/Pemeriksaan Kesehatan)')}.
     </p>
     <p style="text-align: justify; ">
       Saya berkomitmen untuk tetap mengejar ketertinggalan materi pelajaran/kuliah selama tidak mengikuti kegiatan tersebut.

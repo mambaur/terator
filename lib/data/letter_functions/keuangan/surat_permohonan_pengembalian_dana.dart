@@ -1,9 +1,28 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanPengembalianDanaVariables = [
+  LetterVariable(key: 'nama_pihak_tujuan', label: 'Nama Pihak Tujuan'),
+  LetterVariable(
+      key: 'alamat', label: 'Alamat', type: LetterVariableType.multiline),
+  LetterVariable(
+      key: 'nominal', label: 'Nominal', type: LetterVariableType.currency),
+  LetterVariable(
+      key: 'tanggal_pembayaran',
+      label: 'Tanggal Pembayaran',
+      type: LetterVariableType.date),
+  LetterVariable(key: 'keperluan', label: 'Keperluan'),
+  LetterVariable(
+      key: 'alasan_pengembalian',
+      label: 'Alasan Pengembalian',
+      type: LetterVariableType.multiline),
+];
 
 String suratPermohonanPengembalianDana(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,9 +31,9 @@ String suratPermohonanPengembalianDana(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama Pihak Tujuan)</b>
+      ${fillVar(vars, 'nama_pihak_tujuan', '... (Nama Pihak Tujuan)')}
       <br>
-      di <b>... (Alamat)</b>
+      di ${fillVar(vars, 'alamat', '... (Alamat)')}
     </p>
     <p><br></p>
     <p>Perihal: <b>Permohonan Pengembalian Dana</b></p>
@@ -47,10 +66,10 @@ String suratPermohonanPengembalianDana(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini mengajukan permohonan pengembalian dana sebesar <b>Rp ... (Nominal)</b> yang telah saya bayarkan pada tanggal <b>... (Tanggal Pembayaran)</b> untuk keperluan <b>... (Keperluan)</b>.
+      Dengan ini mengajukan permohonan pengembalian dana sebesar ${fillVar(vars, 'nominal', 'Rp ... (Nominal)', prefix: 'Rp ')} yang telah saya bayarkan pada tanggal ${fillVar(vars, 'tanggal_pembayaran', '... (Tanggal Pembayaran)')} untuk keperluan ${fillVar(vars, 'keperluan', '... (Keperluan)')}.
     </p>
     <p style="text-align: justify; ">
-      Adapun alasan pengembalian dana ini adalah <b>... (Alasan Pengembalian)</b>.
+      Adapun alasan pengembalian dana ini adalah ${fillVar(vars, 'alasan_pengembalian', '... (Alasan Pengembalian)')}.
     </p>
     <p style="text-align: justify; ">
       Demikian surat permohonan ini saya buat. Atas perhatian dan kerjasamanya saya ucapkan terima kasih.

@@ -1,9 +1,22 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPengantarNikahVariables = [
+  LetterVariable(key: 'nama_desa_kelurahan', label: 'Nama Desa/Kelurahan'),
+  LetterVariable(key: 'nama_calon_pasangan', label: 'Nama Calon Pasangan'),
+  LetterVariable(key: 'tempat_tgl_lahir', label: 'Tempat, tgl lahir'),
+  LetterVariable(
+      key: 'alamat_calon',
+      label: 'Alamat Calon',
+      type: LetterVariableType.multiline),
+  LetterVariable(key: 'nama_kepala_desa', label: 'Nama Kepala Desa'),
+];
 
 String suratPengantarNikah(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,7 +25,7 @@ String suratPengantarNikah(
     </p>
     <p><br></p>
     <p style="text-align: justify; ">
-      Yang bertanda tangan di bawah ini Kepala Desa/Lurah <b>... (Nama Desa/Kelurahan)</b>, menerangkan bahwa:
+      Yang bertanda tangan di bawah ini Kepala Desa/Lurah ${fillVar(vars, 'nama_desa_kelurahan', '... (Nama Desa/Kelurahan)')}, menerangkan bahwa:
     </p>
     <p>
       <table border="0" style="width:100%">
@@ -59,17 +72,17 @@ String suratPengantarNikah(
 					<tr>
 						<td style="white-space: nowrap">Nama</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Nama Calon Pasangan)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nama_calon_pasangan', '... (Nama Calon Pasangan)')}</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap">Tempat, tgl lahir</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (TTL Calon)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'tempat_tgl_lahir', '... (TTL Calon)')}</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap">Alamat</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Alamat Calon)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'alamat_calon', '... (Alamat Calon)')}</td>
 					</tr>
 				</tbody>
 			</table>
@@ -98,7 +111,7 @@ String suratPengantarNikah(
           <td style="width: 100%">&nbsp;</td>
           <td style="vertical-align:top;text-align:center;">
             <p>
-              <span style="white-space: nowrap"><b>... (Nama Kepala Desa)</b></span>
+              <span style="white-space: nowrap">${fillVar(vars, 'nama_kepala_desa', '... (Nama Kepala Desa)')}</span>
             </p>
           </td>
         </tr>

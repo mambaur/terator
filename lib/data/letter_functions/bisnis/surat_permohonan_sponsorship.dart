@@ -1,9 +1,45 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanSponsorshipVariables = [
+  LetterVariable(
+      key: 'nama_pimpinan_perusahaan', label: 'Nama Pimpinan Perusahaan'),
+  LetterVariable(key: 'nama_perusahaan', label: 'Nama Perusahaan'),
+  LetterVariable(
+      key: 'alamat_perusahaan',
+      label: 'Alamat Perusahaan',
+      type: LetterVariableType.multiline),
+  LetterVariable(key: 'jabatan', label: 'Jabatan'),
+  LetterVariable(
+      key: 'nama_perusahaan_organisasi', label: 'Nama Perusahaan/Organisasi'),
+  LetterVariable(key: 'nama_acara', label: 'Nama Acara'),
+  LetterVariable(
+      key: 'hari_tanggal_acara',
+      label: 'Hari/Tanggal Acara',
+      type: LetterVariableType.dateWithDay),
+  LetterVariable(key: 'tempat_acara', label: 'Tempat Acara'),
+  LetterVariable(
+      key: 'jumlah_peserta',
+      label: 'Jumlah Peserta',
+      type: LetterVariableType.number),
+  LetterVariable(
+      key: 'bentuk_sponsorship',
+      label: 'Bentuk Sponsorship',
+      hint: 'misal: dana / produk / jasa'),
+  LetterVariable(
+      key: 'nominal', label: 'Nominal', type: LetterVariableType.currency),
+  LetterVariable(
+      key: 'bentuk_kompensasi',
+      label: 'Bentuk Kompensasi',
+      type: LetterVariableType.multiline,
+      hint: 'misal: pemasangan logo / booth pameran / mention di acara'),
+];
 
 String suratPermohonanSponsorship(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,11 +48,11 @@ String suratPermohonanSponsorship(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama Pimpinan Perusahaan)</b>
+      ${fillVar(vars, 'nama_pimpinan_perusahaan', '... (Nama Pimpinan Perusahaan)')}
       <br>
-      <b>... (Nama Perusahaan)</b>
+      ${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')}
       <br>
-      di <b>... (Alamat Perusahaan)</b>
+      di ${fillVar(vars, 'alamat_perusahaan', '... (Alamat Perusahaan)')}
     </p>
     <p><br></p>
     <p>Perihal: <b>Permohonan Sponsorship</b></p>
@@ -38,12 +74,12 @@ String suratPermohonanSponsorship(
 					<tr>
 						<td style="white-space: nowrap">Jabatan</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Jabatan)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'jabatan', '... (Jabatan)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Perusahaan/Organisasi</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Nama Perusahaan/Organisasi)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nama_perusahaan_organisasi', '... (Nama Perusahaan/Organisasi)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Alamat</td>
@@ -64,7 +100,7 @@ String suratPermohonanSponsorship(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini mengajukan permohonan sponsorship untuk acara <b>... (Nama Acara)</b> yang akan diselenggarakan pada:
+      Dengan ini mengajukan permohonan sponsorship untuk acara ${fillVar(vars, 'nama_acara', '... (Nama Acara)')} yang akan diselenggarakan pada:
     </p>
     <p>
       <table border="0" style="width:100%">
@@ -72,23 +108,23 @@ String suratPermohonanSponsorship(
 					<tr>
 						<td style="white-space: nowrap">Hari/Tanggal</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Hari/Tanggal Acara)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'hari_tanggal_acara', '... (Hari/Tanggal Acara)')}</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap">Tempat</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Tempat Acara)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'tempat_acara', '... (Tempat Acara)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Jumlah Peserta</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Jumlah Peserta)</b> orang</td>
+						<td style="width: 100%">${fillVar(vars, 'jumlah_peserta', '... (Jumlah Peserta)')} orang</td>
 					</tr>
 				</tbody>
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Adapun bentuk sponsorship yang kami harapkan berupa <b>... (Bentuk Sponsorship, misal: dana / produk / jasa)</b> senilai <b>Rp ... (Nominal)</b>. Sebagai bentuk kerja sama, kami menawarkan <b>... (Bentuk Kompensasi, misal: pemasangan logo / booth pameran / mention di acara)</b>.
+      Adapun bentuk sponsorship yang kami harapkan berupa ${fillVar(vars, 'bentuk_sponsorship', '... (Bentuk Sponsorship, misal: dana / produk / jasa)')} senilai ${fillVar(vars, 'nominal', 'Rp ... (Nominal)', prefix: 'Rp ')}. Sebagai bentuk kerja sama, kami menawarkan ${fillVar(vars, 'bentuk_kompensasi', '... (Bentuk Kompensasi, misal: pemasangan logo / booth pameran / mention di acara)')}.
     </p>
     <p style="text-align: justify; ">
       Demikian surat permohonan ini kami sampaikan. Atas perhatian dan kerjasamanya kami ucapkan terima kasih.

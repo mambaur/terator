@@ -18,16 +18,46 @@ class LetterRepository {
         where: '${dbInstance.letterId} = ?', whereArgs: [id]);
   }
 
-  Future<List<LetterModel>> all({int? limit, int? page}) async {
+  /// Total number of saved letters (unfiltered).
+  Future<int> count() async {
+    Database db = await dbInstance.init;
+    final data = await db
+        .rawQuery('SELECT COUNT(*) AS total FROM ${dbInstance.letterTable}');
+    return int.tryParse(data.first['total'].toString()) ?? 0;
+  }
+
+  /// [query] matches the file title or template name; [templateNames]
+  /// restricts to letters made from those templates (`name` column holds the
+  /// template title). An empty [templateNames] list matches nothing.
+  Future<List<LetterModel>> all(
+      {int? limit,
+      int? page,
+      String? query,
+      List<String>? templateNames}) async {
     try {
       // Setup pagination
       limit ??= 10;
       int offset = (limit * (page ?? 1)) - limit;
 
+      final where = <String>[];
+      final args = <Object?>[];
+      if (query != null && query.trim().isNotEmpty) {
+        where.add(
+            '(${dbInstance.letterTitle} LIKE ? OR ${dbInstance.letterName} LIKE ?)');
+        args.addAll(['%${query.trim()}%', '%${query.trim()}%']);
+      }
+      if (templateNames != null) {
+        if (templateNames.isEmpty) return [];
+        where.add(
+            '${dbInstance.letterName} IN (${List.filled(templateNames.length, '?').join(',')})');
+        args.addAll(templateNames);
+      }
+      final whereSql = where.isEmpty ? '' : 'WHERE ${where.join(' AND ')}';
+
       Database db = await dbInstance.init;
       final data = await db.rawQuery(
-          'SELECT *  FROM ${dbInstance.letterTable} ORDER BY ${dbInstance.letterTable}.${dbInstance.letterUpdatedAt} DESC LIMIT $limit OFFSET $offset',
-          []);
+          'SELECT *  FROM ${dbInstance.letterTable} $whereSql ORDER BY ${dbInstance.letterTable}.${dbInstance.letterUpdatedAt} DESC LIMIT $limit OFFSET $offset',
+          args);
 
       List<LetterModel> listLetters = [];
       if (data.isNotEmpty) {

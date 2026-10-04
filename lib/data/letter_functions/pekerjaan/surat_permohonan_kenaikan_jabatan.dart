@@ -1,9 +1,28 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanKenaikanJabatanVariables = [
+  LetterVariable(key: 'nama_pimpinan_hrd', label: 'Nama Pimpinan/HRD'),
+  LetterVariable(key: 'nama_perusahaan', label: 'Nama Perusahaan'),
+  LetterVariable(key: 'nik_nip_karyawan', label: 'NIK/NIP Karyawan'),
+  LetterVariable(key: 'jabatan_saat_ini', label: 'Jabatan Saat Ini'),
+  LetterVariable(key: 'divisi_departemen', label: 'Divisi/Departemen'),
+  LetterVariable(
+      key: 'tanggal_mulai_bekerja',
+      label: 'Tanggal Mulai Bekerja',
+      type: LetterVariableType.date),
+  LetterVariable(
+      key: 'jabatan_yang_diharapkan', label: 'Jabatan yang Diharapkan'),
+  LetterVariable(key: 'pencapaian_prestasi_1', label: 'Pencapaian/Prestasi 1'),
+  LetterVariable(key: 'pencapaian_prestasi_2', label: 'Pencapaian/Prestasi 2'),
+  LetterVariable(key: 'pencapaian_prestasi_3', label: 'Pencapaian/Prestasi 3'),
+];
 
 String suratPermohonanKenaikanJabatan(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -16,9 +35,9 @@ String suratPermohonanKenaikanJabatan(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama Pimpinan/HRD)</b>
+      ${fillVar(vars, 'nama_pimpinan_hrd', '... (Nama Pimpinan/HRD)')}
       <br>
-      <b>... (Nama Perusahaan)</b>
+      ${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')}
       <br>
       di Tempat
     </p>
@@ -48,22 +67,22 @@ String suratPermohonanKenaikanJabatan(
           <tr>
             <td style="white-space: nowrap">NIK/NIP Karyawan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (NIK/NIP Karyawan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nik_nip_karyawan', '... (NIK/NIP Karyawan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Jabatan Saat Ini</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Jabatan Saat Ini)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'jabatan_saat_ini', '... (Jabatan Saat Ini)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Divisi/Departemen</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Divisi/Departemen)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'divisi_departemen', '... (Divisi/Departemen)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Mulai Bekerja</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Tanggal Mulai Bekerja)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'tanggal_mulai_bekerja', '... (Tanggal Mulai Bekerja)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat</td>
@@ -79,17 +98,17 @@ String suratPermohonanKenaikanJabatan(
       </table>
     </p>
     <p style="text-align: justify; ">
-      Melalui surat ini, dengan segala kerendahan hati saya bermaksud mengajukan permohonan kenaikan jabatan dari <b>... (Jabatan Saat Ini)</b> menjadi <b>... (Jabatan yang Diharapkan)</b> di <b>... (Nama Perusahaan)</b>.
+      Melalui surat ini, dengan segala kerendahan hati saya bermaksud mengajukan permohonan kenaikan jabatan dari ${fillVar(vars, 'jabatan_saat_ini', '... (Jabatan Saat Ini)')} menjadi ${fillVar(vars, 'jabatan_yang_diharapkan', '... (Jabatan yang Diharapkan)')} di ${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')}.
     </p>
     <p style="text-align: justify; ">
       Selama bekerja, saya telah berupaya menunjukkan kinerja dan dedikasi terbaik, antara lain melalui pencapaian sebagai berikut:
     </p>
     <p style="text-align: justify; ">
-      1. <b>... (Pencapaian/Prestasi 1)</b>
+      1. ${fillVar(vars, 'pencapaian_prestasi_1', '... (Pencapaian/Prestasi 1)')}
       <br>
-      2. <b>... (Pencapaian/Prestasi 2)</b>
+      2. ${fillVar(vars, 'pencapaian_prestasi_2', '... (Pencapaian/Prestasi 2)')}
       <br>
-      3. <b>... (Pencapaian/Prestasi 3)</b>
+      3. ${fillVar(vars, 'pencapaian_prestasi_3', '... (Pencapaian/Prestasi 3)')}
     </p>
     <p style="text-align: justify; ">
       Saya berkomitmen untuk terus meningkatkan kinerja serta memberikan kontribusi yang lebih besar bagi kemajuan perusahaan. Sebagai bahan pertimbangan, saya lampirkan dokumen pendukung yang relevan.

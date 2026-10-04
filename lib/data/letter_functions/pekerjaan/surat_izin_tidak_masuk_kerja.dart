@@ -1,9 +1,22 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratIzinTidakMasukKerjaVariables = [
+  LetterVariable(key: 'divisi', label: 'Divisi'),
+  LetterVariable(key: 'nama_perusahaan', label: 'Nama Perusahaan'),
+  LetterVariable(
+      key: 'alamat_perusahaan',
+      label: 'Alamat Perusahaan',
+      type: LetterVariableType.multiline),
+  LetterVariable(
+      key: 'alasan', label: 'Alasan', type: LetterVariableType.multiline),
+];
 
 String suratIzinTidakMasukKerja(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow =
       DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
@@ -27,11 +40,11 @@ String suratIzinTidakMasukKerja(
     <p>
       Kepada Yth.
       <br>
-      Kepala Bagian <b>... (Divisi)</b>
+      Kepala Bagian ${fillVar(vars, 'divisi', '... (Divisi)')}
       <br>
-      <b>... (Nama Perusahaan)</b>
+      ${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')}
       <br>
-      <b>... (Alamat Perusahaan)</b>
+      ${fillVar(vars, 'alamat_perusahaan', '... (Alamat Perusahaan)')}
     </p>
     <p style="text-align: justify; ">
       Saya yang bertanda tangan dibawah ini:
@@ -58,7 +71,7 @@ String suratIzinTidakMasukKerja(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini saya memberitahukan bahwa pada hari $dateNow saya tidak bisa masuk untuk bekerja seperti biasanya dikarenakan <b>... (Alasan)</b>. Sehubungan dengan hal tersebut, saya bermaksud untuk memohon izin tidak masuk kerja pada tanggal tersebut.
+      Dengan ini saya memberitahukan bahwa pada hari $dateNow saya tidak bisa masuk untuk bekerja seperti biasanya dikarenakan ${fillVar(vars, 'alasan', '... (Alasan)')}. Sehubungan dengan hal tersebut, saya bermaksud untuk memohon izin tidak masuk kerja pada tanggal tersebut.
     </p>
     <p style="text-align: justify; ">
       Demikian surat izin saya sampaikan dengan sebenar-benarnya. Atas perhatiannya saya  ucapkan terima kasih.

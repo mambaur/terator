@@ -1,9 +1,33 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanPenggunaanNamaVariables = [
+  LetterVariable(key: 'pekerjaan', label: 'Pekerjaan'),
+  LetterVariable(key: 'nomor_ktp_nik', label: 'Nomor KTP/NIK'),
+  LetterVariable(key: 'nama_sesuai_ktp', label: 'Nama sesuai KTP'),
+  LetterVariable(key: 'nama_sesuai_ijazah', label: 'Nama sesuai Ijazah'),
+  LetterVariable(
+      key: 'nama_sesuai_akta_lahir', label: 'Nama sesuai Akta Lahir'),
+  LetterVariable(
+      key: 'nama_sesuai_kartu_keluarga', label: 'Nama sesuai Kartu Keluarga'),
+  LetterVariable(
+      key: 'nama_sesuai_dokumen_lain', label: 'Nama sesuai Dokumen Lain'),
+  LetterVariable(
+      key: 'alasan_perbedaan_penulisan_nama',
+      label: 'Alasan Perbedaan Penulisan Nama',
+      type: LetterVariableType.multiline,
+      hint: 'mis. Kesalahan Penulisan/Penyingkatan'),
+  LetterVariable(
+      key: 'keperluan',
+      label: 'Keperluan',
+      hint: 'mis. Pencairan Dana/Pendaftaran'),
+];
 
 String suratPernyataanPenggunaanNama(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -40,12 +64,12 @@ String suratPernyataanPenggunaanNama(
           <tr>
             <td style="white-space: nowrap">Pekerjaan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Pekerjaan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'pekerjaan', '... (Pekerjaan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">No. KTP/NIK</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nomor KTP/NIK)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nomor_ktp_nik', '... (Nomor KTP/NIK)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat</td>
@@ -69,36 +93,36 @@ String suratPernyataanPenggunaanNama(
           <tr>
             <td style="white-space: nowrap">Nama pada KTP</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nama sesuai KTP)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nama_sesuai_ktp', '... (Nama sesuai KTP)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Nama pada Ijazah</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nama sesuai Ijazah)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nama_sesuai_ijazah', '... (Nama sesuai Ijazah)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Nama pada Akta Lahir</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nama sesuai Akta Lahir)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nama_sesuai_akta_lahir', '... (Nama sesuai Akta Lahir)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Nama pada Kartu Keluarga</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nama sesuai Kartu Keluarga)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nama_sesuai_kartu_keluarga', '... (Nama sesuai Kartu Keluarga)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Nama pada Dokumen Lain</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nama sesuai Dokumen Lain)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nama_sesuai_dokumen_lain', '... (Nama sesuai Dokumen Lain)')}</td>
           </tr>
         </tbody>
       </table>
     </p>
     <p style="text-align: justify; ">
-      Perbedaan penulisan nama tersebut disebabkan oleh <b>... (Alasan Perbedaan Penulisan Nama, mis. Kesalahan Penulisan/Penyingkatan)</b> dan bukan merupakan upaya untuk memalsukan identitas maupun untuk tujuan yang melawan hukum.
+      Perbedaan penulisan nama tersebut disebabkan oleh ${fillVar(vars, 'alasan_perbedaan_penulisan_nama', '... (Alasan Perbedaan Penulisan Nama, mis. Kesalahan Penulisan/Penyingkatan)')} dan bukan merupakan upaya untuk memalsukan identitas maupun untuk tujuan yang melawan hukum.
     </p>
     <p style="text-align: justify; ">
-      Surat pernyataan ini saya buat untuk keperluan <b>... (Keperluan, mis. Pencairan Dana/Pendaftaran)</b>. Apabila di kemudian hari pernyataan ini terbukti tidak benar, maka saya bersedia mempertanggungjawabkan sepenuhnya secara hukum tanpa melibatkan pihak lain.
+      Surat pernyataan ini saya buat untuk keperluan ${fillVar(vars, 'keperluan', '... (Keperluan, mis. Pencairan Dana/Pendaftaran)')}. Apabila di kemudian hari pernyataan ini terbukti tidak benar, maka saya bersedia mempertanggungjawabkan sepenuhnya secara hukum tanpa melibatkan pihak lain.
     </p>
     <p style="text-align: justify; ">
       Demikian surat pernyataan ini saya buat dengan sebenar-benarnya untuk dapat dipergunakan sebagaimana mestinya.

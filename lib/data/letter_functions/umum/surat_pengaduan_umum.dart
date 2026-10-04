@@ -1,9 +1,39 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPengaduanUmumVariables = [
+  LetterVariable(
+      key: 'nama_pimpinan_bagian_pengaduan',
+      label: 'Nama Pimpinan/Bagian Pengaduan'),
+  LetterVariable(
+      key: 'nama_instansi_perusahaan', label: 'Nama Instansi/Perusahaan'),
+  LetterVariable(key: 'nomor_ktp_nik', label: 'Nomor KTP/NIK'),
+  LetterVariable(
+      key: 'jenis_pengaduan',
+      label: 'Jenis Pengaduan',
+      hint: 'mis. Pelayanan/Produk/Lingkungan'),
+  LetterVariable(
+      key: 'tanggal_waktu_kejadian', label: 'Tanggal/Waktu Kejadian'),
+  LetterVariable(key: 'lokasi_kejadian', label: 'Lokasi Kejadian'),
+  LetterVariable(
+      key: 'uraian_lengkap_kronologis_kejadian_pengaduan',
+      label: 'Uraian Lengkap Kronologis Kejadian/Pengaduan',
+      type: LetterVariableType.multiline),
+  LetterVariable(
+      key: 'kerugian_yang_dialami',
+      label: 'Kerugian yang Dialami',
+      type: LetterVariableType.multiline),
+  LetterVariable(
+      key: 'bukti_pendukung',
+      label: 'Bukti Pendukung',
+      hint: 'mis. Foto/Bukti Transaksi/Saksi'),
+];
 
 String suratPengaduanUmum(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -16,9 +46,9 @@ String suratPengaduanUmum(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama Pimpinan/Bagian Pengaduan)</b>
+      ${fillVar(vars, 'nama_pimpinan_bagian_pengaduan', '... (Nama Pimpinan/Bagian Pengaduan)')}
       <br>
-      <b>... (Nama Instansi/Perusahaan)</b>
+      ${fillVar(vars, 'nama_instansi_perusahaan', '... (Nama Instansi/Perusahaan)')}
       <br>
       di Tempat
     </p>
@@ -38,7 +68,7 @@ String suratPengaduanUmum(
           <tr>
             <td style="white-space: nowrap">No. KTP/NIK</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nomor KTP/NIK)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nomor_ktp_nik', '... (Nomor KTP/NIK)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat</td>
@@ -67,17 +97,17 @@ String suratPengaduanUmum(
           <tr>
             <td style="white-space: nowrap">Jenis Pengaduan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Jenis Pengaduan, mis. Pelayanan/Produk/Lingkungan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'jenis_pengaduan', '... (Jenis Pengaduan, mis. Pelayanan/Produk/Lingkungan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Waktu Kejadian</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Tanggal/Waktu Kejadian)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'tanggal_waktu_kejadian', '... (Tanggal/Waktu Kejadian)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Lokasi</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Lokasi Kejadian)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'lokasi_kejadian', '... (Lokasi Kejadian)')}</td>
           </tr>
         </tbody>
       </table>
@@ -86,10 +116,10 @@ String suratPengaduanUmum(
       Adapun uraian kronologis pengaduan/keluhan saya adalah sebagai berikut:
     </p>
     <p style="text-align: justify; ">
-      <b>... (Uraian Lengkap Kronologis Kejadian/Pengaduan)</b>
+      ${fillVar(vars, 'uraian_lengkap_kronologis_kejadian_pengaduan', '... (Uraian Lengkap Kronologis Kejadian/Pengaduan)')}
     </p>
     <p style="text-align: justify; ">
-      Akibat dari kejadian tersebut, saya mengalami kerugian berupa <b>... (Kerugian yang Dialami)</b>. Oleh karena itu, saya memohon kepada pihak yang berwenang untuk:
+      Akibat dari kejadian tersebut, saya mengalami kerugian berupa ${fillVar(vars, 'kerugian_yang_dialami', '... (Kerugian yang Dialami)')}. Oleh karena itu, saya memohon kepada pihak yang berwenang untuk:
     </p>
     <p style="text-align: justify; ">
       1. Menindaklanjuti pengaduan/keluhan ini dengan sebaik-baiknya;
@@ -99,7 +129,7 @@ String suratPengaduanUmum(
       3. Mengambil langkah perbaikan agar kejadian serupa tidak terulang kembali.
     </p>
     <p style="text-align: justify; ">
-      Sebagai bahan pertimbangan, saya melampirkan bukti pendukung berupa <b>... (Bukti Pendukung, mis. Foto/Bukti Transaksi/Saksi)</b>.
+      Sebagai bahan pertimbangan, saya melampirkan bukti pendukung berupa ${fillVar(vars, 'bukti_pendukung', '... (Bukti Pendukung, mis. Foto/Bukti Transaksi/Saksi)')}.
     </p>
     <p style="text-align: justify; ">
       Demikian surat pengaduan ini saya sampaikan. Atas perhatian dan tindak lanjut Bapak/Ibu, saya ucapkan terima kasih.

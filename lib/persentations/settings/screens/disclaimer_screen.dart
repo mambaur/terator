@@ -25,8 +25,8 @@ class _DisclaimerScreenState extends State<DisclaimerScreen> {
         children: [
           // ─── Icon Header ───
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 32),
-            decoration: AppTheme.cardDecoration(),
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 16),
             child: Column(
               children: [
                 Container(

@@ -35,18 +35,22 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
   void convert(String htmlData, String name) async {
     try {
       LoadingOverlay.show(context);
+      // Web is dev-only: no native PDF export, just save the HTML.
+      if (!kIsWeb) {
+        var targetPath = await _localPath;
+        var targetFileName = name;
+        var html = '<div style="margin: 105px 90px">$htmlData</div>';
 
-      var targetPath = await _localPath;
-      var targetFileName = name;
-      var html = '<div style="margin: 105px 90px">$htmlData</div>';
+        var generatedPdfFile = await HtmlToPdfConverter().convertHtmlToPdf(
+            html: html,
+            targetDirectory: targetPath!,
+            targetName: targetFileName);
 
-      var generatedPdfFile = await HtmlToPdfConverter().convertHtmlToPdf(
-          html: html, targetDirectory: targetPath!, targetName: targetFileName);
-
-      await FlutterFileSaver().writeFileAsBytes(
-        fileName: "$targetFileName - ${getRandomString(5).toUpperCase()}.pdf",
-        bytes: await generatedPdfFile.readAsBytes(),
-      );
+        await FlutterFileSaver().writeFileAsBytes(
+          fileName: "$targetFileName - ${getRandomString(5).toUpperCase()}.pdf",
+          bytes: await generatedPdfFile.readAsBytes(),
+        );
+      }
 
       await update(htmlData);
       isRefreshBack = true;
@@ -102,41 +106,48 @@ class _MyFileEditScreenState extends State<MyFileEditScreen> {
         showBack: true,
         context: context,
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: HtmlEditor(
-              controller: controller,
-              callbacks: Callbacks(onInit: () {
-                String text = widget.letter.html ?? '';
-                controller.setText("$text<br><br><br>");
-              }),
-              htmlToolbarOptions: const HtmlToolbarOptions(
-                  toolbarPosition: ToolbarPosition.custom),
-              htmlEditorOptions: const HtmlEditorOptions(
-                hint: "Your text here...",
-              ),
-              otherOptions: OtherOptions(
-                height: MediaQuery.of(context).size.height,
-              ),
-            ),
+      // Editor sized to the space left between app bar and save bar, so
+      // nothing overlaps it: on web the editor is an iframe that swallows
+      // clicks on Flutter widgets drawn above it.
+      body: LayoutBuilder(
+        builder: (context, constraints) => HtmlEditor(
+          controller: controller,
+          callbacks: Callbacks(onInit: () {
+            String text = widget.letter.html ?? '';
+            controller.setText("$text<br><br><br>");
+          }),
+          htmlToolbarOptions:
+              const HtmlToolbarOptions(toolbarPosition: ToolbarPosition.custom),
+          htmlEditorOptions: const HtmlEditorOptions(
+            hint: "Your text here...",
           ),
-        ],
-      ),
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(colors: kGradientPrimary),
-          borderRadius: BorderRadius.circular(kRadiusMd),
-          boxShadow: kShadowPrimary,
+          otherOptions: OtherOptions(
+            height: constraints.maxHeight,
+          ),
         ),
-        child: FloatingActionButton(
-          onPressed: () async {
-            String data = await controller.getText();
-            convert(data, widget.letter.title ?? '');
-          },
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          child: const Icon(Icons.save_rounded, color: Colors.white),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 12,
+                offset: const Offset(0, -2),
+              ),
+            ],
+          ),
+          child: AppTheme.gradientButton(
+            label: 'Simpan Surat',
+            icon: Icons.save_rounded,
+            onTap: () async {
+              String data = await controller.getText();
+              convert(data, widget.letter.title ?? '');
+            },
+            padding: const EdgeInsets.symmetric(vertical: 15),
+          ),
         ),
       ),
     );

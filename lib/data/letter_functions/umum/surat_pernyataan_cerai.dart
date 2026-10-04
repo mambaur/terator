@@ -1,9 +1,15 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanCeraiVariables = [
+  LetterVariable(key: 'nama_pihak_ii', label: 'Nama Pihak II'),
+];
 
 String suratPernyataanCerai(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   // String dateNow =
   //     DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
 
@@ -128,7 +134,7 @@ String suratPernyataanCerai(
           <td style="width: 100%">&nbsp;</td>
           <td style="vertical-align:top;text-align:center;">
             <p>
-              <span style="white-space: nowrap"><b>... (Nama Pihak II)</b></span>
+              <span style="white-space: nowrap">${fillVar(vars, 'nama_pihak_ii', '... (Nama Pihak II)')}</span>
             </p>
           </td>
         </tr>

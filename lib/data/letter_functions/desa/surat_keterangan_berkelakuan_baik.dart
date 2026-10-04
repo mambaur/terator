@@ -1,9 +1,17 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratKeteranganBerkelakuanBaikVariables = [
+  LetterVariable(key: 'alamat_rt_rw', label: 'Alamat RT/RW'),
+  LetterVariable(key: 'tujuan_surat', label: 'Tujuan Surat'),
+  LetterVariable(key: 'nama_ketua_rt_rw', label: 'Nama Ketua RT/RW'),
+];
 
 String suratKeteranganBerkelakuanBaik(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,7 +20,7 @@ String suratKeteranganBerkelakuanBaik(
     </p>
     <p><br></p>
     <p style="text-align: justify; ">
-      Yang bertanda tangan di bawah ini Ketua RT/RW <b>... (Alamat RT/RW)</b>, menerangkan bahwa:
+      Yang bertanda tangan di bawah ini Ketua RT/RW ${fillVar(vars, 'alamat_rt_rw', '... (Alamat RT/RW)')}, menerangkan bahwa:
     </p>
     <p>
       <table border="0" style="width:100%">
@@ -54,7 +62,7 @@ String suratKeteranganBerkelakuanBaik(
       Adalah benar warga kami yang berkelakuan baik dan tidak pernah terlibat dalam tindak pidana maupun hal-hal yang melanggar norma dan kesusilaan di lingkungan masyarakat.
     </p>
     <p style="text-align: justify; ">
-      Surat keterangan ini dibuat untuk keperluan <b>... (Tujuan Surat)</b>.
+      Surat keterangan ini dibuat untuk keperluan ${fillVar(vars, 'tujuan_surat', '... (Tujuan Surat)')}.
     </p>
     <p style="text-align: justify; ">
       Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan sebagaimana mestinya.
@@ -80,7 +88,7 @@ String suratKeteranganBerkelakuanBaik(
           <td style="width: 100%">&nbsp;</td>
           <td style="vertical-align:top;text-align:center;">
             <p>
-              <span style="white-space: nowrap"><b>... (Nama Ketua RT/RW)</b></span>
+              <span style="white-space: nowrap">${fillVar(vars, 'nama_ketua_rt_rw', '... (Nama Ketua RT/RW)')}</span>
             </p>
           </td>
         </tr>

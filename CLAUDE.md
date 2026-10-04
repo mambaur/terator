@@ -8,6 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 All user-facing copy and template content is in **Bahasa Indonesia**. Keep new strings, template HTML, and snackbar messages in Indonesian to match the existing app.
 
+**Web is dev-only** (UI preview): on `kIsWeb` all premium features are unlocked (`SubscriptionCubit`), ads/RevenueCat are skipped, sqflite uses `sqflite_common_ffi_web` (`web/sqlite3.wasm` + `web/sqflite_sw.js`), letter previews render HTML in an iframe ([lib/core/platform/](lib/core/platform/)) and PDF export is skipped. Never ship web.
+
 Target platform is primarily **Android** (RevenueCat is configured Android-only; iOS is partially set up but subscriptions/paywall are not wired for iOS).
 
 ## Common Commands
@@ -51,7 +53,7 @@ Android requires a `android/key.properties` file alongside `terator-keystore.jks
 - [lib/models/](lib/models/) — plain POJOs `AccountModel` and `LetterModel` with `fromJson` constructors mirroring sqflite column names (snake_case in DB, camelCase in Dart).
 - [lib/repositories/](lib/repositories/) — thin sqflite CRUD wrappers (`AccountRepository`, `LetterRepository`) using `DatabaseInstance` from `core/database.dart`. Both implement paginated `all({limit, page})`.
 - [lib/data/](lib/data/) — letter template registry. See "Letter template system" below.
-- [lib/persentations/](lib/persentations/) — UI layer (note: directory is spelled "persentations", not "presentations"). Organized by feature (`home/`, `letters/`, `my_files/`, `account/`, `settings/`, `faq/`, `subscription/`, `ads/`). Each feature typically has `screens/` and (if stateful) `cubits/` or `cubit/`.
+- [lib/persentations/](lib/persentations/) — UI layer (note: directory is spelled "persentations", not "presentations"). Organized by feature (`home/`, `letters/`, `my_files/`, `account/`, `settings/`, `faq/`, `kop_surat/`, `onboarding/`, `bookmarks/`, `subscription/`, `ads/`). FAQ is reached from the settings screen. Each feature typically has `screens/` and (if stateful) `cubits/` or `cubit/`.
 - [lib/utils/](lib/utils/) — shared widgets/helpers like `CustomSnackbar`.
 
 ### State management — flutter_bloc Cubits
@@ -68,14 +70,23 @@ Cubit state classes use `part`/`part of` files (`*_state.dart`) and the conventi
 
 This is the heart of the app and the part most likely to be extended.
 
-1. **Template functions** live under [lib/data/letter_functions/](lib/data/letter_functions/) grouped by category folder: `sekolah/`, `pekerjaan/`, `desa/`, `bisnis/`, `umum/`, `pribadi/`, `keuangan/`, `kesehatan/`. Each file exports a single top-level function `String suratXxx(LetterModel? letter, String? img, AccountModel? account)` that returns an HTML string with values interpolated from the `account` (and optional signature `img` base64-encoded `<img>` tag).
+1. **Template functions** live under [lib/data/letter_functions/](lib/data/letter_functions/) grouped by category folder: `sekolah/`, `pekerjaan/`, `desa/`, `bisnis/`, `umum/`, `pribadi/`, `keuangan/`, `kesehatan/`. Each file exports a single top-level function `String suratXxx(LetterModel? letter, String? img, AccountModel? account, [Map<String, String>? vars])` that returns an HTML string with values interpolated from the `account` (and optional signature `img` base64-encoded `<img>` tag), plus a `const List<LetterVariable> suratXxxVariables` declaring the fillable fields. Placeholders are rendered with `fillVar(vars, key, '... (Label)')` ([lib/models/letter_variable.dart](lib/models/letter_variable.dart)), which falls back to the bold placeholder when the user skipped the field. Full rules: [lib/data/letter_functions/TEMPLATE_RULES.md](lib/data/letter_functions/TEMPLATE_RULES.md).
 2. **Central registry** [lib/data/letter_data.dart](lib/data/letter_data.dart) imports every template function and exposes:
    - `LetterData.listLetters({q})` — a hardcoded list of categories (with `id`, `title`, `letters: [{key, title, subtitle?}]`). Each `key` (e.g. `"surat_izin_sakit"`) is the routing identifier.
-   - `LetterData.html(key, {image, letter, account})` — looks up the entry by `key` and invokes its template function.
+   - `LetterData.html(key, {image, letter, account, vars})` — looks up the entry by `key` and invokes its template function.
+   - `LetterData.variables(key)` — the template's declared `LetterVariable`s.
    - `premiumLetterMap` — a `{key: true}` map gating individual letters behind a premium subscription. Free templates are simply absent from this map.
-3. **Editor flow**: `LetterScreen` (category list) → `LetterChooseAccountScreen` (pick an Akun Surat to fill in) → `LetterEditorScreen` ([lib/persentations/letters/screens/letter_editor_screen.dart](lib/persentations/letters/screens/letter_editor_screen.dart)) loads the HTML into `HtmlEditor` (`html_editor_enhanced`), then on save calls `HtmlToPdfConverter().convertHtmlToPdf(...)` and `FlutterFileSaver().writeFileAsBytes(...)`, while also persisting the HTML into the `letters` table via `LetterRepository.insert`.
+3. **Editor flow**: `LetterScreen` (category list) → `LetterDetailScreen` (preview, bookmark, kop switch) → `LetterVariableFormScreen` (optional "Isi Data Surat" form, skipped when the template has no variables) → `LetterChooseAccountScreen` (pick an Akun Surat to fill in) → `LetterEditorScreen` ([lib/persentations/letters/screens/letter_editor_screen.dart](lib/persentations/letters/screens/letter_editor_screen.dart)) loads the HTML into `HtmlEditor` (`html_editor_enhanced`), then on save calls `HtmlToPdfConverter().convertHtmlToPdf(...)` and `FlutterFileSaver().writeFileAsBytes(...)`, while also persisting the HTML into the `letters` table via `LetterRepository.insert`.
 
-**To add a new letter template**: (1) create a new file under the appropriate `lib/data/letter_functions/<category>/` returning an HTML string; (2) import it in `letter_data.dart` and add a new entry to the matching category's `letters` array; (3) if it should be premium, add the key to `premiumLetterMap`. No other wiring is needed — the existing screens render whatever the registry exposes.
+**To add a new letter template**: (1) create a new file under the appropriate `lib/data/letter_functions/<category>/` returning an HTML string and declaring its variables; (2) import it in `letter_data.dart`, add a new entry to the matching category's `letters` array, and add `"html"` + `"variables"` to `letterDataMap`; (3) if it should be premium, add the key to `premiumLetterMap`. No other wiring is needed — the existing screens render whatever the registry exposes.
+
+### Kop surat (Premium)
+
+Configured in Pengaturan → Kop Surat ([lib/persentations/kop_surat/](lib/persentations/kop_surat/)). `KopSuratRepository` ([lib/repositories/kop_surat_repository.dart](lib/repositories/kop_surat_repository.dart)) stores the text fields + default design in SharedPreferences, copies the logo into the app documents directory, and keeps the set of letter keys whose "Gunakan Kop Surat" switch (on `LetterDetailScreen`) is on. HTML for the 4 designs lives in [lib/data/kop_surat_designs.dart](lib/data/kop_surat_designs.dart), with a Flutter look-alike in `KopDesignPreview`. `htmlForLetter(key, isPremium:)` is prepended to the letter HTML in the detail preview and the editor.
+
+### Onboarding
+
+`OnboardingScreen` ([lib/persentations/onboarding/](lib/persentations/onboarding/)) is shown on first launch (`onboarding_done` flag in SharedPreferences, checked in `main.dart`) and can be reopened from Pengaturan → Panduan Aplikasi.
 
 ### Persistence — sqflite
 

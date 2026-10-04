@@ -1,9 +1,16 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanKesediaanBekerjaPenuhWaktuVariables =
+    [
+  LetterVariable(key: 'jabatan', label: 'Jabatan'),
+];
 
 String suratPernyataanKesediaanBekerjaPenuhWaktu(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   // String dateNow =
   //     DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
 
@@ -49,7 +56,7 @@ String suratPernyataanKesediaanBekerjaPenuhWaktu(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Menyatakan dengan sebenarnya bahwa saya sanggup bekerja penuh waktu sebagai <b>... (Jabatan)</b>, dan siap diberhentikan setiap saat apabila tidak mematuhi pernyataan ini
+      Menyatakan dengan sebenarnya bahwa saya sanggup bekerja penuh waktu sebagai ${fillVar(vars, 'jabatan', '... (Jabatan)')}, dan siap diberhentikan setiap saat apabila tidak mematuhi pernyataan ini
     </p>
     <p style="text-align: justify; ">
       Demikian surat pernyataan ini dibuat dengan sebenarnya untuk dapat digunakan sebagai <b>... (Kebutuhan)<b>.

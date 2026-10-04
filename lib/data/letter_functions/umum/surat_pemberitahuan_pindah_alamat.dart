@@ -1,9 +1,36 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPemberitahuanPindahAlamatVariables = [
+  LetterVariable(
+      key: 'nama_pimpinan_bagian_yang_dituju',
+      label: 'Nama Pimpinan/Bagian yang Dituju'),
+  LetterVariable(
+      key: 'nama_instansi_perusahaan', label: 'Nama Instansi/Perusahaan'),
+  LetterVariable(key: 'nomor_ktp_nik', label: 'Nomor KTP/NIK'),
+  LetterVariable(
+      key: 'nomor_pelanggan_anggota_jika_ada',
+      label: 'Nomor Pelanggan/Anggota, Jika Ada'),
+  LetterVariable(
+      key: 'tanggal_efektif_pindah',
+      label: 'Tanggal Efektif Pindah',
+      type: LetterVariableType.date),
+  LetterVariable(
+      key: 'alamat_lama_lengkap',
+      label: 'Alamat Lama Lengkap',
+      type: LetterVariableType.multiline),
+  LetterVariable(key: 'rt_rw', label: 'RT/RW'),
+  LetterVariable(key: 'kelurahan_desa', label: 'Kelurahan/Desa'),
+  LetterVariable(key: 'kecamatan', label: 'Kecamatan'),
+  LetterVariable(key: 'kota_kabupaten', label: 'Kota/Kabupaten'),
+  LetterVariable(key: 'kode_pos', label: 'Kode Pos'),
+];
 
 String suratPemberitahuanPindahAlamat(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -16,9 +43,9 @@ String suratPemberitahuanPindahAlamat(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama Pimpinan/Bagian yang Dituju)</b>
+      ${fillVar(vars, 'nama_pimpinan_bagian_yang_dituju', '... (Nama Pimpinan/Bagian yang Dituju)')}
       <br>
-      <b>... (Nama Instansi/Perusahaan)</b>
+      ${fillVar(vars, 'nama_instansi_perusahaan', '... (Nama Instansi/Perusahaan)')}
       <br>
       di Tempat
     </p>
@@ -43,12 +70,12 @@ String suratPemberitahuanPindahAlamat(
           <tr>
             <td style="white-space: nowrap">No. KTP/NIK</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nomor KTP/NIK)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nomor_ktp_nik', '... (Nomor KTP/NIK)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">No. Pelanggan/Anggota</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nomor Pelanggan/Anggota, Jika Ada)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nomor_pelanggan_anggota_jika_ada', '... (Nomor Pelanggan/Anggota, Jika Ada)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">No. Telp</td>
@@ -64,7 +91,7 @@ String suratPemberitahuanPindahAlamat(
       </table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini bermaksud memberitahukan bahwa terhitung sejak tanggal <b>... (Tanggal Efektif Pindah)</b>, saya telah pindah alamat dari:
+      Dengan ini bermaksud memberitahukan bahwa terhitung sejak tanggal ${fillVar(vars, 'tanggal_efektif_pindah', '... (Tanggal Efektif Pindah)')}, saya telah pindah alamat dari:
     </p>
     <p>
       <table border="0" style="width:100%">
@@ -72,7 +99,7 @@ String suratPemberitahuanPindahAlamat(
           <tr>
             <td style="white-space: nowrap">Alamat Lama</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Alamat Lama Lengkap)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'alamat_lama_lengkap', '... (Alamat Lama Lengkap)')}</td>
           </tr>
         </tbody>
       </table>
@@ -91,27 +118,27 @@ String suratPemberitahuanPindahAlamat(
           <tr>
             <td style="white-space: nowrap">RT/RW</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (RT/RW)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'rt_rw', '... (RT/RW)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Kelurahan/Desa</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Kelurahan/Desa)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'kelurahan_desa', '... (Kelurahan/Desa)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Kecamatan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Kecamatan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'kecamatan', '... (Kecamatan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Kota/Kabupaten</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Kota/Kabupaten)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'kota_kabupaten', '... (Kota/Kabupaten)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Kode Pos</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Kode Pos)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'kode_pos', '... (Kode Pos)')}</td>
           </tr>
         </tbody>
       </table>

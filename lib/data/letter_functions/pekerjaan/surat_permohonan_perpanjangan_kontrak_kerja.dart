@@ -1,9 +1,24 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanPerpanjanganKontrakKerjaVariables = [
+  LetterVariable(key: 'nama_pimpinan_hrd', label: 'Nama Pimpinan/HRD'),
+  LetterVariable(key: 'nama_perusahaan', label: 'Nama Perusahaan'),
+  LetterVariable(key: 'nik_nip_karyawan', label: 'NIK/NIP Karyawan'),
+  LetterVariable(key: 'jabatan', label: 'Jabatan'),
+  LetterVariable(key: 'divisi_departemen', label: 'Divisi/Departemen'),
+  LetterVariable(key: 'nomor_kontrak_kerja', label: 'Nomor Kontrak Kerja'),
+  LetterVariable(
+      key: 'tanggal_berakhir_kontrak',
+      label: 'Tanggal Berakhir Kontrak',
+      type: LetterVariableType.date),
+];
 
 String suratPermohonanPerpanjanganKontrakKerja(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -16,9 +31,9 @@ String suratPermohonanPerpanjanganKontrakKerja(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama Pimpinan/HRD)</b>
+      ${fillVar(vars, 'nama_pimpinan_hrd', '... (Nama Pimpinan/HRD)')}
       <br>
-      <b>... (Nama Perusahaan)</b>
+      ${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')}
       <br>
       di Tempat
     </p>
@@ -43,27 +58,27 @@ String suratPermohonanPerpanjanganKontrakKerja(
           <tr>
             <td style="white-space: nowrap">NIK/NIP Karyawan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (NIK/NIP Karyawan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nik_nip_karyawan', '... (NIK/NIP Karyawan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Jabatan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Jabatan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'jabatan', '... (Jabatan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Divisi/Departemen</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Divisi/Departemen)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'divisi_departemen', '... (Divisi/Departemen)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Nomor Kontrak</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nomor Kontrak Kerja)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nomor_kontrak_kerja', '... (Nomor Kontrak Kerja)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Masa Kontrak Berakhir</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Tanggal Berakhir Kontrak)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'tanggal_berakhir_kontrak', '... (Tanggal Berakhir Kontrak)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat</td>
@@ -79,7 +94,7 @@ String suratPermohonanPerpanjanganKontrakKerja(
       </table>
     </p>
     <p style="text-align: justify; ">
-      Sehubungan dengan akan berakhirnya masa kontrak kerja saya pada tanggal <b>... (Tanggal Berakhir Kontrak)</b>, melalui surat ini saya bermaksud mengajukan permohonan perpanjangan kontrak kerja di <b>... (Nama Perusahaan)</b>.
+      Sehubungan dengan akan berakhirnya masa kontrak kerja saya pada tanggal ${fillVar(vars, 'tanggal_berakhir_kontrak', '... (Tanggal Berakhir Kontrak)')}, melalui surat ini saya bermaksud mengajukan permohonan perpanjangan kontrak kerja di ${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')}.
     </p>
     <p style="text-align: justify; ">
       Selama menjalankan kontrak kerja yang lalu, saya telah berupaya melaksanakan tugas dan tanggung jawab dengan sebaik-baiknya, serta mematuhi seluruh peraturan yang berlaku di perusahaan. Saya juga merasa cocok dengan lingkungan kerja dan ingin terus berkontribusi bagi kemajuan perusahaan.

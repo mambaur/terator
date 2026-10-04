@@ -1,9 +1,40 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanHakAsuhAnakVariables = [
+  LetterVariable(key: 'pekerjaan', label: 'Pekerjaan'),
+  LetterVariable(key: 'nomor_ktp_nik', label: 'Nomor KTP/NIK'),
+  LetterVariable(key: 'nama_mantan_pasangan', label: 'Nama Mantan Pasangan'),
+  LetterVariable(
+      key: 'tempat_tgl_lahir_mantan_pasangan',
+      label: 'Tempat/Tgl. Lahir Mantan Pasangan'),
+  LetterVariable(
+      key: 'nomor_ktp_nik_mantan_pasangan',
+      label: 'Nomor KTP/NIK Mantan Pasangan'),
+  LetterVariable(
+      key: 'alamat_mantan_pasangan',
+      label: 'Alamat Mantan Pasangan',
+      type: LetterVariableType.multiline),
+  LetterVariable(key: 'nomor_akta_putusan', label: 'Nomor Akta/Putusan'),
+  LetterVariable(
+      key: 'tanggal_akta_putusan',
+      label: 'Tanggal Akta/Putusan',
+      type: LetterVariableType.date),
+  LetterVariable(key: 'nama_lengkap_anak', label: 'Nama Lengkap Anak'),
+  LetterVariable(key: 'tempat_tgl_lahir_anak', label: 'Tempat/Tgl. Lahir Anak'),
+  LetterVariable(
+      key: 'jenis_kelamin_anak',
+      label: 'Jenis Kelamin Anak',
+      type: LetterVariableType.choice,
+      options: ['Laki-laki', 'Perempuan']),
+  LetterVariable(key: 'nomor_akta_kelahiran', label: 'Nomor Akta Kelahiran'),
+];
 
 String suratPernyataanHakAsuhAnak(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -40,12 +71,12 @@ String suratPernyataanHakAsuhAnak(
           <tr>
             <td style="white-space: nowrap">Pekerjaan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Pekerjaan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'pekerjaan', '... (Pekerjaan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">No. KTP/NIK</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nomor KTP/NIK)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nomor_ktp_nik', '... (Nomor KTP/NIK)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat</td>
@@ -69,26 +100,26 @@ String suratPernyataanHakAsuhAnak(
           <tr>
             <td style="white-space: nowrap">Nama</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nama Mantan Pasangan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nama_mantan_pasangan', '... (Nama Mantan Pasangan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Tempat/Tgl. Lahir</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Tempat/Tgl. Lahir Mantan Pasangan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'tempat_tgl_lahir_mantan_pasangan', '... (Tempat/Tgl. Lahir Mantan Pasangan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">No. KTP/NIK</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nomor KTP/NIK Mantan Pasangan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nomor_ktp_nik_mantan_pasangan', '... (Nomor KTP/NIK Mantan Pasangan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Alamat Mantan Pasangan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'alamat_mantan_pasangan', '... (Alamat Mantan Pasangan)')}</td>
           </tr>
         </tbody>
       </table>
-      Berdasarkan Akta Cerai/Putusan Pengadilan Nomor <b>... (Nomor Akta/Putusan)</b> tanggal <b>... (Tanggal Akta/Putusan)</b>, maka telah disepakati bahwa hak asuh anak diberikan kepada saya, dengan data anak sebagai berikut:
+      Berdasarkan Akta Cerai/Putusan Pengadilan Nomor ${fillVar(vars, 'nomor_akta_putusan', '... (Nomor Akta/Putusan)')} tanggal ${fillVar(vars, 'tanggal_akta_putusan', '... (Tanggal Akta/Putusan)')}, maka telah disepakati bahwa hak asuh anak diberikan kepada saya, dengan data anak sebagai berikut:
     </p>
     <p>
       <table border="0" style="width:100%">
@@ -96,22 +127,22 @@ String suratPernyataanHakAsuhAnak(
           <tr>
             <td style="white-space: nowrap">Nama Anak</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nama Lengkap Anak)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nama_lengkap_anak', '... (Nama Lengkap Anak)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Tempat/Tgl. Lahir</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Tempat/Tgl. Lahir Anak)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'tempat_tgl_lahir_anak', '... (Tempat/Tgl. Lahir Anak)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Jenis Kelamin</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Jenis Kelamin Anak)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'jenis_kelamin_anak', '... (Jenis Kelamin Anak)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">No. Akta Kelahiran</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nomor Akta Kelahiran)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nomor_akta_kelahiran', '... (Nomor Akta Kelahiran)')}</td>
           </tr>
         </tbody>
       </table>

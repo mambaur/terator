@@ -1,9 +1,20 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanPenghasilanVariables = [
+  LetterVariable(
+      key: 'nominal_penghasilan',
+      label: 'Nominal Penghasilan',
+      type: LetterVariableType.currency),
+  LetterVariable(key: 'terbilang', label: 'Terbilang'),
+  LetterVariable(key: 'tujuan_surat', label: 'Tujuan Surat'),
+];
 
 String suratPernyataanPenghasilan(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -41,10 +52,10 @@ String suratPernyataanPenghasilan(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini menyatakan bahwa penghasilan saya per bulan adalah sebesar <b>Rp ... (Nominal Penghasilan)</b> (<b>... Terbilang</b>).
+      Dengan ini menyatakan bahwa penghasilan saya per bulan adalah sebesar ${fillVar(vars, 'nominal_penghasilan', 'Rp ... (Nominal Penghasilan)', prefix: 'Rp ')} (${fillVar(vars, 'terbilang', '... Terbilang')}).
     </p>
     <p style="text-align: justify; ">
-      Surat pernyataan penghasilan ini dibuat untuk keperluan <b>... (Tujuan Surat)</b>.
+      Surat pernyataan penghasilan ini dibuat untuk keperluan ${fillVar(vars, 'tujuan_surat', '... (Tujuan Surat)')}.
     </p>
     <p style="text-align: justify; ">
       Demikian surat pernyataan ini saya buat dengan sebenar-benarnya dan dapat dipertanggungjawabkan.

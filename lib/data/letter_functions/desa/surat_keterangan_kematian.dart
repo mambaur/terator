@@ -1,9 +1,34 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratKeteranganKematianVariables = [
+  LetterVariable(key: 'nama_desa_kelurahan', label: 'Nama Desa/Kelurahan'),
+  LetterVariable(key: 'nama_almarhum_ah', label: 'Nama Almarhum/ah'),
+  LetterVariable(key: 'nik', label: 'NIK'),
+  LetterVariable(
+      key: 'jenis_kelamin',
+      label: 'Jenis Kelamin',
+      type: LetterVariableType.choice,
+      options: ['Laki-laki', 'Perempuan']),
+  LetterVariable(
+      key: 'alamat_terakhir',
+      label: 'Alamat Terakhir',
+      type: LetterVariableType.multiline),
+  LetterVariable(
+      key: 'hari_tanggal',
+      label: 'Hari, Tanggal',
+      type: LetterVariableType.dateWithDay),
+  LetterVariable(key: 'tempat', label: 'Tempat'),
+  LetterVariable(key: 'penyebab', label: 'Penyebab'),
+  LetterVariable(key: 'hubungan_keluarga', label: 'Hubungan Keluarga'),
+  LetterVariable(key: 'nama_kepala_desa', label: 'Nama Kepala Desa'),
+];
 
 String suratKeteranganKematian(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,7 +37,7 @@ String suratKeteranganKematian(
     </p>
     <p><br></p>
     <p style="text-align: justify; ">
-      Yang bertanda tangan di bawah ini Kepala Desa/Lurah <b>... (Nama Desa/Kelurahan)</b>, menerangkan bahwa:
+      Yang bertanda tangan di bawah ini Kepala Desa/Lurah ${fillVar(vars, 'nama_desa_kelurahan', '... (Nama Desa/Kelurahan)')}, menerangkan bahwa:
     </p>
     <p>
       <table border="0" style="width:100%">
@@ -20,22 +45,22 @@ String suratKeteranganKematian(
 					<tr>
 						<td style="white-space: nowrap">Nama</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Nama Almarhum/ah)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nama_almarhum_ah', '... (Nama Almarhum/ah)')}</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap">NIK</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (NIK)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nik', '... (NIK)')}</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap">Jenis Kelamin</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Jenis Kelamin)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'jenis_kelamin', '... (Jenis Kelamin)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Alamat Terakhir</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Alamat)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'alamat_terakhir', '... (Alamat)')}</td>
 					</tr>
 				</tbody>
 			</table>
@@ -49,23 +74,23 @@ String suratKeteranganKematian(
 					<tr>
 						<td style="white-space: nowrap">Hari/Tanggal</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Hari, Tanggal)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'hari_tanggal', '... (Hari, Tanggal)')}</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap">Tempat</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Tempat)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'tempat', '... (Tempat)')}</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap">Penyebab</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Penyebab)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'penyebab', '... (Penyebab)')}</td>
 					</tr>
 				</tbody>
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Surat keterangan ini dibuat berdasarkan laporan dari keluarga yang bersangkutan yaitu ${account?.name ?? ''} selaku <b>... (Hubungan Keluarga)</b>.
+      Surat keterangan ini dibuat berdasarkan laporan dari keluarga yang bersangkutan yaitu ${account?.name ?? ''} selaku ${fillVar(vars, 'hubungan_keluarga', '... (Hubungan Keluarga)')}.
     </p>
     <p style="text-align: justify; ">
       Demikian surat keterangan ini dibuat untuk dapat dipergunakan sebagaimana mestinya.
@@ -103,7 +128,7 @@ String suratKeteranganKematian(
           <td style="width: 100%">&nbsp;</td>
           <td style="vertical-align:top;text-align:center;">
             <p>
-              <span style="white-space: nowrap"><b>... (Nama Kepala Desa)</b></span>
+              <span style="white-space: nowrap">${fillVar(vars, 'nama_kepala_desa', '... (Nama Kepala Desa)')}</span>
             </p>
           </td>
         </tr>

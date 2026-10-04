@@ -1,9 +1,27 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPengantarIzinKeramaianVariables = [
+  LetterVariable(key: 'alamat_rt_rw', label: 'Alamat RT/RW'),
+  LetterVariable(key: 'nama_acara', label: 'Nama Acara'),
+  LetterVariable(
+      key: 'hari_tanggal_acara',
+      label: 'Hari/Tanggal Acara',
+      type: LetterVariableType.dateWithDay),
+  LetterVariable(key: 'waktu_acara', label: 'Waktu Acara'),
+  LetterVariable(key: 'tempat_acara', label: 'Tempat Acara'),
+  LetterVariable(
+      key: 'jumlah_peserta',
+      label: 'Jumlah Peserta',
+      type: LetterVariableType.number),
+  LetterVariable(key: 'nama_ketua_rt_rw', label: 'Nama Ketua RT/RW'),
+];
 
 String suratPengantarIzinKeramaian(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,7 +30,7 @@ String suratPengantarIzinKeramaian(
     </p>
     <p><br></p>
     <p style="text-align: justify; ">
-      Yang bertanda tangan di bawah ini Ketua RT/RW <b>... (Alamat RT/RW)</b>, dengan ini memberikan pengantar kepada:
+      Yang bertanda tangan di bawah ini Ketua RT/RW ${fillVar(vars, 'alamat_rt_rw', '... (Alamat RT/RW)')}, dengan ini memberikan pengantar kepada:
     </p>
     <p>
       <table border="0" style="width:100%">
@@ -44,27 +62,27 @@ String suratPengantarIzinKeramaian(
 					<tr>
 						<td style="white-space: nowrap">Nama Acara</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Nama Acara)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nama_acara', '... (Nama Acara)')}</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap">Hari/Tanggal</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Hari/Tanggal Acara)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'hari_tanggal_acara', '... (Hari/Tanggal Acara)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Waktu</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Waktu Acara)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'waktu_acara', '... (Waktu Acara)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Tempat</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Tempat Acara)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'tempat_acara', '... (Tempat Acara)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Perkiraan Peserta</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Jumlah Peserta)</b> orang</td>
+						<td style="width: 100%">${fillVar(vars, 'jumlah_peserta', '... (Jumlah Peserta)')} orang</td>
 					</tr>
 				</tbody>
 			</table>
@@ -102,7 +120,7 @@ String suratPengantarIzinKeramaian(
         <tr>
           <td style="vertical-align:top;text-align:center;">
             <p>
-              <span style="white-space: nowrap"><b>... (Nama Ketua RT/RW)</b></span>
+              <span style="white-space: nowrap">${fillVar(vars, 'nama_ketua_rt_rw', '... (Nama Ketua RT/RW)')}</span>
             </p>
           </td>
           <td style="width: 100%">&nbsp;</td>

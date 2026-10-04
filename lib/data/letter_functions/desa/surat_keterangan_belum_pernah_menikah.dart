@@ -1,9 +1,24 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratKeteranganBelumPernahMenikahVariables = [
+  LetterVariable(key: 'nama_desa_kelurahan', label: 'Nama Desa/Kelurahan'),
+  LetterVariable(key: 'nama_kecamatan', label: 'Nama Kecamatan'),
+  LetterVariable(key: 'nama_kabupaten_kota', label: 'Nama Kabupaten/Kota'),
+  LetterVariable(key: 'pekerjaan', label: 'Pekerjaan'),
+  LetterVariable(
+      key: 'tujuan',
+      label: 'Tujuan',
+      hint: 'misal: persyaratan pendaftaran nikah / administrasi'),
+  LetterVariable(
+      key: 'nama_kepala_desa_lurah', label: 'Nama Kepala Desa/Lurah'),
+];
 
 String suratKeteranganBelumPernahMenikah(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,7 +27,7 @@ String suratKeteranganBelumPernahMenikah(
     </p>
     <p><br></p>
     <p style="text-align: justify; ">
-      Yang bertanda tangan di bawah ini Kepala Desa/Lurah <b>... (Nama Desa/Kelurahan)</b>, Kecamatan <b>... (Nama Kecamatan)</b>, Kabupaten/Kota <b>... (Nama Kabupaten/Kota)</b>, dengan ini menerangkan bahwa:
+      Yang bertanda tangan di bawah ini Kepala Desa/Lurah ${fillVar(vars, 'nama_desa_kelurahan', '... (Nama Desa/Kelurahan)')}, Kecamatan ${fillVar(vars, 'nama_kecamatan', '... (Nama Kecamatan)')}, Kabupaten/Kota ${fillVar(vars, 'nama_kabupaten_kota', '... (Nama Kabupaten/Kota)')}, dengan ini menerangkan bahwa:
     </p>
     <p>
       <table border="0" style="width:100%">
@@ -40,7 +55,7 @@ String suratKeteranganBelumPernahMenikah(
           <tr>
 						<td style="white-space: nowrap">Pekerjaan</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Pekerjaan)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'pekerjaan', '... (Pekerjaan)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Alamat</td>
@@ -54,7 +69,7 @@ String suratKeteranganBelumPernahMenikah(
       Adalah benar warga kami yang sampai dengan saat ini <b>belum pernah menikah</b> dan belum pernah tercatat dalam perkawinan secara sah menurut hukum negara maupun agama.
     </p>
     <p style="text-align: justify; ">
-      Surat keterangan ini dibuat untuk keperluan <b>... (Tujuan, misal: persyaratan pendaftaran nikah / administrasi)</b>.
+      Surat keterangan ini dibuat untuk keperluan ${fillVar(vars, 'tujuan', '... (Tujuan, misal: persyaratan pendaftaran nikah / administrasi)')}.
     </p>
     <p style="text-align: justify; ">
       Demikian surat keterangan ini dibuat dengan sebenar-benarnya untuk dapat digunakan sebagaimana mestinya.
@@ -86,7 +101,7 @@ String suratKeteranganBelumPernahMenikah(
         <tr>
           <td style="vertical-align:top;text-align:center;">
             <p>
-              <span style="white-space: nowrap"><b>... (Nama Kepala Desa/Lurah)</b></span>
+              <span style="white-space: nowrap">${fillVar(vars, 'nama_kepala_desa_lurah', '... (Nama Kepala Desa/Lurah)')}</span>
             </p>
           </td>
           <td style="width: 100%">&nbsp;</td>

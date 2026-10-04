@@ -1,9 +1,30 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanCutiSakitBerkepanjanganVariables = [
+  LetterVariable(key: 'nama_pimpinan', label: 'Nama Pimpinan'),
+  LetterVariable(
+      key: 'nama_perusahaan_instansi', label: 'Nama Perusahaan/Instansi'),
+  LetterVariable(key: 'jenis_penyakit', label: 'Jenis Penyakit'),
+  LetterVariable(
+      key: 'tanggal_mulai_cuti',
+      label: 'Tanggal Mulai Cuti',
+      type: LetterVariableType.date),
+  LetterVariable(
+      key: 'tanggal_selesai_cuti',
+      label: 'Tanggal Selesai Cuti',
+      type: LetterVariableType.date),
+  LetterVariable(
+      key: 'jumlah_hari',
+      label: 'Jumlah Hari',
+      type: LetterVariableType.number),
+];
 
 String suratPermohonanCutiSakitBerkepanjangan(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,9 +33,9 @@ String suratPermohonanCutiSakitBerkepanjangan(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama Pimpinan)</b>
+      ${fillVar(vars, 'nama_pimpinan', '... (Nama Pimpinan)')}
       <br>
-      <b>... (Nama Perusahaan/Instansi)</b>
+      ${fillVar(vars, 'nama_perusahaan_instansi', '... (Nama Perusahaan/Instansi)')}
       <br>
       di Tempat
     </p>
@@ -56,22 +77,22 @@ String suratPermohonanCutiSakitBerkepanjangan(
 					<tr>
 						<td style="white-space: nowrap">Jenis Penyakit</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Jenis Penyakit)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'jenis_penyakit', '... (Jenis Penyakit)')}</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap">Tanggal Mulai Cuti</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Tanggal Mulai)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'tanggal_mulai_cuti', '... (Tanggal Mulai)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Tanggal Selesai Cuti</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Tanggal Selesai)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'tanggal_selesai_cuti', '... (Tanggal Selesai)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Total Hari</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Jumlah Hari)</b> hari</td>
+						<td style="width: 100%">${fillVar(vars, 'jumlah_hari', '... (Jumlah Hari)')} hari</td>
 					</tr>
 				</tbody>
 			</table>

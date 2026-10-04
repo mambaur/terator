@@ -129,6 +129,7 @@ import 'package:terator/data/letter_functions/umum/surat_pemberitahuan_pindah_al
 import 'package:terator/data/letter_functions/umum/surat_pernyataan_tidak_terlibat_kasus_hukum.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
 
 // Letter key => Premium true/false
 // Each category has minimum 7 premium letters.
@@ -208,13 +209,23 @@ final premiumLetterMap = {
 
 class LetterData {
   static String html(String key,
-      {String? image, LetterModel? letter, AccountModel? account}) {
+      {String? image,
+      LetterModel? letter,
+      AccountModel? account,
+      Map<String, String>? vars}) {
     List<Map<String, dynamic>> data =
-        letterDataMap(image, letter: letter, account: account)
+        letterDataMap(image, letter: letter, account: account, vars: vars)
             .where((element) => element['key'] == key)
             .toList();
     if (data.isEmpty) return '';
     return data[0]['html'];
+  }
+
+  /// Fillable fields declared by the template behind [key].
+  static List<LetterVariable> variables(String key) {
+    final data = letterDataMap(null).where((element) => element['key'] == key);
+    if (data.isEmpty) return const [];
+    return data.first['variables'] as List<LetterVariable>;
   }
 
   static List<Map<String, dynamic>> listLetters({String q = ''}) {
@@ -427,10 +438,7 @@ class LetterData {
             "key": "surat_keterangan_penghasilan_warga",
             "title": "Surat Keterangan Penghasilan Warga"
           },
-          {
-            "key": "surat_pengantar_skck",
-            "title": "Surat Pengantar SKCK"
-          },
+          {"key": "surat_pengantar_skck", "title": "Surat Pengantar SKCK"},
           {
             "key": "surat_keterangan_beda_nama",
             "title": "Surat Keterangan Beda Nama"
@@ -439,10 +447,7 @@ class LetterData {
             "key": "surat_keterangan_janda_duda",
             "title": "Surat Keterangan Janda/Duda"
           },
-          {
-            "key": "surat_keterangan_tanah",
-            "title": "Surat Keterangan Tanah"
-          },
+          {"key": "surat_keterangan_tanah", "title": "Surat Keterangan Tanah"},
           {
             "key": "surat_permohonan_bantuan_sosial",
             "title": "Surat Permohonan Bantuan Sosial"
@@ -537,10 +542,7 @@ class LetterData {
             "key": "surat_perjanjian_jual_beli",
             "title": "Surat Perjanjian Jual Beli"
           },
-          {
-            "key": "surat_pengajuan_tender",
-            "title": "Surat Pengajuan Tender"
-          },
+          {"key": "surat_pengajuan_tender", "title": "Surat Pengajuan Tender"},
           {
             "key": "surat_permohonan_menjadi_supplier",
             "title": "Surat Permohonan Menjadi Supplier"
@@ -579,10 +581,7 @@ class LetterData {
             "key": "surat_permohonan_bantuan_dana_acara",
             "title": "Surat Permohonan Bantuan Dana Acara"
           },
-          {
-            "key": "surat_pengaduan_umum",
-            "title": "Surat Pengaduan/Keluhan"
-          },
+          {"key": "surat_pengaduan_umum", "title": "Surat Pengaduan/Keluhan"},
           {
             "key": "surat_pernyataan_tidak_keberatan",
             "title": "Surat Pernyataan Tidak Keberatan"
@@ -778,669 +777,811 @@ class LetterData {
 }
 
 List<Map<String, dynamic>> letterDataMap(String? image,
-    {LetterModel? letter, AccountModel? account}) {
+    {LetterModel? letter, AccountModel? account, Map<String, String>? vars}) {
   return [
     // ─── Sekolah ───
     {
       "key": "surat_izin_tidak_masuk_sekolah",
       "title": "Surat Izin Tidak Masuk Sekolah",
-      "html": suratIzinTidakMasukSekolah(letter, image, account)
+      "html": suratIzinTidakMasukSekolah(letter, image, account, vars),
+      "variables": suratIzinTidakMasukSekolahVariables
     },
     {
       "key": "surat_permohonan_pindah_sekolah",
       "title": "Surat Permohonan Pindah Sekolah",
-      "html": suratPermohonanPindahSekolah(letter, image, account)
+      "html": suratPermohonanPindahSekolah(letter, image, account, vars),
+      "variables": suratPermohonanPindahSekolahVariables
     },
     {
       "key": "surat_permohonan_beasiswa",
       "title": "Surat Permohonan Beasiswa",
-      "html": suratPermohonanBeaSiswa(letter, image, account)
+      "html": suratPermohonanBeaSiswa(letter, image, account, vars),
+      "variables": suratPermohonanBeaSiswaVariables
     },
     {
       "key": "surat_pernyataan_tidak_menerima_beasiswa",
       "title": "Surat Pernyataan Tidak Menerima Beasiswa",
-      "html": suratPernyataanTidakMenerimaBeasiswa(letter, image, account)
+      "html":
+          suratPernyataanTidakMenerimaBeasiswa(letter, image, account, vars),
+      "variables": suratPernyataanTidakMenerimaBeasiswaVariables
     },
     {
       "key": "surat_keterangan_penghasilan_orang_tua",
       "title": "Surat Keterangan Penghasilan Orang Tua",
-      "html": suratKeteranganPenghasilanOrangTua(letter, image, account)
+      "html": suratKeteranganPenghasilanOrangTua(letter, image, account, vars),
+      "variables": suratKeteranganPenghasilanOrangTuaVariables
     },
     {
       "key": "surat_persetujuan_orang_tua",
       "title": "Surat Persetujuan Orang Tua",
-      "html": suratPersetujuanOrangTua(letter, image, account)
+      "html": suratPersetujuanOrangTua(letter, image, account, vars),
+      "variables": suratPersetujuanOrangTuaVariables
     },
     {
       "key": "surat_perjanjian_tidak_mengulangi_kesalahan",
       "title": "Surat Perjanjian Tidak Mengulangi Kesalahan",
-      "html": suratPerjanjianTidakMengulangiKesalahan(letter, image, account)
+      "html":
+          suratPerjanjianTidakMengulangiKesalahan(letter, image, account, vars),
+      "variables": suratPerjanjianTidakMengulangiKesalahanVariables
     },
     // ─── Sekolah (10 new) ───
     {
       "key": "surat_permohonan_cuti_akademik",
       "title": "Surat Permohonan Cuti Akademik",
-      "html": suratPermohonanCutiAkademik(letter, image, account)
+      "html": suratPermohonanCutiAkademik(letter, image, account, vars),
+      "variables": suratPermohonanCutiAkademikVariables
     },
     {
       "key": "surat_permohonan_aktif_kembali_kuliah",
       "title": "Surat Permohonan Aktif Kembali Kuliah",
-      "html": suratPermohonanAktifKembaliKuliah(letter, image, account)
+      "html": suratPermohonanAktifKembaliKuliah(letter, image, account, vars),
+      "variables": suratPermohonanAktifKembaliKuliahVariables
     },
     {
       "key": "surat_permohonan_dispensasi",
       "title": "Surat Permohonan Dispensasi",
-      "html": suratPermohonanDispensasi(letter, image, account)
+      "html": suratPermohonanDispensasi(letter, image, account, vars),
+      "variables": suratPermohonanDispensasiVariables
     },
     {
       "key": "surat_permohonan_pindah_jurusan",
       "title": "Surat Permohonan Pindah Jurusan",
-      "html": suratPermohonanPindahJurusan(letter, image, account)
+      "html": suratPermohonanPindahJurusan(letter, image, account, vars),
+      "variables": suratPermohonanPindahJurusanVariables
     },
     {
       "key": "surat_permohonan_keringanan_biaya_spp",
       "title": "Surat Permohonan Keringanan Biaya SPP",
-      "html": suratPermohonanKeringananBiayaSpp(letter, image, account)
+      "html": suratPermohonanKeringananBiayaSpp(letter, image, account, vars),
+      "variables": suratPermohonanKeringananBiayaSppVariables
     },
     {
       "key": "surat_permohonan_pengantar_penelitian",
       "title": "Surat Permohonan Surat Pengantar Penelitian",
-      "html": suratPermohonanPengantarPenelitian(letter, image, account)
+      "html": suratPermohonanPengantarPenelitian(letter, image, account, vars),
+      "variables": suratPermohonanPengantarPenelitianVariables
     },
     {
       "key": "surat_permohonan_pengantar_magang",
       "title": "Surat Permohonan Surat Pengantar Magang/PKL",
-      "html": suratPermohonanPengantarMagang(letter, image, account)
+      "html": suratPermohonanPengantarMagang(letter, image, account, vars),
+      "variables": suratPermohonanPengantarMagangVariables
     },
     {
       "key": "surat_permohonan_ujian_susulan",
       "title": "Surat Permohonan Mengikuti Ujian Susulan",
-      "html": suratPermohonanUjianSusulan(letter, image, account)
+      "html": suratPermohonanUjianSusulan(letter, image, account, vars),
+      "variables": suratPermohonanUjianSusulanVariables
     },
     {
       "key": "surat_permohonan_surat_keterangan_aktif_kuliah",
       "title": "Surat Permohonan Surat Keterangan Aktif Kuliah",
-      "html": suratPermohonanSuratKeteranganAktifKuliah(letter, image, account)
+      "html": suratPermohonanSuratKeteranganAktifKuliah(
+          letter, image, account, vars),
+      "variables": suratPermohonanSuratKeteranganAktifKuliahVariables
     },
     {
       "key": "surat_pernyataan_bebas_plagiarisme",
       "title": "Surat Pernyataan Bebas Plagiarisme",
-      "html": suratPernyataanBebasPlagiarisme(letter, image, account)
+      "html": suratPernyataanBebasPlagiarisme(letter, image, account, vars),
+      "variables": suratPernyataanBebasPlagiarismeVariables
     },
     // ─── Pekerjaan ───
     {
       "key": "surat_permohonan_magang_kerja",
       "title": "Surat Permohonan Magang Kerja",
-      "html": suratPermohonanMagangKerja(letter, image, account)
+      "html": suratPermohonanMagangKerja(letter, image, account, vars),
+      "variables": suratPermohonanMagangKerjaVariables
     },
     {
       "key": "surat_keterangan_tempat_usaha",
       "title": "Surat Keterangan Tempat Usaha",
-      "html": suratKeteranganTempatUsaha(letter, image, account)
+      "html": suratKeteranganTempatUsaha(letter, image, account, vars),
+      "variables": suratKeteranganTempatUsahaVariables
     },
     {
       "key": "surat_kesepakatan_kerjasama",
       "title": "Surat Kesepakatan Kerjasama",
-      "html": suratKesepakatanKerjasama(letter, image, account)
+      "html": suratKesepakatanKerjasama(letter, image, account, vars),
+      "variables": suratKesepakatanKerjasamaVariables
     },
     {
       "key": "surat_izin_tidak_masuk_kerja",
       "title": "Surat Izin Tidak Masuk Kerja",
-      "html": suratIzinTidakMasukKerja(letter, image, account)
+      "html": suratIzinTidakMasukKerja(letter, image, account, vars),
+      "variables": suratIzinTidakMasukKerjaVariables
     },
     {
       "key": "surat_permohonan_izin_cuti_kerja",
       "title": "Surat Permohonan Izin Cuti Kerja",
-      "html": suratPermohonanIzinCutiKerja(letter, image, account)
+      "html": suratPermohonanIzinCutiKerja(letter, image, account, vars),
+      "variables": suratPermohonanIzinCutiKerjaVariables
     },
     {
       "key": "surat_pengunduran_diri",
       "title": "Surat Pengunduran Diri",
-      "html": suratPengunduranDiri(letter, image, account)
+      "html": suratPengunduranDiri(letter, image, account, vars),
+      "variables": suratPengunduranDiriVariables
     },
     {
       "key": "surat_pernyataan_kesediaan_bekerja_paruh_waktu",
       "title": "Surat Pernyataan Kesediaan Bekerja Paruh Waktu",
-      "html": suratPernyataanKesediaanBekerjaPenuhWaktu(letter, image, account)
+      "html": suratPernyataanKesediaanBekerjaPenuhWaktu(
+          letter, image, account, vars),
+      "variables": suratPernyataanKesediaanBekerjaPenuhWaktuVariables
     },
     {
       "key": "surat_lamaran_pekerjaan",
       "title": "Surat Lamaran Pekerjaan",
-      "html": suratLamaranPekerjaan(letter, image, account)
+      "html": suratLamaranPekerjaan(letter, image, account, vars),
+      "variables": suratLamaranPekerjaanVariables
     },
     // ─── Pekerjaan (10 new) ───
     {
       "key": "surat_permohonan_kenaikan_gaji",
       "title": "Surat Permohonan Kenaikan Gaji",
-      "html": suratPermohonanKenaikanGaji(letter, image, account)
+      "html": suratPermohonanKenaikanGaji(letter, image, account, vars),
+      "variables": suratPermohonanKenaikanGajiVariables
     },
     {
       "key": "surat_permohonan_kenaikan_jabatan",
       "title": "Surat Permohonan Kenaikan Jabatan",
-      "html": suratPermohonanKenaikanJabatan(letter, image, account)
+      "html": suratPermohonanKenaikanJabatan(letter, image, account, vars),
+      "variables": suratPermohonanKenaikanJabatanVariables
     },
     {
       "key": "surat_permohonan_mutasi_kerja",
       "title": "Surat Permohonan Mutasi Kerja",
-      "html": suratPermohonanMutasiKerja(letter, image, account)
+      "html": suratPermohonanMutasiKerja(letter, image, account, vars),
+      "variables": suratPermohonanMutasiKerjaVariables
     },
     {
       "key": "surat_permohonan_perpanjangan_kontrak_kerja",
       "title": "Surat Permohonan Perpanjangan Kontrak Kerja",
-      "html": suratPermohonanPerpanjanganKontrakKerja(letter, image, account)
+      "html":
+          suratPermohonanPerpanjanganKontrakKerja(letter, image, account, vars),
+      "variables": suratPermohonanPerpanjanganKontrakKerjaVariables
     },
     {
       "key": "surat_permohonan_cuti_melahirkan",
       "title": "Surat Permohonan Cuti Melahirkan",
-      "html": suratPermohonanCutiMelahirkan(letter, image, account)
+      "html": suratPermohonanCutiMelahirkan(letter, image, account, vars),
+      "variables": suratPermohonanCutiMelahirkanVariables
     },
     {
       "key": "surat_permohonan_reimbursement_biaya",
       "title": "Surat Permohonan Reimbursement Biaya",
-      "html": suratPermohonanReimbursementBiaya(letter, image, account)
+      "html": suratPermohonanReimbursementBiaya(letter, image, account, vars),
+      "variables": suratPermohonanReimbursementBiayaVariables
     },
     {
       "key": "surat_permohonan_surat_keterangan_kerja",
       "title": "Surat Permohonan Surat Keterangan Kerja",
-      "html": suratPermohonanSuratKeteranganKerja(letter, image, account)
+      "html": suratPermohonanSuratKeteranganKerja(letter, image, account, vars),
+      "variables": suratPermohonanSuratKeteranganKerjaVariables
     },
     {
       "key": "surat_pernyataan_tidak_bekerja_di_tempat_lain",
       "title": "Surat Pernyataan Tidak Bekerja di Tempat Lain",
-      "html": suratPernyataanTidakBekerjaDiTempatLain(letter, image, account)
+      "html":
+          suratPernyataanTidakBekerjaDiTempatLain(letter, image, account, vars),
+      "variables": suratPernyataanTidakBekerjaDiTempatLainVariables
     },
     {
       "key": "surat_pernyataan_kerahasiaan_perusahaan",
       "title": "Surat Pernyataan Kerahasiaan Perusahaan",
-      "html": suratPernyataanKerahasiaanPerusahaan(letter, image, account)
+      "html":
+          suratPernyataanKerahasiaanPerusahaan(letter, image, account, vars),
+      "variables": suratPernyataanKerahasiaanPerusahaanVariables
     },
     {
       "key": "surat_pernyataan_bersedia_mengikuti_peraturan_perusahaan",
       "title": "Surat Pernyataan Bersedia Mengikuti Peraturan Perusahaan",
-      "html":
-          suratPernyataanBersediaMengikutiPeraturanPerusahaan(letter, image, account)
+      "html": suratPernyataanBersediaMengikutiPeraturanPerusahaan(
+          letter, image, account, vars),
+      "variables": suratPernyataanBersediaMengikutiPeraturanPerusahaanVariables
     },
     // ─── Umum ───
     {
       "key": "surat_pernyataan_belum_menikah",
       "title": "Surat Pernyataan Belum Menikah",
-      "html": suratPernyataanBelumMenikah(letter, image, account)
+      "html": suratPernyataanBelumMenikah(letter, image, account, vars),
+      "variables": suratPernyataanBelumMenikahVariables
     },
     {
       "key": "surat_pernyataan_cerai",
       "title": "Surat Pernyataan Cerai",
-      "html": suratPernyataanCerai(letter, image, account)
+      "html": suratPernyataanCerai(letter, image, account, vars),
+      "variables": suratPernyataanCeraiVariables
     },
     {
       "key": "surat_pernyataan_keluarga_tentang_kematian",
       "title": "Surat Pernyataan Keluarga Tentang Kematian",
-      "html": suratPernyataanKeluargaTentangKematian(letter, image, account)
+      "html":
+          suratPernyataanKeluargaTentangKematian(letter, image, account, vars),
+      "variables": suratPernyataanKeluargaTentangKematianVariables
     },
     {
       "key": "surat_permohonan_maaf",
       "title": "Surat Permohonan Maaf",
-      "html": suratPermohonanMaaf(letter, image, account)
+      "html": suratPermohonanMaaf(letter, image, account, vars),
+      "variables": suratPermohonanMaafVariables
     },
     // ─── Umum (10 new) ───
     {
       "key": "surat_undangan_acara",
       "title": "Surat Undangan Acara",
-      "html": suratUndanganAcara(letter, image, account)
+      "html": suratUndanganAcara(letter, image, account, vars),
+      "variables": suratUndanganAcaraVariables
     },
     {
       "key": "surat_ucapan_terima_kasih",
       "title": "Surat Ucapan Terima Kasih",
-      "html": suratUcapanTerimaKasih(letter, image, account)
+      "html": suratUcapanTerimaKasih(letter, image, account, vars),
+      "variables": suratUcapanTerimaKasihVariables
     },
     {
       "key": "surat_permohonan_sumbangan",
       "title": "Surat Permohonan Sumbangan/Donasi",
-      "html": suratPermohonanSumbangan(letter, image, account)
+      "html": suratPermohonanSumbangan(letter, image, account, vars),
+      "variables": suratPermohonanSumbanganVariables
     },
     {
       "key": "surat_permohonan_bantuan_dana_acara",
       "title": "Surat Permohonan Bantuan Dana Acara",
-      "html": suratPermohonanBantuanDanaAcara(letter, image, account)
+      "html": suratPermohonanBantuanDanaAcara(letter, image, account, vars),
+      "variables": suratPermohonanBantuanDanaAcaraVariables
     },
     {
       "key": "surat_pengaduan_umum",
       "title": "Surat Pengaduan/Keluhan",
-      "html": suratPengaduanUmum(letter, image, account)
+      "html": suratPengaduanUmum(letter, image, account, vars),
+      "variables": suratPengaduanUmumVariables
     },
     {
       "key": "surat_pernyataan_tidak_keberatan",
       "title": "Surat Pernyataan Tidak Keberatan",
-      "html": suratPernyataanTidakKeberatan(letter, image, account)
+      "html": suratPernyataanTidakKeberatan(letter, image, account, vars),
+      "variables": suratPernyataanTidakKeberatanVariables
     },
     {
       "key": "surat_pernyataan_hibah",
       "title": "Surat Pernyataan Hibah",
-      "html": suratPernyataanHibah(letter, image, account)
+      "html": suratPernyataanHibah(letter, image, account, vars),
+      "variables": suratPernyataanHibahVariables
     },
     {
       "key": "surat_wasiat",
       "title": "Surat Wasiat",
-      "html": suratWasiat(letter, image, account)
+      "html": suratWasiat(letter, image, account, vars),
+      "variables": suratWasiatVariables
     },
     {
       "key": "surat_pemberitahuan_pindah_alamat",
       "title": "Surat Pemberitahuan Pindah Alamat",
-      "html": suratPemberitahuanPindahAlamat(letter, image, account)
+      "html": suratPemberitahuanPindahAlamat(letter, image, account, vars),
+      "variables": suratPemberitahuanPindahAlamatVariables
     },
     {
       "key": "surat_pernyataan_tidak_terlibat_kasus_hukum",
       "title": "Surat Pernyataan Tidak Sedang Terlibat Kasus Hukum",
-      "html": suratPernyataanTidakTerlibatKasusHukum(letter, image, account)
+      "html":
+          suratPernyataanTidakTerlibatKasusHukum(letter, image, account, vars),
+      "variables": suratPernyataanTidakTerlibatKasusHukumVariables
     },
     // ─── Desa ───
     {
       "key": "surat_keterangan_tidak_mampu",
       "title": "Surat Keterangan Tidak Mampu",
-      "html": suratKeteranganTidakMampu(letter, image, account)
+      "html": suratKeteranganTidakMampu(letter, image, account, vars),
+      "variables": suratKeteranganTidakMampuVariables
     },
     {
       "key": "surat_keterangan_domisili",
       "title": "Surat Keterangan Domisili",
-      "html": suratKeteranganDomisili(letter, image, account)
+      "html": suratKeteranganDomisili(letter, image, account, vars),
+      "variables": suratKeteranganDomisiliVariables
     },
     // ─── Pribadi ───
     {
       "key": "surat_pernyataan_pemilik_tempat_tinggal",
       "title": "Surat Pernyataan Pemilik Tempat Tinggal",
-      "html": suratPernyataanPemilikTempatTinggal(letter, image, account)
+      "html": suratPernyataanPemilikTempatTinggal(letter, image, account, vars),
+      "variables": suratPernyataanPemilikTempatTinggalVariables
     },
     {
       "key": "surat_pernyataan_kebenaran_dokumen",
       "title": "Surat Pernyataan Kebenaran Dokumen",
-      "html": suratPernyataanKebenaranDokumen(letter, image, account)
+      "html": suratPernyataanKebenaranDokumen(letter, image, account, vars),
+      "variables": suratPernyataanKebenaranDokumenVariables
     },
     {
       "key": "surat_persetujuan_suami_istri",
       "title": "Surat Persetujuan Suami Istri",
-      "html": suratPersetujuanSuamiIstri(letter, image, account)
+      "html": suratPersetujuanSuamiIstri(letter, image, account, vars),
+      "variables": suratPersetujuanSuamiIstriVariables
     },
     {
       "key": "surat_pernyataan_kesanggupan_membayar_ukt",
       "title": "Surat Pernyataan Kesanggupan Membayar UKT",
-      "html": suratPernyataanKesanggupanMembayarUkt(letter, image, account)
+      "html":
+          suratPernyataanKesanggupanMembayarUkt(letter, image, account, vars),
+      "variables": suratPernyataanKesanggupanMembayarUktVariables
     },
     {
       "key": "surat_pernyataan_kehilangan_ijazah",
       "title": "Surat Pernyataan Kehilangan Ijazah",
-      "html": suratPernyataanKehilanganIjazah(letter, image, account)
+      "html": suratPernyataanKehilanganIjazah(letter, image, account, vars),
+      "variables": suratPernyataanKehilanganIjazahVariables
     },
     // ─── Pribadi (8 new) ───
     {
       "key": "surat_pernyataan_tanggung_jawab_mutlak",
       "title": "Surat Pernyataan Tanggung Jawab Mutlak",
-      "html": suratPernyataanTanggungJawabMutlak(letter, image, account)
+      "html": suratPernyataanTanggungJawabMutlak(letter, image, account, vars),
+      "variables": suratPernyataanTanggungJawabMutlakVariables
     },
     {
       "key": "surat_pernyataan_bersedia_ditempatkan",
       "title": "Surat Pernyataan Bersedia Ditempatkan",
-      "html": suratPernyataanBersediaDitempatkan(letter, image, account)
+      "html": suratPernyataanBersediaDitempatkan(letter, image, account, vars),
+      "variables": suratPernyataanBersediaDitempatkanVariables
     },
     {
       "key": "surat_pernyataan_tidak_menuntut",
       "title": "Surat Pernyataan Tidak Menuntut",
-      "html": suratPernyataanTidakMenuntut(letter, image, account)
+      "html": suratPernyataanTidakMenuntut(letter, image, account, vars),
+      "variables": suratPernyataanTidakMenuntutVariables
     },
     {
       "key": "surat_pernyataan_kepemilikan_kendaraan",
       "title": "Surat Pernyataan Kepemilikan Kendaraan",
-      "html": suratPernyataanKepemilikanKendaraan(letter, image, account)
+      "html": suratPernyataanKepemilikanKendaraan(letter, image, account, vars),
+      "variables": suratPernyataanKepemilikanKendaraanVariables
     },
     {
       "key": "surat_kuasa_pengambilan_dokumen",
       "title": "Surat Kuasa Pengambilan Dokumen",
-      "html": suratKuasaPengambilanDokumen(letter, image, account)
+      "html": suratKuasaPengambilanDokumen(letter, image, account, vars),
+      "variables": suratKuasaPengambilanDokumenVariables
     },
     {
       "key": "surat_pernyataan_kebenaran_data_diri",
       "title": "Surat Pernyataan Kebenaran Data Diri",
-      "html": suratPernyataanKebenaranDataDiri(letter, image, account)
+      "html": suratPernyataanKebenaranDataDiri(letter, image, account, vars),
+      "variables": suratPernyataanKebenaranDataDiriVariables
     },
     {
       "key": "surat_pernyataan_hak_asuh_anak",
       "title": "Surat Pernyataan Hak Asuh Anak",
-      "html": suratPernyataanHakAsuhAnak(letter, image, account)
+      "html": suratPernyataanHakAsuhAnak(letter, image, account, vars),
+      "variables": suratPernyataanHakAsuhAnakVariables
     },
     {
       "key": "surat_pernyataan_penggunaan_nama",
       "title": "Surat Pernyataan Penggunaan Nama",
-      "html": suratPernyataanPenggunaanNama(letter, image, account)
+      "html": suratPernyataanPenggunaanNama(letter, image, account, vars),
+      "variables": suratPernyataanPenggunaanNamaVariables
     },
     // ─── Keuangan (existing + 8 new) ───
     {
       "key": "surat_pernyataan_kepemilikan_harta",
       "title": "Surat Pernyataan Kepemilikan Harta",
-      "html": suratPernyataanKepemilikanHarta(letter, image, account)
+      "html": suratPernyataanKepemilikanHarta(letter, image, account, vars),
+      "variables": suratPernyataanKepemilikanHartaVariables
     },
     {
       "key": "surat_kwitansi_pembayaran",
       "title": "Kwitansi Pembayaran",
-      "html": suratKwitansiPembayaran(letter, image, account)
+      "html": suratKwitansiPembayaran(letter, image, account, vars),
+      "variables": suratKwitansiPembayaranVariables
     },
     {
       "key": "surat_permohonan_pinjaman",
       "title": "Surat Permohonan Pinjaman",
-      "html": suratPermohonanPinjaman(letter, image, account)
+      "html": suratPermohonanPinjaman(letter, image, account, vars),
+      "variables": suratPermohonanPinjamanVariables
     },
     {
       "key": "surat_pernyataan_hutang",
       "title": "Surat Pernyataan Hutang",
-      "html": suratPernyataanHutang(letter, image, account)
+      "html": suratPernyataanHutang(letter, image, account, vars),
+      "variables": suratPernyataanHutangVariables
     },
     {
       "key": "surat_pernyataan_pelunasan_hutang",
       "title": "Surat Pernyataan Pelunasan Hutang",
-      "html": suratPernyataanPelunasanHutang(letter, image, account)
+      "html": suratPernyataanPelunasanHutang(letter, image, account, vars),
+      "variables": suratPernyataanPelunasanHutangVariables
     },
     {
       "key": "surat_kuasa_pengurusan_keuangan",
       "title": "Surat Kuasa Pengurusan Keuangan",
-      "html": suratKuasaPengurusanKeuangan(letter, image, account)
+      "html": suratKuasaPengurusanKeuangan(letter, image, account, vars),
+      "variables": suratKuasaPengurusanKeuanganVariables
     },
     {
       "key": "surat_permohonan_pengembalian_dana",
       "title": "Surat Permohonan Pengembalian Dana",
-      "html": suratPermohonanPengembalianDana(letter, image, account)
+      "html": suratPermohonanPengembalianDana(letter, image, account, vars),
+      "variables": suratPermohonanPengembalianDanaVariables
     },
     {
       "key": "surat_pernyataan_penghasilan",
       "title": "Surat Pernyataan Penghasilan",
-      "html": suratPernyataanPenghasilan(letter, image, account)
+      "html": suratPernyataanPenghasilan(letter, image, account, vars),
+      "variables": suratPernyataanPenghasilanVariables
     },
     {
       "key": "surat_perjanjian_sewa_rumah",
       "title": "Surat Perjanjian Sewa Rumah",
-      "html": suratPerjanjianSewaRumah(letter, image, account)
+      "html": suratPerjanjianSewaRumah(letter, image, account, vars),
+      "variables": suratPerjanjianSewaRumahVariables
     },
     // ─── Kesehatan (existing + 8 new) ───
     {
       "key": "surat_pernyataan_sehat_jasmani_rohani",
       "title": "Surat Pernyataan Sehat Jasmani dan Rohani",
-      "html": suratPernyataanSehatJasmaniRohani(letter, image, account)
+      "html": suratPernyataanSehatJasmaniRohani(letter, image, account, vars),
+      "variables": suratPernyataanSehatJasmaniRohaniVariables
     },
     {
       "key": "surat_izin_sakit",
       "title": "Surat Izin Sakit",
-      "html": suratIzinSakit(letter, image, account)
+      "html": suratIzinSakit(letter, image, account, vars),
+      "variables": suratIzinSakitVariables
     },
     {
       "key": "surat_keterangan_bebas_narkoba",
       "title": "Surat Pernyataan Bebas Narkoba",
-      "html": suratKeteranganBebasNarkoba(letter, image, account)
+      "html": suratKeteranganBebasNarkoba(letter, image, account, vars),
+      "variables": suratKeteranganBebasNarkobaVariables
     },
     {
       "key": "surat_persetujuan_tindakan_medis",
       "title": "Surat Persetujuan Tindakan Medis",
-      "html": suratPersetujuanTindakanMedis(letter, image, account)
+      "html": suratPersetujuanTindakanMedis(letter, image, account, vars),
+      "variables": suratPersetujuanTindakanMedisVariables
     },
     {
       "key": "surat_permohonan_rujukan_medis",
       "title": "Surat Permohonan Rujukan Medis",
-      "html": suratPermohonanRujukanMedis(letter, image, account)
+      "html": suratPermohonanRujukanMedis(letter, image, account, vars),
+      "variables": suratPermohonanRujukanMedisVariables
     },
     {
       "key": "surat_pernyataan_riwayat_penyakit",
       "title": "Surat Pernyataan Riwayat Penyakit",
-      "html": suratPernyataanRiwayatPenyakit(letter, image, account)
+      "html": suratPernyataanRiwayatPenyakit(letter, image, account, vars),
+      "variables": suratPernyataanRiwayatPenyakitVariables
     },
     {
       "key": "surat_pernyataan_tidak_buta_warna",
       "title": "Surat Pernyataan Tidak Buta Warna",
-      "html": suratPernyataanTidakButaWarna(letter, image, account)
+      "html": suratPernyataanTidakButaWarna(letter, image, account, vars),
+      "variables": suratPernyataanTidakButaWarnaVariables
     },
     {
       "key": "surat_pernyataan_tidak_hamil",
       "title": "Surat Pernyataan Tidak Hamil",
-      "html": suratPernyataanTidakHamil(letter, image, account)
+      "html": suratPernyataanTidakHamil(letter, image, account, vars),
+      "variables": suratPernyataanTidakHamilVariables
     },
     {
       "key": "surat_permohonan_bantuan_biaya_pengobatan",
       "title": "Surat Permohonan Bantuan Biaya Pengobatan",
-      "html": suratPermohonanBantuanBiayaPengobatan(letter, image, account)
+      "html":
+          suratPermohonanBantuanBiayaPengobatan(letter, image, account, vars),
+      "variables": suratPermohonanBantuanBiayaPengobatanVariables
     },
     // ─── Kesehatan (10 new) ───
     {
       "key": "surat_permohonan_rekam_medis",
       "title": "Surat Permohonan Rekam Medis",
-      "html": suratPermohonanRekamMedis(letter, image, account)
+      "html": suratPermohonanRekamMedis(letter, image, account, vars),
+      "variables": suratPermohonanRekamMedisVariables
     },
     {
       "key": "surat_pernyataan_alergi_obat",
       "title": "Surat Pernyataan Alergi Obat",
-      "html": suratPernyataanAlergiObat(letter, image, account)
+      "html": suratPernyataanAlergiObat(letter, image, account, vars),
+      "variables": suratPernyataanAlergiObatVariables
     },
     {
       "key": "surat_izin_perawatan_anak",
       "title": "Surat Izin Perawatan Anak",
-      "html": suratIzinPerawatanAnak(letter, image, account)
+      "html": suratIzinPerawatanAnak(letter, image, account, vars),
+      "variables": suratIzinPerawatanAnakVariables
     },
     {
       "key": "surat_permohonan_visum",
       "title": "Surat Permohonan Visum et Repertum",
-      "html": suratPermohonanVisum(letter, image, account)
+      "html": suratPermohonanVisum(letter, image, account, vars),
+      "variables": suratPermohonanVisumVariables
     },
     {
       "key": "surat_pernyataan_tidak_merokok",
       "title": "Surat Pernyataan Tidak Merokok",
-      "html": suratPernyataanTidakMerokok(letter, image, account)
+      "html": suratPernyataanTidakMerokok(letter, image, account, vars),
+      "variables": suratPernyataanTidakMerokokVariables
     },
     {
       "key": "surat_permohonan_second_opinion",
       "title": "Surat Permohonan Second Opinion",
-      "html": suratPermohonanSecondOpinion(letter, image, account)
+      "html": suratPermohonanSecondOpinion(letter, image, account, vars),
+      "variables": suratPermohonanSecondOpinionVariables
     },
     {
       "key": "surat_pernyataan_golongan_darah",
       "title": "Surat Pernyataan Golongan Darah",
-      "html": suratPernyataanGolonganDarah(letter, image, account)
+      "html": suratPernyataanGolonganDarah(letter, image, account, vars),
+      "variables": suratPernyataanGolonganDarahVariables
     },
     {
       "key": "surat_permohonan_cuti_sakit_berkepanjangan",
       "title": "Surat Permohonan Cuti Sakit Berkepanjangan",
-      "html": suratPermohonanCutiSakitBerkepanjangan(letter, image, account)
+      "html":
+          suratPermohonanCutiSakitBerkepanjangan(letter, image, account, vars),
+      "variables": suratPermohonanCutiSakitBerkepanjanganVariables
     },
     {
       "key": "surat_penolakan_tindakan_medis",
       "title": "Surat Penolakan Tindakan Medis",
-      "html": suratPenolakanTindakanMedis(letter, image, account)
+      "html": suratPenolakanTindakanMedis(letter, image, account, vars),
+      "variables": suratPenolakanTindakanMedisVariables
     },
     {
       "key": "surat_pernyataan_kesehatan_mental",
       "title": "Surat Pernyataan Kesehatan Mental",
-      "html": suratPernyataanKesehatanMental(letter, image, account)
+      "html": suratPernyataanKesehatanMental(letter, image, account, vars),
+      "variables": suratPernyataanKesehatanMentalVariables
     },
     // ─── Bisnis (8 new) ───
     {
       "key": "surat_penawaran_barang",
       "title": "Surat Penawaran Barang/Jasa",
-      "html": suratPenawaranBarang(letter, image, account)
+      "html": suratPenawaranBarang(letter, image, account, vars),
+      "variables": suratPenawaranBarangVariables
     },
     {
       "key": "surat_pesanan_barang",
       "title": "Surat Pesanan Barang",
-      "html": suratPesananBarang(letter, image, account)
+      "html": suratPesananBarang(letter, image, account, vars),
+      "variables": suratPesananBarangVariables
     },
     {
       "key": "surat_perjanjian_kerjasama_bisnis",
       "title": "Surat Perjanjian Kerjasama Bisnis",
-      "html": suratPerjanjianKerjasama(letter, image, account)
+      "html": suratPerjanjianKerjasama(letter, image, account, vars),
+      "variables": suratPerjanjianKerjasamaVariables
     },
     {
       "key": "surat_komplain_barang",
       "title": "Surat Komplain Barang/Jasa",
-      "html": suratKomplainBarang(letter, image, account)
+      "html": suratKomplainBarang(letter, image, account, vars),
+      "variables": suratKomplainBarangVariables
     },
     {
       "key": "surat_permohonan_izin_usaha",
       "title": "Surat Permohonan Izin Usaha",
-      "html": suratPermohonanIzinUsaha(letter, image, account)
+      "html": suratPermohonanIzinUsaha(letter, image, account, vars),
+      "variables": suratPermohonanIzinUsahaVariables
     },
     {
       "key": "surat_pemutusan_kerjasama",
       "title": "Surat Pemutusan Kerjasama",
-      "html": suratPemutusanKerjasama(letter, image, account)
+      "html": suratPemutusanKerjasama(letter, image, account, vars),
+      "variables": suratPemutusanKerjasamaVariables
     },
     {
       "key": "surat_kuasa_bisnis",
       "title": "Surat Kuasa Bisnis",
-      "html": suratKuasaBisnis(letter, image, account)
+      "html": suratKuasaBisnis(letter, image, account, vars),
+      "variables": suratKuasaBisnisVariables
     },
     {
       "key": "surat_peringatan_pembayaran",
       "title": "Surat Peringatan Pembayaran",
-      "html": suratPeringatanPembayaran(letter, image, account)
+      "html": suratPeringatanPembayaran(letter, image, account, vars),
+      "variables": suratPeringatanPembayaranVariables
     },
     // ─── Bisnis (10 new) ───
     {
       "key": "surat_permohonan_sponsorship",
       "title": "Surat Permohonan Sponsorship",
-      "html": suratPermohonanSponsorship(letter, image, account)
+      "html": suratPermohonanSponsorship(letter, image, account, vars),
+      "variables": suratPermohonanSponsorshipVariables
     },
     {
       "key": "surat_pemberitahuan_kenaikan_harga",
       "title": "Surat Pemberitahuan Kenaikan Harga",
-      "html": suratPemberitahuanKenaikanHarga(letter, image, account)
+      "html": suratPemberitahuanKenaikanHarga(letter, image, account, vars),
+      "variables": suratPemberitahuanKenaikanHargaVariables
     },
     {
       "key": "surat_penunjukan_distributor",
       "title": "Surat Penunjukan Distributor",
-      "html": suratPenunjukanDistributor(letter, image, account)
+      "html": suratPenunjukanDistributor(letter, image, account, vars),
+      "variables": suratPenunjukanDistributorVariables
     },
     {
       "key": "surat_permohonan_perpanjangan_kontrak_bisnis",
       "title": "Surat Permohonan Perpanjangan Kontrak Bisnis",
-      "html": suratPermohonanPerpanjanganKontrakBisnis(letter, image, account)
+      "html": suratPermohonanPerpanjanganKontrakBisnis(
+          letter, image, account, vars),
+      "variables": suratPermohonanPerpanjanganKontrakBisnisVariables
     },
     {
       "key": "surat_pernyataan_kerahasiaan_bisnis",
       "title": "Surat Pernyataan Kerahasiaan Bisnis (NDA)",
-      "html": suratPernyataanKerahasiaanBisnis(letter, image, account)
+      "html": suratPernyataanKerahasiaanBisnis(letter, image, account, vars),
+      "variables": suratPernyataanKerahasiaanBisnisVariables
     },
     {
       "key": "surat_pengembalian_barang",
       "title": "Surat Pengembalian Barang",
-      "html": suratPengembalianBarang(letter, image, account)
+      "html": suratPengembalianBarang(letter, image, account, vars),
+      "variables": suratPengembalianBarangVariables
     },
     {
       "key": "surat_permohonan_kredit_usaha",
       "title": "Surat Permohonan Kredit Usaha",
-      "html": suratPermohonanKreditUsaha(letter, image, account)
+      "html": suratPermohonanKreditUsaha(letter, image, account, vars),
+      "variables": suratPermohonanKreditUsahaVariables
     },
     {
       "key": "surat_perjanjian_jual_beli",
       "title": "Surat Perjanjian Jual Beli",
-      "html": suratPerjanjianJualBeli(letter, image, account)
+      "html": suratPerjanjianJualBeli(letter, image, account, vars),
+      "variables": suratPerjanjianJualBeliVariables
     },
     {
       "key": "surat_pengajuan_tender",
       "title": "Surat Pengajuan Tender",
-      "html": suratPengajuanTender(letter, image, account)
+      "html": suratPengajuanTender(letter, image, account, vars),
+      "variables": suratPengajuanTenderVariables
     },
     {
       "key": "surat_permohonan_menjadi_supplier",
       "title": "Surat Permohonan Menjadi Supplier",
-      "html": suratPermohonanMenjadiSupplier(letter, image, account)
+      "html": suratPermohonanMenjadiSupplier(letter, image, account, vars),
+      "variables": suratPermohonanMenjadiSupplierVariables
     },
     // ─── Desa (8 new) ───
     {
       "key": "surat_pengantar_ktp",
       "title": "Surat Pengantar Pembuatan KTP",
-      "html": suratPengantarKtp(letter, image, account)
+      "html": suratPengantarKtp(letter, image, account, vars),
+      "variables": suratPengantarKtpVariables
     },
     {
       "key": "surat_keterangan_usaha",
       "title": "Surat Keterangan Usaha",
-      "html": suratKeteranganUsaha(letter, image, account)
+      "html": suratKeteranganUsaha(letter, image, account, vars),
+      "variables": suratKeteranganUsahaVariables
     },
     {
       "key": "surat_keterangan_belum_memiliki_rumah",
       "title": "Surat Keterangan Belum Memiliki Rumah",
-      "html": suratKeteranganBelumMemilikiRumah(letter, image, account)
+      "html": suratKeteranganBelumMemilikiRumah(letter, image, account, vars),
+      "variables": suratKeteranganBelumMemilikiRumahVariables
     },
     {
       "key": "surat_keterangan_kelahiran",
       "title": "Surat Keterangan Kelahiran",
-      "html": suratKeteranganKelahiran(letter, image, account)
+      "html": suratKeteranganKelahiran(letter, image, account, vars),
+      "variables": suratKeteranganKelahiranVariables
     },
     {
       "key": "surat_keterangan_kematian",
       "title": "Surat Keterangan Kematian",
-      "html": suratKeteranganKematian(letter, image, account)
+      "html": suratKeteranganKematian(letter, image, account, vars),
+      "variables": suratKeteranganKematianVariables
     },
     {
       "key": "surat_keterangan_pindah",
       "title": "Surat Keterangan Pindah",
-      "html": suratKeteranganPindah(letter, image, account)
+      "html": suratKeteranganPindah(letter, image, account, vars),
+      "variables": suratKeteranganPindahVariables
     },
     {
       "key": "surat_pengantar_nikah",
       "title": "Surat Pengantar Nikah",
-      "html": suratPengantarNikah(letter, image, account)
+      "html": suratPengantarNikah(letter, image, account, vars),
+      "variables": suratPengantarNikahVariables
     },
     {
       "key": "surat_keterangan_berkelakuan_baik",
       "title": "Surat Keterangan Berkelakuan Baik",
-      "html": suratKeteranganBerkelakuanBaik(letter, image, account)
+      "html": suratKeteranganBerkelakuanBaik(letter, image, account, vars),
+      "variables": suratKeteranganBerkelakuanBaikVariables
     },
     {
       "key": "surat_keterangan_ahli_waris",
       "title": "Surat Keterangan Ahli Waris",
-      "html": suratKeteranganAhliWaris(letter, image, account)
+      "html": suratKeteranganAhliWaris(letter, image, account, vars),
+      "variables": suratKeteranganAhliWarisVariables
     },
     // ─── Desa (10 new) ───
     {
       "key": "surat_keterangan_penghasilan_warga",
       "title": "Surat Keterangan Penghasilan Warga",
-      "html": suratKeteranganPenghasilanWarga(letter, image, account)
+      "html": suratKeteranganPenghasilanWarga(letter, image, account, vars),
+      "variables": suratKeteranganPenghasilanWargaVariables
     },
     {
       "key": "surat_pengantar_skck",
       "title": "Surat Pengantar SKCK",
-      "html": suratPengantarSkck(letter, image, account)
+      "html": suratPengantarSkck(letter, image, account, vars),
+      "variables": suratPengantarSkckVariables
     },
     {
       "key": "surat_keterangan_beda_nama",
       "title": "Surat Keterangan Beda Nama",
-      "html": suratKeteranganBedaNama(letter, image, account)
+      "html": suratKeteranganBedaNama(letter, image, account, vars),
+      "variables": suratKeteranganBedaNamaVariables
     },
     {
       "key": "surat_keterangan_janda_duda",
       "title": "Surat Keterangan Janda/Duda",
-      "html": suratKeteranganJandaDuda(letter, image, account)
+      "html": suratKeteranganJandaDuda(letter, image, account, vars),
+      "variables": suratKeteranganJandaDudaVariables
     },
     {
       "key": "surat_keterangan_tanah",
       "title": "Surat Keterangan Tanah",
-      "html": suratKeteranganTanah(letter, image, account)
+      "html": suratKeteranganTanah(letter, image, account, vars),
+      "variables": suratKeteranganTanahVariables
     },
     {
       "key": "surat_permohonan_bantuan_sosial",
       "title": "Surat Permohonan Bantuan Sosial",
-      "html": suratPermohonanBantuanSosial(letter, image, account)
+      "html": suratPermohonanBantuanSosial(letter, image, account, vars),
+      "variables": suratPermohonanBantuanSosialVariables
     },
     {
       "key": "surat_keterangan_tidak_sengketa",
       "title": "Surat Keterangan Tidak Sengketa",
-      "html": suratKeteranganTidakSengketa(letter, image, account)
+      "html": suratKeteranganTidakSengketa(letter, image, account, vars),
+      "variables": suratKeteranganTidakSengketaVariables
     },
     {
       "key": "surat_pengantar_izin_keramaian",
       "title": "Surat Pengantar Izin Keramaian",
-      "html": suratPengantarIzinKeramaian(letter, image, account)
+      "html": suratPengantarIzinKeramaian(letter, image, account, vars),
+      "variables": suratPengantarIzinKeramaianVariables
     },
     {
       "key": "surat_keterangan_belum_pernah_menikah",
       "title": "Surat Keterangan Belum Pernah Menikah",
-      "html": suratKeteranganBelumPernahMenikah(letter, image, account)
+      "html": suratKeteranganBelumPernahMenikah(letter, image, account, vars),
+      "variables": suratKeteranganBelumPernahMenikahVariables
     },
     {
       "key": "surat_keterangan_kehilangan",
       "title": "Surat Keterangan Kehilangan",
-      "html": suratKeteranganKehilangan(letter, image, account)
+      "html": suratKeteranganKehilangan(letter, image, account, vars),
+      "variables": suratKeteranganKehilanganVariables
     },
   ];
 }

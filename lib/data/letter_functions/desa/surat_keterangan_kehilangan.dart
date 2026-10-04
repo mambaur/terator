@@ -1,9 +1,23 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratKeteranganKehilanganVariables = [
+  LetterVariable(key: 'pekerjaan', label: 'Pekerjaan'),
+  LetterVariable(key: 'jenis_barang_dokumen', label: 'Jenis Barang/Dokumen'),
+  LetterVariable(key: 'nomor_jika_ada', label: 'Nomor (jika ada)'),
+  LetterVariable(
+      key: 'perkiraan_waktu_hilang', label: 'Perkiraan Waktu Hilang'),
+  LetterVariable(key: 'lokasi_kehilangan', label: 'Lokasi Kehilangan'),
+  LetterVariable(
+      key: 'dokumen_barang_yang_hilang', label: 'Dokumen/Barang yang Hilang'),
+  LetterVariable(key: 'nama_ketua_rt_rw', label: 'Nama Ketua RT/RW'),
+];
 
 String suratKeteranganKehilangan(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -35,7 +49,7 @@ String suratKeteranganKehilangan(
           <tr>
 						<td style="white-space: nowrap">Pekerjaan</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Pekerjaan)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'pekerjaan', '... (Pekerjaan)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Alamat</td>
@@ -54,28 +68,28 @@ String suratKeteranganKehilangan(
 					<tr>
 						<td style="white-space: nowrap">Jenis Barang/Dokumen</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Jenis Barang/Dokumen)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'jenis_barang_dokumen', '... (Jenis Barang/Dokumen)')}</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap">Nomor (jika ada)</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Nomor Dokumen)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nomor_jika_ada', '... (Nomor Dokumen)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Perkiraan Waktu Hilang</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Waktu Kehilangan)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'perkiraan_waktu_hilang', '... (Waktu Kehilangan)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Lokasi Kehilangan</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Lokasi Kehilangan)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'lokasi_kehilangan', '... (Lokasi Kehilangan)')}</td>
 					</tr>
 				</tbody>
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Surat keterangan ini dibuat untuk keperluan pengurusan penggantian <b>... (Dokumen/Barang yang Hilang)</b> dan sebagai bukti laporan kehilangan.
+      Surat keterangan ini dibuat untuk keperluan pengurusan penggantian ${fillVar(vars, 'dokumen_barang_yang_hilang', '... (Dokumen/Barang yang Hilang)')} dan sebagai bukti laporan kehilangan.
     </p>
     <p style="text-align: justify; ">
       Demikian surat keterangan ini saya buat dengan sebenar-benarnya, tanpa paksaan dari pihak manapun.
@@ -109,7 +123,7 @@ String suratKeteranganKehilangan(
         <tr>
           <td style="vertical-align:top;text-align:center;">
             <p>
-              <span style="white-space: nowrap"><b>... (Nama Ketua RT/RW)</b></span>
+              <span style="white-space: nowrap">${fillVar(vars, 'nama_ketua_rt_rw', '... (Nama Ketua RT/RW)')}</span>
             </p>
           </td>
           <td style="width: 100%">&nbsp;</td>

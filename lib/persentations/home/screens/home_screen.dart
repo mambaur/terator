@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:terator/core/styles.dart';
+import 'package:terator/data/letter_categories.dart';
 import 'package:terator/data/letter_data.dart';
 import 'package:terator/persentations/ads/widgets/banner_ad_widget.dart';
 import 'package:terator/persentations/bookmarks/cubit/bookmark_cubit.dart';
 import 'package:terator/persentations/bookmarks/screens/letter_bookmark_list_screen.dart';
 import 'package:terator/persentations/letters/screens/letter_detail_screen.dart';
 import 'package:terator/persentations/letters/screens/letter_screen.dart';
+import 'package:terator/persentations/navbar.dart';
+import 'package:terator/repositories/account_repository.dart';
+import 'package:terator/repositories/letter_repository.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 enum StatusAd { initial, loaded }
@@ -20,6 +24,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  static const double _statsHeight = 76;
+
   final String _youtubeUrl =
       'https://nexadream.id/tutorial-generate-surat-terator';
   List<Map<String, dynamic>> lettersData = letterDataMap(null);
@@ -32,70 +38,35 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Map<String, dynamic>> listLetters = [];
 
-  // Category data with gradients and icons
-  List<Map<String, dynamic>> get _categories => [
-        {
-          'index': 0,
-          'label': 'Sekolah',
-          'icon': Icons.school_rounded,
-          'gradient': kGradientSekolah,
-          'asset': 'assets/icons/school.png',
-        },
-        {
-          'index': 1,
-          'label': 'Pekerjaan',
-          'icon': Icons.work_rounded,
-          'gradient': kGradientPekerjaan,
-          'asset': 'assets/icons/work.png',
-        },
-        {
-          'index': 2,
-          'label': 'Desa',
-          'icon': Icons.location_city_rounded,
-          'gradient': kGradientDesa,
-          'asset': 'assets/icons/village.png',
-        },
-        {
-          'index': 3,
-          'label': 'Bisnis',
-          'icon': Icons.business_center_rounded,
-          'gradient': kGradientBisnis,
-          'asset': 'assets/icons/business.png',
-        },
-        {
-          'index': 4,
-          'label': 'Umum',
-          'icon': Icons.public_rounded,
-          'gradient': kGradientUmum,
-          'asset': 'assets/icons/common.png',
-        },
-        {
-          'index': 6,
-          'label': 'Keuangan',
-          'icon': Icons.account_balance_wallet_rounded,
-          'gradient': kGradientKeuangan,
-          'asset': 'assets/icons/keuangan.png',
-        },
-        {
-          'index': 5,
-          'label': 'Pribadi',
-          'icon': Icons.person_rounded,
-          'gradient': kGradientPribadi,
-          'asset': 'assets/icons/pribadi.png',
-        },
-        {
-          'index': 7,
-          'label': 'Kesehatan',
-          'icon': Icons.health_and_safety_rounded,
-          'gradient': kGradientKesehatan,
-          'asset': 'assets/icons/kesehatan.png',
-        },
-      ];
+  // Null until loaded. Beranda is rebuilt each time its tab is opened, so
+  // loading once in initState keeps these current.
+  int? _letterCount;
+  int? _accountCount;
 
   @override
   void initState() {
     listLetters = LetterData.listLetters(q: '');
     super.initState();
+    _loadCounts();
+  }
+
+  Future<void> _loadCounts() async {
+    final letters = await LetterRepository().count();
+    final accounts = await AccountRepository().count();
+    if (!mounted) return;
+    setState(() {
+      _letterCount = letters;
+      _accountCount = accounts;
+    });
+  }
+
+  /// Indonesian time-of-day greeting.
+  String get _greeting {
+    final hour = DateTime.now().hour;
+    if (hour >= 4 && hour < 11) return 'Selamat Pagi';
+    if (hour >= 11 && hour < 15) return 'Selamat Siang';
+    if (hour >= 15 && hour < 18) return 'Selamat Sore';
+    return 'Selamat Malam';
   }
 
   Future<void> _launchUrl(String url) async {
@@ -112,14 +83,22 @@ class _HomeScreenState extends State<HomeScreen> {
       body: CustomScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
-          // ─── Hero Section ───
+          // ─── Hero Section + Quick Stats (card overlaps hero by half) ───
           SliverToBoxAdapter(
-            child: _buildHeroSection(context),
-          ),
-
-          // ─── Quick Stats ───
-          SliverToBoxAdapter(
-            child: _buildQuickStats(),
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: _statsHeight / 2),
+                  child: _buildHeroSection(context),
+                ),
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: _buildQuickStats(),
+                ),
+              ],
+            ),
           ),
 
           // ─── Ad Banner ───
@@ -136,19 +115,6 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.fromLTRB(20, 24, 20, 14),
               child: Row(
                 children: [
-                  Container(
-                    width: 4,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: kGradientPrimary,
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
                   const Text(
                     'Kategori Surat',
                     style: TextStyle(
@@ -194,31 +160,20 @@ class _HomeScreenState extends State<HomeScreen> {
   // ─── Hero Section ───
   Widget _buildHeroSection(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 20 + _statsHeight / 2),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
           colors: kGradientPrimary,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(28),
-          bottomRight: Radius.circular(28),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: kPrimary.withValues(alpha: 0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Hai, Selamat Datang! 👋',
-            style: TextStyle(
+          Text(
+            '$_greeting! 👋',
+            style: const TextStyle(
               fontSize: 22,
               color: Colors.white,
               fontWeight: FontWeight.w700,
@@ -226,120 +181,122 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 4),
           Text(
-            'Buat surat dengan mudah dan cepat',
+            'Tersedia 100+ template surat',
             style: TextStyle(
               fontSize: 14,
               color: Colors.white.withValues(alpha: 0.85),
             ),
           ),
           const SizedBox(height: 18),
-          // Search Bar
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14),
-            height: 52,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(kRadiusMd),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.08),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.search_rounded, color: kTextMuted, size: 22),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: TypeAheadField<Map<String, dynamic>>(
-                    builder: (context, controller, focusNode) {
-                      return TextField(
-                        controller: controller,
-                        focusNode: focusNode,
-                        autofocus: false,
-                        style: const TextStyle(fontSize: 14),
-                        decoration: InputDecoration(
-                          isDense: true,
-                          border: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                          filled: false,
-                          hintStyle: TextStyle(
-                            color: Colors.grey.shade400,
-                            fontSize: 14,
+          // Search Bar — TypeAheadField wraps the whole box so the results
+          // dropdown is as wide as the search bar, not just the text input.
+          TypeAheadField<Map<String, dynamic>>(
+            builder: (context, controller, focusNode) {
+              // Tapping the icon/padding focuses the input too.
+              return GestureDetector(
+                onTap: focusNode.requestFocus,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  height: 52,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(kRadiusMd),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.08),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.search_rounded,
+                          color: kTextMuted, size: 22),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: TextField(
+                          controller: controller,
+                          focusNode: focusNode,
+                          autofocus: false,
+                          style: const TextStyle(fontSize: 14),
+                          decoration: InputDecoration(
+                            isDense: true,
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            filled: false,
+                            hintStyle: TextStyle(
+                              color: Colors.grey.shade400,
+                              fontSize: 14,
+                            ),
+                            hintText: 'Cari template surat...',
+                            contentPadding: EdgeInsets.zero,
                           ),
-                          hintText: 'Cari template surat...',
-                          contentPadding: EdgeInsets.zero,
                         ),
-                      );
-                    },
-                    suggestionsCallback: (pattern) async {
-                      return searchLetterData(pattern);
-                    },
-                    itemBuilder: (context, suggestion) {
-                      bool isPremiumLetter =
-                          premiumLetterMap[suggestion['key']] == true;
-                      return ListTile(
-                        leading: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: kPrimary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(Icons.description_outlined,
-                              color: kPrimary, size: 20),
-                        ),
-                        title: Text(
-                          suggestion['title'],
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w500),
-                        ),
-                        trailing: isPremiumLetter
-                            ? Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 3),
-                                decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      Color(0xFFD97706),
-                                      Color(0xFFF59E0B)
-                                    ],
-                                  ),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: const Text(
-                                  'PRO',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w800,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
-                              )
-                            : null,
-                      );
-                    },
-                    onSelected: (suggestion) {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (builder) {
-                        return LetterDetailScreen(
-                          keyLetter: suggestion['key'],
-                          title: suggestion['title'],
-                          subtitle: suggestion['subtitle'],
-                        );
-                      }));
-                    },
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              );
+            },
+            suggestionsCallback: (pattern) async {
+              return searchLetterData(pattern);
+            },
+            itemBuilder: (context, suggestion) {
+              bool isPremiumLetter =
+                  premiumLetterMap[suggestion['key']] == true;
+              return ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: kPrimary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.description_outlined,
+                      color: kPrimary, size: 20),
+                ),
+                title: Text(
+                  suggestion['title'],
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w500),
+                ),
+                trailing: isPremiumLetter
+                    ? Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFFD97706), Color(0xFFF59E0B)],
+                          ),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Text(
+                          'PRO',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      )
+                    : null,
+              );
+            },
+            onSelected: (suggestion) {
+              Navigator.push(context, MaterialPageRoute(builder: (builder) {
+                return LetterDetailScreen(
+                  keyLetter: suggestion['key'],
+                  title: suggestion['title'],
+                  subtitle: suggestion['subtitle'],
+                );
+              }));
+            },
           ),
         ],
       ),
@@ -348,86 +305,90 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // ─── Quick Stats ───
   Widget _buildQuickStats() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+    return Container(
+      height: _statsHeight,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: kCardWhite,
-                borderRadius: BorderRadius.circular(kRadiusLg),
-                boxShadow: kShadowSm,
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: kPrimary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(kRadiusSm),
-                    ),
-                    child: const Icon(Icons.description_rounded,
-                        color: kPrimary, size: 22),
-                  ),
-                  const SizedBox(width: 12),
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('100+',
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w700,
-                              color: kTextPrimary)),
-                      Text('Template',
-                          style:
-                              TextStyle(fontSize: 12, color: kTextSecondary)),
-                    ],
-                  ),
-                ],
-              ),
+            child: _statCard(
+              icon: Icons.description_rounded,
+              color: kPrimary,
+              value: _letterCount,
+              label: 'Surat Dibuat',
+              onTap: () => Navbar.switchTab(context, 1),
             ),
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: kCardWhite,
-                borderRadius: BorderRadius.circular(kRadiusLg),
-                boxShadow: kShadowSm,
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: kViolet.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(kRadiusSm),
-                    ),
-                    child: const Icon(Icons.category_rounded,
-                        color: kViolet, size: 22),
-                  ),
-                  const SizedBox(width: 12),
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('8',
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w700,
-                              color: kTextPrimary)),
-                      Text('Kategori',
-                          style:
-                              TextStyle(fontSize: 12, color: kTextSecondary)),
-                    ],
-                  ),
-                ],
-              ),
+            child: _statCard(
+              icon: Icons.people_alt_rounded,
+              color: kViolet,
+              value: _accountCount,
+              label: 'Akun Surat',
+              onTap: () => Navbar.switchTab(context, 2),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _statCard({
+    required IconData icon,
+    required Color color,
+    required int? value,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: kCardWhite,
+        borderRadius: BorderRadius.circular(kRadiusLg),
+        boxShadow: kShadowMd,
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        borderRadius: BorderRadius.circular(kRadiusLg),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(kRadiusSm),
+                  ),
+                  child: Icon(icon, color: color, size: 22),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(value?.toString() ?? '-',
+                          style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: kTextPrimary)),
+                      Text(label,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              fontSize: 12, color: kTextSecondary)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -444,9 +405,9 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisSpacing: 12,
         childAspectRatio: 0.85,
       ),
-      itemCount: _categories.length,
+      itemCount: letterCategories.length,
       itemBuilder: (context, i) {
-        final cat = _categories[i];
+        final cat = letterCategories[i];
         return GestureDetector(
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (builder) {
@@ -533,19 +494,6 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.fromLTRB(20, 28, 20, 14),
           child: Row(
             children: [
-              Container(
-                width: 4,
-                height: 20,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [kViolet, kPrimaryLight],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(width: 8),
               const Text(
                 'Surat Populer',
                 style: TextStyle(
@@ -631,19 +579,6 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.fromLTRB(20, 28, 20, 14),
               child: Row(
                 children: [
-                  Container(
-                    width: 4,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [kPrimary, kViolet],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
                   const Text(
                     'Surat Tersimpan',
                     style: TextStyle(

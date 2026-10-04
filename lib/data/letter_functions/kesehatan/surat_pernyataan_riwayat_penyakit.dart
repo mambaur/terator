@@ -1,9 +1,27 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanRiwayatPenyakitVariables = [
+  LetterVariable(key: 'nama_penyakit_1', label: 'Nama Penyakit 1'),
+  LetterVariable(
+      key: 'tahun_penyakit_1',
+      label: 'Tahun Penyakit 1',
+      type: LetterVariableType.number),
+  LetterVariable(key: 'nama_penyakit_2', label: 'Nama Penyakit 2'),
+  LetterVariable(
+      key: 'tahun_penyakit_2',
+      label: 'Tahun Penyakit 2',
+      type: LetterVariableType.number),
+  LetterVariable(
+      key: 'riwayat_penyakit_lainnya', label: 'Riwayat Penyakit Lainnya'),
+  LetterVariable(key: 'tujuan_surat', label: 'Tujuan Surat'),
+];
 
 String suratPernyataanRiwayatPenyakit(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -45,13 +63,13 @@ String suratPernyataanRiwayatPenyakit(
     </p>
     <p>
       <ol>
-        <li><b>... (Nama Penyakit 1)</b> — Tahun <b>... (Tahun)</b></li>
-        <li><b>... (Nama Penyakit 2)</b> — Tahun <b>... (Tahun)</b></li>
-        <li><b>... (Tambahkan jika ada)</b></li>
+        <li>${fillVar(vars, 'nama_penyakit_1', '... (Nama Penyakit 1)')} — Tahun ${fillVar(vars, 'tahun_penyakit_1', '... (Tahun)')}</li>
+        <li>${fillVar(vars, 'nama_penyakit_2', '... (Nama Penyakit 2)')} — Tahun ${fillVar(vars, 'tahun_penyakit_2', '... (Tahun)')}</li>
+        <li>${fillVar(vars, 'riwayat_penyakit_lainnya', '... (Tambahkan jika ada)')}</li>
       </ol>
     </p>
     <p style="text-align: justify; ">
-      Surat pernyataan ini dibuat untuk keperluan <b>... (Tujuan Surat)</b> dan dapat dipertanggungjawabkan kebenarannya.
+      Surat pernyataan ini dibuat untuk keperluan ${fillVar(vars, 'tujuan_surat', '... (Tujuan Surat)')} dan dapat dipertanggungjawabkan kebenarannya.
     </p>
     <p><br></p>
     <table>

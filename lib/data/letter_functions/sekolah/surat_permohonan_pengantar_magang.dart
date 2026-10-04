@@ -1,9 +1,27 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanPengantarMagangVariables = [
+  LetterVariable(
+      key: 'kepala_sekolah_dekan_ketua_program_studi',
+      label: 'Kepala Sekolah/Dekan/Ketua Program Studi'),
+  LetterVariable(
+      key: 'nama_instansi_perusahaan_tujuan',
+      label: 'Nama Instansi/Perusahaan Tujuan'),
+  LetterVariable(
+      key: 'alamat_lengkap_instansi',
+      label: 'Alamat Lengkap Instansi',
+      type: LetterVariableType.multiline),
+  LetterVariable(key: 'bidang_divisi_magang', label: 'Bidang/Divisi Magang'),
+  LetterVariable(
+      key: 'tanggal_mulai_s_d_selesai', label: 'Tanggal Mulai s/d Selesai'),
+];
 
 String suratPermohonanPengantarMagang(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -16,7 +34,7 @@ String suratPermohonanPengantarMagang(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Kepala Sekolah/Dekan/Ketua Program Studi)</b>
+      ${fillVar(vars, 'kepala_sekolah_dekan_ketua_program_studi', '... (Kepala Sekolah/Dekan/Ketua Program Studi)')}
       <br>
       ${account?.educationInstitution ?? ''}
       <br>
@@ -77,22 +95,22 @@ String suratPermohonanPengantarMagang(
           <tr>
             <td style="white-space: nowrap">Nama Instansi</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nama Instansi/Perusahaan Tujuan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nama_instansi_perusahaan_tujuan', '... (Nama Instansi/Perusahaan Tujuan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat Instansi</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Alamat Lengkap Instansi)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'alamat_lengkap_instansi', '... (Alamat Lengkap Instansi)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Bidang Magang</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Bidang/Divisi Magang)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'bidang_divisi_magang', '... (Bidang/Divisi Magang)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Periode Magang</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Tanggal Mulai s/d Selesai)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'tanggal_mulai_s_d_selesai', '... (Tanggal Mulai s/d Selesai)')}</td>
           </tr>
         </tbody>
       </table>

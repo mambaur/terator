@@ -1,9 +1,30 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanPerpanjanganKontrakBisnisVariables = [
+  LetterVariable(key: 'nama_pimpinan_mitra', label: 'Nama Pimpinan Mitra'),
+  LetterVariable(key: 'nama_perusahaan_mitra', label: 'Nama Perusahaan Mitra'),
+  LetterVariable(
+      key: 'alamat', label: 'Alamat', type: LetterVariableType.multiline),
+  LetterVariable(key: 'jabatan', label: 'Jabatan'),
+  LetterVariable(key: 'nama_perusahaan', label: 'Nama Perusahaan'),
+  LetterVariable(key: 'nomor_kontrak', label: 'Nomor Kontrak'),
+  LetterVariable(
+      key: 'tanggal_kontrak_awal',
+      label: 'Tanggal Kontrak Awal',
+      type: LetterVariableType.date),
+  LetterVariable(
+      key: 'tanggal_berakhir',
+      label: 'Tanggal Berakhir',
+      type: LetterVariableType.date),
+  LetterVariable(key: 'durasi_perpanjangan', label: 'Durasi Perpanjangan'),
+];
 
 String suratPermohonanPerpanjanganKontrakBisnis(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,11 +33,11 @@ String suratPermohonanPerpanjanganKontrakBisnis(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama Pimpinan Mitra)</b>
+      ${fillVar(vars, 'nama_pimpinan_mitra', '... (Nama Pimpinan Mitra)')}
       <br>
-      <b>... (Nama Perusahaan Mitra)</b>
+      ${fillVar(vars, 'nama_perusahaan_mitra', '... (Nama Perusahaan Mitra)')}
       <br>
-      di <b>... (Alamat)</b>
+      di ${fillVar(vars, 'alamat', '... (Alamat)')}
     </p>
     <p><br></p>
     <p>Perihal: <b>Permohonan Perpanjangan Kontrak Kerjasama</b></p>
@@ -38,12 +59,12 @@ String suratPermohonanPerpanjanganKontrakBisnis(
 					<tr>
 						<td style="white-space: nowrap">Jabatan</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Jabatan)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'jabatan', '... (Jabatan)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Perusahaan</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Nama Perusahaan)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Alamat</td>
@@ -59,10 +80,10 @@ String suratPermohonanPerpanjanganKontrakBisnis(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini mengajukan permohonan perpanjangan kontrak kerjasama yang telah berjalan antara perusahaan kami dengan <b>... (Nama Perusahaan Mitra)</b> berdasarkan perjanjian nomor <b>... (Nomor Kontrak)</b> tertanggal <b>... (Tanggal Kontrak Awal)</b> yang akan berakhir pada tanggal <b>... (Tanggal Berakhir)</b>.
+      Dengan ini mengajukan permohonan perpanjangan kontrak kerjasama yang telah berjalan antara perusahaan kami dengan ${fillVar(vars, 'nama_perusahaan_mitra', '... (Nama Perusahaan Mitra)')} berdasarkan perjanjian nomor ${fillVar(vars, 'nomor_kontrak', '... (Nomor Kontrak)')} tertanggal ${fillVar(vars, 'tanggal_kontrak_awal', '... (Tanggal Kontrak Awal)')} yang akan berakhir pada tanggal ${fillVar(vars, 'tanggal_berakhir', '... (Tanggal Berakhir)')}.
     </p>
     <p style="text-align: justify; ">
-      Selama masa kerjasama, kami merasa bahwa hubungan bisnis yang terjalin berjalan dengan baik dan saling menguntungkan. Oleh karena itu, kami berharap kerjasama ini dapat diperpanjang untuk jangka waktu <b>... (Durasi Perpanjangan)</b> ke depan.
+      Selama masa kerjasama, kami merasa bahwa hubungan bisnis yang terjalin berjalan dengan baik dan saling menguntungkan. Oleh karena itu, kami berharap kerjasama ini dapat diperpanjang untuk jangka waktu ${fillVar(vars, 'durasi_perpanjangan', '... (Durasi Perpanjangan)')} ke depan.
     </p>
     <p style="text-align: justify; ">
       Demikian surat permohonan ini kami sampaikan. Atas perhatian dan pertimbangan Bapak/Ibu, kami ucapkan terima kasih.

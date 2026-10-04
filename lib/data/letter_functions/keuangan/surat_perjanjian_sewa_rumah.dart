@@ -1,9 +1,32 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPerjanjianSewaRumahVariables = [
+  LetterVariable(key: 'nama_penyewa', label: 'Nama Penyewa'),
+  LetterVariable(
+      key: 'alamat_penyewa',
+      label: 'Alamat Penyewa',
+      type: LetterVariableType.multiline),
+  LetterVariable(key: 'no_telepon', label: 'No. Telepon'),
+  LetterVariable(
+      key: 'alamat_rumah',
+      label: 'Alamat Rumah',
+      type: LetterVariableType.multiline),
+  LetterVariable(key: 'durasi', label: 'Durasi'),
+  LetterVariable(
+      key: 'tanggal_mulai',
+      label: 'Tanggal Mulai',
+      type: LetterVariableType.date),
+  LetterVariable(
+      key: 'nominal', label: 'Nominal', type: LetterVariableType.currency),
+  LetterVariable(key: 'bulan_tahun', label: 'Bulan/Tahun'),
+];
 
 String suratPerjanjianSewaRumah(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -44,17 +67,17 @@ String suratPerjanjianSewaRumah(
 					<tr>
 						<td style="white-space: nowrap">Nama</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Nama Penyewa)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nama_penyewa', '... (Nama Penyewa)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Alamat</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Alamat Penyewa)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'alamat_penyewa', '... (Alamat Penyewa)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">No. Telepon</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (No. Telepon)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'no_telepon', '... (No. Telepon)')}</td>
 					</tr>
 				</tbody>
 			</table>
@@ -67,9 +90,9 @@ String suratPerjanjianSewaRumah(
     </p>
     <p>
       <ol>
-        <li>Objek sewa berupa rumah yang terletak di <b>... (Alamat Rumah)</b></li>
-        <li>Jangka waktu sewa selama <b>... (Durasi)</b> terhitung sejak <b>... (Tanggal Mulai)</b></li>
-        <li>Harga sewa sebesar <b>Rp ... (Nominal)</b> per <b>... (Bulan/Tahun)</b></li>
+        <li>Objek sewa berupa rumah yang terletak di ${fillVar(vars, 'alamat_rumah', '... (Alamat Rumah)')}</li>
+        <li>Jangka waktu sewa selama ${fillVar(vars, 'durasi', '... (Durasi)')} terhitung sejak ${fillVar(vars, 'tanggal_mulai', '... (Tanggal Mulai)')}</li>
+        <li>Harga sewa sebesar ${fillVar(vars, 'nominal', 'Rp ... (Nominal)', prefix: 'Rp ')} per ${fillVar(vars, 'bulan_tahun', '... (Bulan/Tahun)')}</li>
         <li>Pembayaran dilakukan di muka sebelum masa sewa dimulai</li>
         <li>Penyewa wajib menjaga dan merawat rumah dengan baik</li>
       </ol>
@@ -104,7 +127,7 @@ String suratPerjanjianSewaRumah(
         <tr>
           <td style="vertical-align:top;text-align:center;">
             <p>
-              <span style="white-space: nowrap"><b>... (Nama Penyewa)</b></span>
+              <span style="white-space: nowrap">${fillVar(vars, 'nama_penyewa', '... (Nama Penyewa)')}</span>
             </p>
           </td>
           <td style="width: 100%">&nbsp;</td>

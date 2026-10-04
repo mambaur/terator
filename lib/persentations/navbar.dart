@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/persentations/account/screens/account_screen.dart';
-import 'package:terator/persentations/faq/screens/faq_screen.dart';
 import 'package:terator/persentations/home/screens/home_screen.dart';
 import 'package:terator/persentations/my_files/screens/my_file_screen.dart';
 import 'package:terator/persentations/settings/screens/setting_screen.dart';
@@ -13,6 +13,12 @@ import 'package:terator/utils/custom_snackbar.dart';
 class Navbar extends StatefulWidget {
   final int? selectedIndex;
   const Navbar({super.key, this.selectedIndex});
+
+  /// Switches the bottom-nav tab from a screen inside it
+  /// (0 Beranda, 1 File Saya, 2 Akun Surat, 3 Pengaturan).
+  static void switchTab(BuildContext context, int index) {
+    context.findAncestorStateOfType<_NavbarState>()?._onItemTapped(index);
+  }
 
   @override
   State<Navbar> createState() => _NavbarState();
@@ -77,26 +83,6 @@ class _NavbarState extends State<Navbar> {
               actions: [
                 // ─── Subscription Button ───
                 _buildSubscriptionButton(),
-                // ─── FAQ Button ───
-                Container(
-                  width: 44,
-                  height: 44,
-                  margin: const EdgeInsets.only(right: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(kRadiusSm),
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (builder) {
-                        return const FaqScreen();
-                      }));
-                    },
-                    icon: const Icon(Icons.help_outline_rounded,
-                        color: Colors.white, size: 22),
-                  ),
-                ),
               ],
             )
           : AppBar(
@@ -117,26 +103,6 @@ class _NavbarState extends State<Navbar> {
               actions: [
                 // ─── Subscription Button ───
                 _buildSubscriptionButton(),
-                // ─── FAQ Button ───
-                Container(
-                  width: 44,
-                  height: 44,
-                  margin: const EdgeInsets.only(right: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(kRadiusSm),
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (builder) {
-                        return const FaqScreen();
-                      }));
-                    },
-                    icon: const Icon(Icons.help_outline_rounded,
-                        color: Colors.white, size: 22),
-                  ),
-                ),
               ],
             ),
       body: _widgetOptions.elementAt(_selectedIndex),
@@ -189,45 +155,65 @@ class _NavbarState extends State<Navbar> {
         return Container(
           width: 44,
           height: 44,
-          margin: const EdgeInsets.only(right: 8),
+          margin: const EdgeInsets.only(right: 12),
           decoration: BoxDecoration(
-            color: state.isPremium
-                ? const Color(0xFFF59E0B).withValues(alpha: 0.3)
-                : Colors.white.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(kRadiusSm),
+            gradient: const LinearGradient(
+              colors: [Color(0xFFD97706), Color(0xFFFBBF24)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFD97706).withValues(alpha: 0.4),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: Stack(
+            clipBehavior: Clip.none,
+            fit: StackFit.expand,
             children: [
-              IconButton(
-                onPressed: () {
-                  if (state.isPremium) {
-                    CustomSnackbar.show(context,
-                        message:
-                            "🎉 Selamat! Kamu memiliki akses penuh ke fitur premium!",
-                        type: SnackbarType.success);
-                  } else {
-                    PremiumGate.show(context);
-                  }
-                },
-                icon: Icon(
-                  state.isPremium
-                      ? Icons.workspace_premium_rounded
-                      : Icons.diamond_outlined,
-                  color:
-                      state.isPremium ? const Color(0xFFFCD34D) : Colors.white,
-                  size: 22,
+              // Not an IconButton: its 48px minimum size would overflow the
+              // 44px circle and push the icon off-center.
+              Material(
+                type: MaterialType.transparency,
+                shape: const CircleBorder(),
+                clipBehavior: Clip.antiAlias,
+                child: InkWell(
+                  onTap: () {
+                    if (state.isPremium) {
+                      CustomSnackbar.show(context,
+                          message:
+                              "🎉 Selamat! Kamu memiliki akses penuh ke fitur premium!",
+                          type: SnackbarType.success);
+                    } else {
+                      PremiumGate.show(context);
+                    }
+                  },
+                  child: Center(
+                    child: Icon(
+                      LucideIcons.crown,
+                      color: Colors.white,
+                      size: 22,
+                    ),
+                  ),
                 ),
               ),
+              // Premium: dot on the top-right edge.
               if (state.isPremium)
-                Positioned(
-                  top: 6,
-                  right: 6,
-                  child: Container(
-                    width: 8,
-                    height: 8,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFFCD34D),
-                      shape: BoxShape.circle,
+                const Positioned(
+                  top: 1,
+                  right: 1,
+                  child: SizedBox(
+                    width: 10,
+                    height: 10,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
                     ),
                   ),
                 ),

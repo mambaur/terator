@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/persentations/subscription/cubit/subscription_cubit.dart';
@@ -95,7 +96,7 @@ class PremiumGate {
                     borderRadius: BorderRadius.circular(kRadiusMd),
                   ),
                 ),
-                icon: const Icon(Icons.diamond_rounded, color: Colors.white),
+                icon: const Icon(LucideIcons.crown, color: Colors.white),
                 label: const Text(
                   'Upgrade ke Premium',
                   style: TextStyle(

@@ -1,9 +1,24 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratKuasaPengurusanKeuanganVariables = [
+  LetterVariable(key: 'nama_penerima_kuasa', label: 'Nama Penerima Kuasa'),
+  LetterVariable(key: 'nik', label: 'NIK'),
+  LetterVariable(
+      key: 'alamat', label: 'Alamat', type: LetterVariableType.multiline),
+  LetterVariable(
+      key: 'detail_pengurusan',
+      label: 'Detail Pengurusan',
+      type: LetterVariableType.multiline),
+  LetterVariable(key: 'nama_lembaga_bank', label: 'Nama Lembaga/Bank'),
+  LetterVariable(key: 'penerima_kuasa', label: 'Penerima Kuasa'),
+];
 
 String suratKuasaPengurusanKeuangan(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -44,23 +59,23 @@ String suratKuasaPengurusanKeuangan(
 					<tr>
 						<td style="white-space: nowrap">Nama</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Nama Penerima Kuasa)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nama_penerima_kuasa', '... (Nama Penerima Kuasa)')}</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap">NIK</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (NIK)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nik', '... (NIK)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Alamat</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Alamat)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'alamat', '... (Alamat)')}</td>
 					</tr>
 				</tbody>
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Selanjutnya disebut sebagai <b>PENERIMA KUASA</b>, untuk melakukan pengurusan keuangan berupa <b>... (Detail Pengurusan)</b> di <b>... (Nama Lembaga/Bank)</b> atas nama pemberi kuasa.
+      Selanjutnya disebut sebagai <b>PENERIMA KUASA</b>, untuk melakukan pengurusan keuangan berupa ${fillVar(vars, 'detail_pengurusan', '... (Detail Pengurusan)')} di ${fillVar(vars, 'nama_lembaga_bank', '... (Nama Lembaga/Bank)')} atas nama pemberi kuasa.
     </p>
     <p style="text-align: justify; ">
       Demikian surat kuasa ini dibuat dengan sebenar-benarnya untuk dipergunakan sebagaimana mestinya.
@@ -92,7 +107,7 @@ String suratKuasaPengurusanKeuangan(
         <tr>
           <td style="vertical-align:top;text-align:center;">
             <p>
-              <span style="white-space: nowrap"><b>... (Penerima Kuasa)</b></span>
+              <span style="white-space: nowrap">${fillVar(vars, 'penerima_kuasa', '... (Penerima Kuasa)')}</span>
             </p>
           </td>
           <td style="width: 100%">&nbsp;</td>

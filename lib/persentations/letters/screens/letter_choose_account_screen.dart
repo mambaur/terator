@@ -7,8 +7,14 @@ import 'package:terator/repositories/account_repository.dart';
 
 class LetterChooseAccountScreen extends StatefulWidget {
   final String keyLetter, title;
+
+  /// Values from the "Isi Data Surat" form (empty when skipped).
+  final Map<String, String> vars;
   const LetterChooseAccountScreen(
-      {super.key, required this.keyLetter, required this.title});
+      {super.key,
+      required this.keyLetter,
+      required this.title,
+      this.vars = const {}});
 
   @override
   State<LetterChooseAccountScreen> createState() =>
@@ -115,6 +121,7 @@ class _LetterChooseAccountScreenState extends State<LetterChooseAccountScreen> {
                             return LetterEditorScreen(
                               title: widget.title,
                               keyLetter: widget.keyLetter,
+                              vars: widget.vars,
                               account: account,
                               withSignature: false,
                             );
@@ -238,6 +245,7 @@ class _LetterChooseAccountScreenState extends State<LetterChooseAccountScreen> {
                       return LetterEditorScreen(
                         title: widget.title,
                         keyLetter: widget.keyLetter,
+                        vars: widget.vars,
                         account: account,
                         withSignature: false,
                       );
@@ -275,6 +283,7 @@ class _LetterChooseAccountScreenState extends State<LetterChooseAccountScreen> {
                         return LetterEditorScreen(
                           title: widget.title,
                           keyLetter: widget.keyLetter,
+                          vars: widget.vars,
                           account: account,
                           withSignature: true,
                         );

@@ -1,9 +1,28 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanSuratKeteranganAktifKuliahVariables =
+    [
+  LetterVariable(
+      key: 'dekan_ketua_program_studi_bagian_akademik',
+      label: 'Dekan/Ketua Program Studi/Bagian Akademik'),
+  LetterVariable(
+      key: 'semester_saat_ini',
+      label: 'Semester Saat Ini',
+      type: LetterVariableType.number),
+  LetterVariable(key: 'tahun_akademik', label: 'Tahun Akademik'),
+  LetterVariable(
+      key: 'keperluan',
+      label: 'Keperluan',
+      hint:
+          'mis. Pengajuan Beasiswa/Tunjangan Anak Pegawai/Pengurusan KIP/Pengajuan Pinjaman'),
+];
 
 String suratPermohonanSuratKeteranganAktifKuliah(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -16,7 +35,7 @@ String suratPermohonanSuratKeteranganAktifKuliah(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Dekan/Ketua Program Studi/Bagian Akademik)</b>
+      ${fillVar(vars, 'dekan_ketua_program_studi_bagian_akademik', '... (Dekan/Ketua Program Studi/Bagian Akademik)')}
       <br>
       ${account?.educationInstitution ?? ''}
       <br>
@@ -58,12 +77,12 @@ String suratPermohonanSuratKeteranganAktifKuliah(
           <tr>
             <td style="white-space: nowrap">Semester</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Semester Saat Ini)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'semester_saat_ini', '... (Semester Saat Ini)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Tahun Akademik</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Tahun Akademik)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'tahun_akademik', '... (Tahun Akademik)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat</td>
@@ -79,7 +98,7 @@ String suratPermohonanSuratKeteranganAktifKuliah(
       </table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini bermaksud mengajukan permohonan kepada Bapak/Ibu untuk dapat diterbitkannya <b>Surat Keterangan Aktif Kuliah</b> atas nama saya. Surat tersebut akan saya gunakan untuk keperluan <b>... (Keperluan, mis. Pengajuan Beasiswa/Tunjangan Anak Pegawai/Pengurusan KIP/Pengajuan Pinjaman)</b>.
+      Dengan ini bermaksud mengajukan permohonan kepada Bapak/Ibu untuk dapat diterbitkannya <b>Surat Keterangan Aktif Kuliah</b> atas nama saya. Surat tersebut akan saya gunakan untuk keperluan ${fillVar(vars, 'keperluan', '... (Keperluan, mis. Pengajuan Beasiswa/Tunjangan Anak Pegawai/Pengurusan KIP/Pengajuan Pinjaman)')}.
     </p>
     <p style="text-align: justify; ">
       Adapun saya menyatakan bahwa saat ini saya benar-benar masih aktif mengikuti perkuliahan di ${account?.educationInstitution ?? '... (Nama Kampus)'} dan tidak sedang dalam status cuti akademik maupun tidak aktif.

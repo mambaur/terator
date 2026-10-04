@@ -1,9 +1,20 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanKebenaranDataDiriVariables = [
+  LetterVariable(key: 'pekerjaan', label: 'Pekerjaan'),
+  LetterVariable(key: 'nomor_ktp_nik', label: 'Nomor KTP/NIK'),
+  LetterVariable(
+      key: 'keperluan',
+      label: 'Keperluan',
+      hint: 'mis. Pendaftaran/Lamaran Kerja/Beasiswa'),
+];
 
 String suratPernyataanKebenaranDataDiri(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -50,12 +61,12 @@ String suratPernyataanKebenaranDataDiri(
           <tr>
             <td style="white-space: nowrap">Pekerjaan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Pekerjaan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'pekerjaan', '... (Pekerjaan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">No. KTP/NIK</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nomor KTP/NIK)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nomor_ktp_nik', '... (Nomor KTP/NIK)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat</td>
@@ -76,7 +87,7 @@ String suratPernyataanKebenaranDataDiri(
       </table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini menyatakan dengan sebenar-benarnya bahwa seluruh data diri yang saya sampaikan sebagaimana tersebut di atas, beserta seluruh dokumen pendukung yang saya lampirkan untuk keperluan <b>... (Keperluan, mis. Pendaftaran/Lamaran Kerja/Beasiswa)</b>, adalah <b>BENAR</b> dan sesuai dengan keadaan yang sesungguhnya.
+      Dengan ini menyatakan dengan sebenar-benarnya bahwa seluruh data diri yang saya sampaikan sebagaimana tersebut di atas, beserta seluruh dokumen pendukung yang saya lampirkan untuk keperluan ${fillVar(vars, 'keperluan', '... (Keperluan, mis. Pendaftaran/Lamaran Kerja/Beasiswa)')}, adalah <b>BENAR</b> dan sesuai dengan keadaan yang sesungguhnya.
     </p>
     <p style="text-align: justify; ">
       Apabila di kemudian hari ditemukan bahwa terdapat data atau dokumen yang tidak benar, dipalsukan, ataupun direkayasa, maka saya bersedia:

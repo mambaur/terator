@@ -1,9 +1,9 @@
-import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:terator/core/platform/db_factory.dart';
 
 class DatabaseInstance {
   final String _databaseName = "surat_generator.db";
@@ -65,12 +65,15 @@ class DatabaseInstance {
 
   // this opens the database (and creates it if it doesn't exist)
   Future<Database> _openDatabase() async {
-    Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, _databaseName);
-    return await openDatabase(path,
-        version: _databaseVersion,
-        onCreate: _onCreate,
-        onUpgrade: _onUpgrade);
+    // Web (dev-only) stores the DB in IndexedDB, keyed by name alone.
+    final String path = kIsWeb
+        ? _databaseName
+        : join((await getApplicationDocumentsDirectory()).path, _databaseName);
+    return await appDatabaseFactory.openDatabase(path,
+        options: OpenDatabaseOptions(
+            version: _databaseVersion,
+            onCreate: _onCreate,
+            onUpgrade: _onUpgrade));
   }
 
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {

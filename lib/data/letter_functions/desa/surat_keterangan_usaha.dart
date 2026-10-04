@@ -1,9 +1,20 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratKeteranganUsahaVariables = [
+  LetterVariable(key: 'nama_desa_kelurahan', label: 'Nama Desa/Kelurahan'),
+  LetterVariable(key: 'jenis_usaha', label: 'Jenis Usaha'),
+  LetterVariable(key: 'lokasi_usaha', label: 'Lokasi Usaha'),
+  LetterVariable(key: 'tahun', label: 'Tahun', type: LetterVariableType.number),
+  LetterVariable(key: 'tujuan_surat', label: 'Tujuan Surat'),
+  LetterVariable(key: 'nama_kepala_desa', label: 'Nama Kepala Desa'),
+];
 
 String suratKeteranganUsaha(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,7 +23,7 @@ String suratKeteranganUsaha(
     </p>
     <p><br></p>
     <p style="text-align: justify; ">
-      Yang bertanda tangan di bawah ini Kepala Desa/Lurah <b>... (Nama Desa/Kelurahan)</b>, menerangkan bahwa:
+      Yang bertanda tangan di bawah ini Kepala Desa/Lurah ${fillVar(vars, 'nama_desa_kelurahan', '... (Nama Desa/Kelurahan)')}, menerangkan bahwa:
     </p>
     <p>
       <table border="0" style="width:100%">
@@ -41,10 +52,10 @@ String suratKeteranganUsaha(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Adalah benar warga kami yang menjalankan usaha <b>... (Jenis Usaha)</b> di <b>... (Lokasi Usaha)</b> sejak tahun <b>... (Tahun)</b>.
+      Adalah benar warga kami yang menjalankan usaha ${fillVar(vars, 'jenis_usaha', '... (Jenis Usaha)')} di ${fillVar(vars, 'lokasi_usaha', '... (Lokasi Usaha)')} sejak tahun ${fillVar(vars, 'tahun', '... (Tahun)')}.
     </p>
     <p style="text-align: justify; ">
-      Surat keterangan ini dibuat untuk keperluan <b>... (Tujuan Surat)</b>.
+      Surat keterangan ini dibuat untuk keperluan ${fillVar(vars, 'tujuan_surat', '... (Tujuan Surat)')}.
     </p>
     <p style="text-align: justify; ">
       Demikian surat keterangan ini dibuat dengan sebenarnya untuk dapat dipergunakan sebagaimana mestinya.
@@ -70,7 +81,7 @@ String suratKeteranganUsaha(
           <td style="width: 100%">&nbsp;</td>
           <td style="vertical-align:top;text-align:center;">
             <p>
-              <span style="white-space: nowrap"><b>... (Nama Kepala Desa)</b></span>
+              <span style="white-space: nowrap">${fillVar(vars, 'nama_kepala_desa', '... (Nama Kepala Desa)')}</span>
             </p>
           </td>
         </tr>

@@ -1,9 +1,18 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanTidakMerokokVariables = [
+  LetterVariable(
+      key: 'tujuan',
+      label: 'Tujuan',
+      hint: 'misal: persyaratan kerja / pendaftaran asuransi kesehatan'),
+];
 
 String suratPernyataanTidakMerokok(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -44,7 +53,7 @@ String suratPernyataanTidakMerokok(
       Dengan ini menyatakan dengan sesungguhnya bahwa saya tidak merokok dan tidak menggunakan produk tembakau dalam bentuk apapun.
     </p>
     <p style="text-align: justify; ">
-      Surat pernyataan ini saya buat untuk keperluan <b>... (Tujuan, misal: persyaratan kerja / pendaftaran asuransi kesehatan)</b>.
+      Surat pernyataan ini saya buat untuk keperluan ${fillVar(vars, 'tujuan', '... (Tujuan, misal: persyaratan kerja / pendaftaran asuransi kesehatan)')}.
     </p>
     <p style="text-align: justify; ">
       Apabila di kemudian hari pernyataan ini terbukti tidak benar, saya bersedia menerima sanksi sesuai ketentuan yang berlaku.

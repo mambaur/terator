@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +11,7 @@ import 'package:terator/persentations/bookmarks/cubit/bookmark_cubit.dart';
 import 'package:terator/persentations/my_files/cubits/file_cubit/file_cubit.dart';
 import 'package:terator/persentations/subscription/cubit/subscription_cubit.dart';
 import 'package:terator/persentations/navbar.dart';
+import 'package:terator/persentations/onboarding/screens/onboarding_screen.dart';
 import 'package:upgrader/upgrader.dart';
 
 void main() async {
@@ -18,13 +20,15 @@ void main() async {
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.light,
   ));
-  MobileAds.instance.initialize();
+  if (!kIsWeb) MobileAds.instance.initialize();
   await initializeDateFormatting('id_ID', null);
-  runApp(const MyApp());
+  final bool onboardingDone = await OnboardingScreen.isDone();
+  runApp(MyApp(showOnboarding: !onboardingDone));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool showOnboarding;
+  const MyApp({super.key, this.showOnboarding = false});
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -116,7 +120,7 @@ class MyApp extends StatelessWidget {
             showIgnore: false,
             showLater: false,
             showReleaseNotes: false,
-            child: const Navbar()),
+            child: showOnboarding ? const OnboardingScreen() : const Navbar()),
       ),
     );
   }

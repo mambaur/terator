@@ -1,9 +1,31 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanGolonganDarahVariables = [
+  LetterVariable(
+      key: 'golongan_darah',
+      label: 'Golongan Darah',
+      type: LetterVariableType.choice,
+      options: ['A', 'B', 'AB', 'O']),
+  LetterVariable(
+      key: 'hasil_pemeriksaan',
+      label: 'Hasil Pemeriksaan',
+      type: LetterVariableType.choice,
+      options: ['Positif', 'Negatif']),
+  LetterVariable(
+      key: 'nama_laboratorium_rumah_sakit',
+      label: 'Nama Laboratorium / Rumah Sakit'),
+  LetterVariable(
+      key: 'tanggal_pemeriksaan',
+      label: 'Tanggal Pemeriksaan',
+      type: LetterVariableType.date),
+];
 
 String suratPernyataanGolonganDarah(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -49,18 +71,18 @@ String suratPernyataanGolonganDarah(
 					<tr>
 						<td style="white-space: nowrap">Golongan Darah</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (A / B / AB / O)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'golongan_darah', '... (A / B / AB / O)')}</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap">Rhesus</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Positif / Negatif)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'hasil_pemeriksaan', '... (Positif / Negatif)')}</td>
 					</tr>
 				</tbody>
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Pemeriksaan golongan darah dilakukan di <b>... (Nama Laboratorium / Rumah Sakit)</b> pada tanggal <b>... (Tanggal Pemeriksaan)</b>.
+      Pemeriksaan golongan darah dilakukan di ${fillVar(vars, 'nama_laboratorium_rumah_sakit', '... (Nama Laboratorium / Rumah Sakit)')} pada tanggal ${fillVar(vars, 'tanggal_pemeriksaan', '... (Tanggal Pemeriksaan)')}.
     </p>
     <p style="text-align: justify; ">
       Demikian surat pernyataan ini saya buat dengan sebenar-benarnya untuk dapat digunakan sebagaimana mestinya.

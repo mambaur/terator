@@ -1,9 +1,34 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanCutiMelahirkanVariables = [
+  LetterVariable(key: 'nama_pimpinan_hrd', label: 'Nama Pimpinan/HRD'),
+  LetterVariable(key: 'nama_perusahaan', label: 'Nama Perusahaan'),
+  LetterVariable(key: 'nik_nip_karyawan', label: 'NIK/NIP Karyawan'),
+  LetterVariable(key: 'jabatan', label: 'Jabatan'),
+  LetterVariable(key: 'divisi_departemen', label: 'Divisi/Departemen'),
+  LetterVariable(
+      key: 'perkiraan_tanggal_persalinan',
+      label: 'Perkiraan Tanggal Persalinan',
+      type: LetterVariableType.date),
+  LetterVariable(
+      key: 'tanggal_mulai_cuti',
+      label: 'Tanggal Mulai Cuti',
+      type: LetterVariableType.date),
+  LetterVariable(
+      key: 'tanggal_selesai_cuti',
+      label: 'Tanggal Selesai Cuti',
+      type: LetterVariableType.date),
+  LetterVariable(key: 'lama_cuti', label: 'Lama Cuti', hint: 'mis. 3 bulan'),
+  LetterVariable(
+      key: 'nama_rekan_kerja_pengganti', label: 'Nama Rekan Kerja Pengganti'),
+];
 
 String suratPermohonanCutiMelahirkan(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -16,9 +41,9 @@ String suratPermohonanCutiMelahirkan(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama Pimpinan/HRD)</b>
+      ${fillVar(vars, 'nama_pimpinan_hrd', '... (Nama Pimpinan/HRD)')}
       <br>
-      <b>... (Nama Perusahaan)</b>
+      ${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')}
       <br>
       di Tempat
     </p>
@@ -43,17 +68,17 @@ String suratPermohonanCutiMelahirkan(
           <tr>
             <td style="white-space: nowrap">NIK/NIP Karyawan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (NIK/NIP Karyawan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nik_nip_karyawan', '... (NIK/NIP Karyawan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Jabatan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Jabatan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'jabatan', '... (Jabatan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Divisi/Departemen</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Divisi/Departemen)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'divisi_departemen', '... (Divisi/Departemen)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat</td>
@@ -77,28 +102,28 @@ String suratPermohonanCutiMelahirkan(
           <tr>
             <td style="white-space: nowrap">Perkiraan Tanggal Lahir</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Perkiraan Tanggal Persalinan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'perkiraan_tanggal_persalinan', '... (Perkiraan Tanggal Persalinan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Tanggal Mulai Cuti</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Tanggal Mulai Cuti)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'tanggal_mulai_cuti', '... (Tanggal Mulai Cuti)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Tanggal Selesai Cuti</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Tanggal Selesai Cuti)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'tanggal_selesai_cuti', '... (Tanggal Selesai Cuti)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Lama Cuti</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Lama Cuti, mis. 3 bulan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'lama_cuti', '... (Lama Cuti, mis. 3 bulan)')}</td>
           </tr>
         </tbody>
       </table>
     </p>
     <p style="text-align: justify; ">
-      Selama saya menjalani cuti, seluruh tugas dan tanggung jawab pekerjaan akan saya delegasikan kepada <b>... (Nama Rekan Kerja Pengganti)</b> dengan persetujuan atasan langsung. Sebagai bahan pertimbangan, saya melampirkan surat keterangan dari dokter sebagai berikut.
+      Selama saya menjalani cuti, seluruh tugas dan tanggung jawab pekerjaan akan saya delegasikan kepada ${fillVar(vars, 'nama_rekan_kerja_pengganti', '... (Nama Rekan Kerja Pengganti)')} dengan persetujuan atasan langsung. Sebagai bahan pertimbangan, saya melampirkan surat keterangan dari dokter sebagai berikut.
     </p>
     <p style="text-align: justify; ">
       Demikian surat permohonan ini saya sampaikan. Atas perhatian dan kebijaksanaan Bapak/Ibu Pimpinan, saya ucapkan terima kasih.

@@ -1,9 +1,19 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanKesanggupanMembayarUktVariables = [
+  LetterVariable(key: 'universitas', label: 'Universitas'),
+  LetterVariable(
+      key: 'tanggal_pendaftaran',
+      label: 'Tanggal Pendaftaran',
+      type: LetterVariableType.date),
+];
 
 String suratPernyataanKesanggupanMembayarUkt(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   // String dateNow =
   //     DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
 
@@ -83,7 +93,7 @@ String suratPernyataanKesanggupanMembayarUkt(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      menyatakan bahwa saya sanggup dan bersedia membayar Uang Kuliah Tunggal (UKT) yang telah ditetapkan pihak <b>... (Universitas)</b> pada tanggal <b>... (Tanggal Pendaftaran)</b>.
+      menyatakan bahwa saya sanggup dan bersedia membayar Uang Kuliah Tunggal (UKT) yang telah ditetapkan pihak ${fillVar(vars, 'universitas', '... (Universitas)')} pada tanggal ${fillVar(vars, 'tanggal_pendaftaran', '... (Tanggal Pendaftaran)')}.
     </p>
     <p style="text-align: justify; ">
       Demikian surat pernyataan kesanggupan ini saya buat dengan sebenarnya dan penuh tanggung jawab. 

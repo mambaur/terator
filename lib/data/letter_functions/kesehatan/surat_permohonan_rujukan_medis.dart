@@ -1,9 +1,27 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanRujukanMedisVariables = [
+  LetterVariable(
+      key: 'nama_rumah_sakit_tujuan', label: 'Nama Rumah Sakit Tujuan'),
+  LetterVariable(
+      key: 'alamat_rs_tujuan',
+      label: 'Alamat RS Tujuan',
+      type: LetterVariableType.multiline),
+  LetterVariable(key: 'jenis_pelayanan', label: 'Jenis Pelayanan'),
+  LetterVariable(
+      key: 'alasan_diagnosa',
+      label: 'Alasan/Diagnosa',
+      type: LetterVariableType.multiline),
+  LetterVariable(
+      key: 'nama_rs_puskesmas_asal', label: 'Nama RS/Puskesmas Asal'),
+];
 
 String suratPermohonanRujukanMedis(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,9 +30,9 @@ String suratPermohonanRujukanMedis(
     <p>
       Kepada Yth.
       <br>
-      Direktur <b>... (Nama Rumah Sakit Tujuan)</b>
+      Direktur ${fillVar(vars, 'nama_rumah_sakit_tujuan', '... (Nama Rumah Sakit Tujuan)')}
       <br>
-      di <b>... (Alamat RS Tujuan)</b>
+      di ${fillVar(vars, 'alamat_rs_tujuan', '... (Alamat RS Tujuan)')}
     </p>
     <p><br></p>
     <p>Perihal: <b>Permohonan Rujukan Medis</b></p>
@@ -47,10 +65,10 @@ String suratPermohonanRujukanMedis(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini mengajukan permohonan rujukan medis untuk mendapatkan pelayanan kesehatan berupa <b>... (Jenis Pelayanan)</b> dikarenakan <b>... (Alasan/Diagnosa)</b>.
+      Dengan ini mengajukan permohonan rujukan medis untuk mendapatkan pelayanan kesehatan berupa ${fillVar(vars, 'jenis_pelayanan', '... (Jenis Pelayanan)')} dikarenakan ${fillVar(vars, 'alasan_diagnosa', '... (Alasan/Diagnosa)')}.
     </p>
     <p style="text-align: justify; ">
-      Bersama surat ini saya lampirkan surat pengantar dari <b>... (Nama RS/Puskesmas Asal)</b> dan dokumen pendukung lainnya.
+      Bersama surat ini saya lampirkan surat pengantar dari ${fillVar(vars, 'nama_rs_puskesmas_asal', '... (Nama RS/Puskesmas Asal)')} dan dokumen pendukung lainnya.
     </p>
     <p style="text-align: justify; ">
       Demikian permohonan ini saya sampaikan. Atas perhatian dan bantuannya saya ucapkan terima kasih.

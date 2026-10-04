@@ -1,9 +1,25 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratKeteranganPenghasilanWargaVariables = [
+  LetterVariable(key: 'alamat_rt_rw', label: 'Alamat RT/RW'),
+  LetterVariable(key: 'pekerjaan', label: 'Pekerjaan'),
+  LetterVariable(
+      key: 'nominal_penghasilan',
+      label: 'Nominal Penghasilan',
+      type: LetterVariableType.currency),
+  LetterVariable(
+      key: 'tujuan',
+      label: 'Tujuan',
+      hint: 'misal: pengajuan beasiswa / bantuan sosial / kredit'),
+  LetterVariable(key: 'nama_ketua_rt_rw', label: 'Nama Ketua RT/RW'),
+];
 
 String suratKeteranganPenghasilanWarga(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,7 +28,7 @@ String suratKeteranganPenghasilanWarga(
     </p>
     <p><br></p>
     <p style="text-align: justify; ">
-      Yang bertanda tangan di bawah ini Ketua RT/RW <b>... (Alamat RT/RW)</b>, dengan ini menerangkan bahwa:
+      Yang bertanda tangan di bawah ini Ketua RT/RW ${fillVar(vars, 'alamat_rt_rw', '... (Alamat RT/RW)')}, dengan ini menerangkan bahwa:
     </p>
     <p>
       <table border="0" style="width:100%">
@@ -40,7 +56,7 @@ String suratKeteranganPenghasilanWarga(
           <tr>
 						<td style="white-space: nowrap">Pekerjaan</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Pekerjaan)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'pekerjaan', '... (Pekerjaan)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Alamat</td>
@@ -51,10 +67,10 @@ String suratKeteranganPenghasilanWarga(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Adalah benar warga kami yang berdomisili di wilayah RT/RW tersebut dan memiliki penghasilan rata-rata per bulan sebesar <b>Rp ... (Nominal Penghasilan)</b>.
+      Adalah benar warga kami yang berdomisili di wilayah RT/RW tersebut dan memiliki penghasilan rata-rata per bulan sebesar ${fillVar(vars, 'nominal_penghasilan', 'Rp ... (Nominal Penghasilan)', prefix: 'Rp ')}.
     </p>
     <p style="text-align: justify; ">
-      Surat keterangan ini dibuat untuk keperluan <b>... (Tujuan, misal: pengajuan beasiswa / bantuan sosial / kredit)</b>.
+      Surat keterangan ini dibuat untuk keperluan ${fillVar(vars, 'tujuan', '... (Tujuan, misal: pengajuan beasiswa / bantuan sosial / kredit)')}.
     </p>
     <p style="text-align: justify; ">
       Demikian surat keterangan ini dibuat dengan sebenar-benarnya untuk dapat digunakan sebagaimana mestinya.
@@ -86,7 +102,7 @@ String suratKeteranganPenghasilanWarga(
         <tr>
           <td style="vertical-align:top;text-align:center;">
             <p>
-              <span style="white-space: nowrap"><b>... (Nama Ketua RT/RW)</b></span>
+              <span style="white-space: nowrap">${fillVar(vars, 'nama_ketua_rt_rw', '... (Nama Ketua RT/RW)')}</span>
             </p>
           </td>
           <td style="width: 100%">&nbsp;</td>

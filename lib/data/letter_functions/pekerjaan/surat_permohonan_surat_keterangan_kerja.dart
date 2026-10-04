@@ -1,9 +1,28 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanSuratKeteranganKerjaVariables = [
+  LetterVariable(key: 'nama_pimpinan_hrd', label: 'Nama Pimpinan/HRD'),
+  LetterVariable(key: 'nama_perusahaan', label: 'Nama Perusahaan'),
+  LetterVariable(key: 'nik_nip_karyawan', label: 'NIK/NIP Karyawan'),
+  LetterVariable(key: 'jabatan', label: 'Jabatan'),
+  LetterVariable(key: 'divisi_departemen', label: 'Divisi/Departemen'),
+  LetterVariable(
+      key: 'tanggal_mulai_bekerja',
+      label: 'Tanggal Mulai Bekerja',
+      type: LetterVariableType.date),
+  LetterVariable(
+      key: 'keperluan',
+      label: 'Keperluan',
+      hint:
+          'mis. Pengajuan KPR/Pinjaman/Pembuatan Visa/Pendaftaran Sekolah Anak'),
+];
 
 String suratPermohonanSuratKeteranganKerja(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -16,9 +35,9 @@ String suratPermohonanSuratKeteranganKerja(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama Pimpinan/HRD)</b>
+      ${fillVar(vars, 'nama_pimpinan_hrd', '... (Nama Pimpinan/HRD)')}
       <br>
-      <b>... (Nama Perusahaan)</b>
+      ${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')}
       <br>
       di Tempat
     </p>
@@ -43,22 +62,22 @@ String suratPermohonanSuratKeteranganKerja(
           <tr>
             <td style="white-space: nowrap">NIK/NIP Karyawan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (NIK/NIP Karyawan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nik_nip_karyawan', '... (NIK/NIP Karyawan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Jabatan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Jabatan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'jabatan', '... (Jabatan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Divisi/Departemen</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Divisi/Departemen)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'divisi_departemen', '... (Divisi/Departemen)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Mulai Bekerja</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Tanggal Mulai Bekerja)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'tanggal_mulai_bekerja', '... (Tanggal Mulai Bekerja)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat</td>
@@ -74,10 +93,10 @@ String suratPermohonanSuratKeteranganKerja(
       </table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini bermaksud mengajukan permohonan kepada Bapak/Ibu untuk dapat diterbitkannya <b>Surat Keterangan Kerja</b> atas nama saya. Surat tersebut akan saya gunakan untuk keperluan <b>... (Keperluan, mis. Pengajuan KPR/Pinjaman/Pembuatan Visa/Pendaftaran Sekolah Anak)</b>.
+      Dengan ini bermaksud mengajukan permohonan kepada Bapak/Ibu untuk dapat diterbitkannya <b>Surat Keterangan Kerja</b> atas nama saya. Surat tersebut akan saya gunakan untuk keperluan ${fillVar(vars, 'keperluan', '... (Keperluan, mis. Pengajuan KPR/Pinjaman/Pembuatan Visa/Pendaftaran Sekolah Anak)')}.
     </p>
     <p style="text-align: justify; ">
-      Adapun informasi yang saya harapkan dapat dicantumkan dalam surat tersebut antara lain adalah identitas, jabatan, masa kerja, serta status kepegawaian saya di <b>... (Nama Perusahaan)</b>.
+      Adapun informasi yang saya harapkan dapat dicantumkan dalam surat tersebut antara lain adalah identitas, jabatan, masa kerja, serta status kepegawaian saya di ${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')}.
     </p>
     <p style="text-align: justify; ">
       Sebagai bahan pertimbangan, saya bersedia untuk mengikuti seluruh prosedur administrasi yang berlaku di perusahaan dalam proses penerbitan surat tersebut.

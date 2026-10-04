@@ -1,9 +1,15 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratKeteranganBebasNarkobaVariables = [
+  LetterVariable(key: 'tujuan_surat', label: 'Tujuan Surat'),
+];
 
 String suratKeteranganBebasNarkoba(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -47,7 +53,7 @@ String suratKeteranganBebasNarkoba(
       Apabila di kemudian hari pernyataan ini terbukti tidak benar, maka saya bersedia menerima sanksi sesuai dengan ketentuan hukum yang berlaku.
     </p>
     <p style="text-align: justify; ">
-      Surat pernyataan ini dibuat untuk keperluan <b>... (Tujuan Surat)</b>.
+      Surat pernyataan ini dibuat untuk keperluan ${fillVar(vars, 'tujuan_surat', '... (Tujuan Surat)')}.
     </p>
     <p><br></p>
     <table>

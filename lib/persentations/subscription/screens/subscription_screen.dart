@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/persentations/subscription/cubit/subscription_cubit.dart';
@@ -115,8 +116,7 @@ class SubscriptionScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(kRadiusMd),
                       ),
                     ),
-                    icon: const Icon(Icons.diamond_rounded,
-                        color: Colors.white),
+                    icon: const Icon(LucideIcons.crown, color: Colors.white),
                     label: const Text(
                       'Lihat Paket Premium',
                       style: TextStyle(
@@ -175,23 +175,13 @@ class SubscriptionScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: isPremium
-              ? [const Color(0xFFD97706), const Color(0xFFF59E0B)]
-              : kGradientPrimary,
+        gradient: const LinearGradient(
+          colors: kGradientPrimary,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(kRadiusXl),
-        boxShadow: isPremium
-            ? [
-                BoxShadow(
-                  color: const Color(0xFFD97706).withValues(alpha: 0.3),
-                  blurRadius: 16,
-                  offset: const Offset(0, 4),
-                ),
-              ]
-            : kShadowPrimary,
+        boxShadow: kShadowPrimary,
       ),
       child: Column(
         children: [
@@ -204,7 +194,7 @@ class SubscriptionScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(kRadiusMd),
                 ),
                 child: Icon(
-                  isPremium ? Icons.workspace_premium_rounded : Icons.person_rounded,
+                  isPremium ? LucideIcons.crown : Icons.person_rounded,
                   color: Colors.white,
                   size: 28,
                 ),
@@ -215,7 +205,7 @@ class SubscriptionScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      isPremium ? 'Premium Aktif ✓' : 'Akun Gratis',
+                      isPremium ? 'Premium Aktif' : 'Akun Gratis',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,

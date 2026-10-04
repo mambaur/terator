@@ -1,9 +1,25 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanSecondOpinionVariables = [
+  LetterVariable(key: 'nama_dokter_spesialis', label: 'Nama Dokter Spesialis'),
+  LetterVariable(
+      key: 'nama_rumah_sakit_klinik_tujuan',
+      label: 'Nama Rumah Sakit / Klinik Tujuan'),
+  LetterVariable(
+      key: 'nama_dokter_rumah_sakit_sebelumnya',
+      label: 'Nama Dokter/Rumah Sakit Sebelumnya'),
+  LetterVariable(key: 'jenis_diagnosis', label: 'Jenis Diagnosis'),
+  LetterVariable(
+      key: 'jenis_tindakan_yang_direkomendasikan',
+      label: 'Jenis Tindakan yang Direkomendasikan'),
+];
 
 String suratPermohonanSecondOpinion(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,9 +28,9 @@ String suratPermohonanSecondOpinion(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama Dokter Spesialis)</b>
+      ${fillVar(vars, 'nama_dokter_spesialis', '... (Nama Dokter Spesialis)')}
       <br>
-      <b>... (Nama Rumah Sakit / Klinik Tujuan)</b>
+      ${fillVar(vars, 'nama_rumah_sakit_klinik_tujuan', '... (Nama Rumah Sakit / Klinik Tujuan)')}
       <br>
       di Tempat
     </p>
@@ -55,10 +71,10 @@ String suratPermohonanSecondOpinion(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini mengajukan permohonan untuk mendapatkan pendapat medis kedua (second opinion) atas diagnosis yang telah saya terima sebelumnya dari <b>... (Nama Dokter/Rumah Sakit Sebelumnya)</b>.
+      Dengan ini mengajukan permohonan untuk mendapatkan pendapat medis kedua (second opinion) atas diagnosis yang telah saya terima sebelumnya dari ${fillVar(vars, 'nama_dokter_rumah_sakit_sebelumnya', '... (Nama Dokter/Rumah Sakit Sebelumnya)')}.
     </p>
     <p style="text-align: justify; ">
-      Adapun diagnosis sebelumnya yang saya terima adalah <b>... (Jenis Diagnosis)</b> dengan rekomendasi tindakan berupa <b>... (Jenis Tindakan yang Direkomendasikan)</b>.
+      Adapun diagnosis sebelumnya yang saya terima adalah ${fillVar(vars, 'jenis_diagnosis', '... (Jenis Diagnosis)')} dengan rekomendasi tindakan berupa ${fillVar(vars, 'jenis_tindakan_yang_direkomendasikan', '... (Jenis Tindakan yang Direkomendasikan)')}.
     </p>
     <p style="text-align: justify; ">
       Saya berharap dapat memperoleh evaluasi dan pendapat medis dari dokter yang bersangkutan untuk memastikan langkah pengobatan yang terbaik.

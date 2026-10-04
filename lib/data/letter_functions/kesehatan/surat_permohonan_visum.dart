@@ -1,9 +1,31 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanVisumVariables = [
+  LetterVariable(
+      key: 'nama_dokter_direktur_rumah_sakit',
+      label: 'Nama Dokter / Direktur Rumah Sakit'),
+  LetterVariable(key: 'nama_rumah_sakit', label: 'Nama Rumah Sakit'),
+  LetterVariable(key: 'nama_yang_divisum', label: 'Nama yang Divisum'),
+  LetterVariable(
+      key: 'jenis_kejadian',
+      label: 'Jenis Kejadian',
+      hint: 'misal: kecelakaan lalu lintas / tindak kekerasan'),
+  LetterVariable(
+      key: 'tanggal_kejadian',
+      label: 'Tanggal Kejadian',
+      type: LetterVariableType.date),
+  LetterVariable(
+      key: 'tujuan',
+      label: 'Tujuan',
+      hint: 'misal: proses hukum / klaim asuransi'),
+];
 
 String suratPermohonanVisum(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,9 +34,9 @@ String suratPermohonanVisum(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama Dokter / Direktur Rumah Sakit)</b>
+      ${fillVar(vars, 'nama_dokter_direktur_rumah_sakit', '... (Nama Dokter / Direktur Rumah Sakit)')}
       <br>
-      <b>... (Nama Rumah Sakit)</b>
+      ${fillVar(vars, 'nama_rumah_sakit', '... (Nama Rumah Sakit)')}
       <br>
       di Tempat
     </p>
@@ -55,10 +77,10 @@ String suratPermohonanVisum(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini mengajukan permohonan pembuatan Visum et Repertum atas diri saya / atas nama <b>... (Nama yang Divisum)</b> sehubungan dengan kejadian <b>... (Jenis Kejadian, misal: kecelakaan lalu lintas / tindak kekerasan)</b> yang terjadi pada tanggal <b>... (Tanggal Kejadian)</b>.
+      Dengan ini mengajukan permohonan pembuatan Visum et Repertum atas diri saya / atas nama ${fillVar(vars, 'nama_yang_divisum', '... (Nama yang Divisum)')} sehubungan dengan kejadian ${fillVar(vars, 'jenis_kejadian', '... (Jenis Kejadian, misal: kecelakaan lalu lintas / tindak kekerasan)')} yang terjadi pada tanggal ${fillVar(vars, 'tanggal_kejadian', '... (Tanggal Kejadian)')}.
     </p>
     <p style="text-align: justify; ">
-      Visum et Repertum ini diperlukan untuk keperluan <b>... (Tujuan, misal: proses hukum / klaim asuransi)</b>.
+      Visum et Repertum ini diperlukan untuk keperluan ${fillVar(vars, 'tujuan', '... (Tujuan, misal: proses hukum / klaim asuransi)')}.
     </p>
     <p style="text-align: justify; ">
       Demikian surat permohonan ini saya buat. Atas perhatian dan kerjasamanya saya ucapkan terima kasih.

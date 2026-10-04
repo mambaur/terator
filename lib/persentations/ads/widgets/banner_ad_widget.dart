@@ -32,7 +32,7 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
   Widget build(BuildContext context) {
     return BlocBuilder<SubscriptionCubit, SubscriptionState>(
       builder: (context, state) {
-        if (!state.isPremium) {
+        if (!kIsWeb && !state.isPremium) {
           return BannerAdWidgetUI(
             placement: widget.placement,
             margin: widget.margin,

@@ -1,9 +1,19 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPersetujuanTindakanMedisVariables = [
+  LetterVariable(key: 'umur', label: 'Umur', type: LetterVariableType.number),
+  LetterVariable(key: 'nama_pasien', label: 'Nama Pasien'),
+  LetterVariable(key: 'jenis_tindakan_medis', label: 'Jenis Tindakan Medis'),
+  LetterVariable(key: 'nama_dokter', label: 'Nama Dokter'),
+  LetterVariable(key: 'nama_rumah_sakit', label: 'Nama Rumah Sakit'),
+];
 
 String suratPersetujuanTindakanMedis(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -27,7 +37,7 @@ String suratPersetujuanTindakanMedis(
 					<tr>
 						<td style="white-space: nowrap">Umur</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Umur)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'umur', '... (Umur)')}</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap">Jenis Kelamin</td>
@@ -48,7 +58,7 @@ String suratPersetujuanTindakanMedis(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Selaku pasien / wali dari pasien <b>... (Nama Pasien)</b>, dengan ini menyatakan <b>SETUJU</b> untuk dilakukan tindakan medis berupa <b>... (Jenis Tindakan Medis)</b> oleh dokter <b>... (Nama Dokter)</b> di <b>... (Nama Rumah Sakit)</b>.
+      Selaku pasien / wali dari pasien ${fillVar(vars, 'nama_pasien', '... (Nama Pasien)')}, dengan ini menyatakan <b>SETUJU</b> untuk dilakukan tindakan medis berupa ${fillVar(vars, 'jenis_tindakan_medis', '... (Jenis Tindakan Medis)')} oleh dokter ${fillVar(vars, 'nama_dokter', '... (Nama Dokter)')} di ${fillVar(vars, 'nama_rumah_sakit', '... (Nama Rumah Sakit)')}.
     </p>
     <p style="text-align: justify; ">
       Saya telah menerima penjelasan mengenai tujuan, prosedur, risiko, serta alternatif dari tindakan medis tersebut dan memahaminya dengan baik.

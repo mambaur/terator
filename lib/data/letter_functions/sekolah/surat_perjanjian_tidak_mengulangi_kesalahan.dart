@@ -1,9 +1,15 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPerjanjianTidakMengulangiKesalahanVariables = [
+  LetterVariable(key: 'kesalahan', label: 'Kesalahan'),
+];
 
 String suratPerjanjianTidakMengulangiKesalahan(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   // String dateNow =
   //     DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
 
@@ -49,7 +55,7 @@ String suratPerjanjianTidakMengulangiKesalahan(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini saya berjanji untuk tidak mengulangi kesalahan yang telah saya perbuat yaitu <b>... (Kesalahan)</b>. Apabila dikemudian hari saya melakukan kesalahan yang sama, maka saya bersedia menerima sanksi dari pihak sekolah sesuai tata tertib yang berlaku.
+      Dengan ini saya berjanji untuk tidak mengulangi kesalahan yang telah saya perbuat yaitu ${fillVar(vars, 'kesalahan', '... (Kesalahan)')}. Apabila dikemudian hari saya melakukan kesalahan yang sama, maka saya bersedia menerima sanksi dari pihak sekolah sesuai tata tertib yang berlaku.
     </p>
     <p style="text-align: justify; ">
       Demikian surat Perjanjian ini saya buat dengan sebenarnya tanpa paksaan dari manapun.

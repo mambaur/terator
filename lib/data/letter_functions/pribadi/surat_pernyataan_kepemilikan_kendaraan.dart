@@ -1,9 +1,32 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanKepemilikanKendaraanVariables = [
+  LetterVariable(key: 'pekerjaan', label: 'Pekerjaan'),
+  LetterVariable(key: 'nomor_ktp_nik', label: 'Nomor KTP/NIK'),
+  LetterVariable(
+      key: 'merk_dan_tipe_kendaraan', label: 'Merk dan Tipe Kendaraan'),
+  LetterVariable(
+      key: 'jenis_kendaraan',
+      label: 'Jenis Kendaraan',
+      type: LetterVariableType.choice,
+      options: ['Mobil', 'Motor']),
+  LetterVariable(
+      key: 'tahun_pembuatan',
+      label: 'Tahun Pembuatan',
+      type: LetterVariableType.number),
+  LetterVariable(key: 'warna_kendaraan', label: 'Warna Kendaraan'),
+  LetterVariable(key: 'nomor_polisi', label: 'Nomor Polisi'),
+  LetterVariable(key: 'nomor_rangka', label: 'Nomor Rangka'),
+  LetterVariable(key: 'nomor_mesin', label: 'Nomor Mesin'),
+  LetterVariable(key: 'nomor_bpkb', label: 'Nomor BPKB'),
+];
 
 String suratPernyataanKepemilikanKendaraan(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -35,12 +58,12 @@ String suratPernyataanKepemilikanKendaraan(
           <tr>
             <td style="white-space: nowrap">Pekerjaan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Pekerjaan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'pekerjaan', '... (Pekerjaan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">No. KTP/NIK</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nomor KTP/NIK)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nomor_ktp_nik', '... (Nomor KTP/NIK)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat</td>
@@ -64,42 +87,42 @@ String suratPernyataanKepemilikanKendaraan(
           <tr>
             <td style="white-space: nowrap">Merk / Tipe</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Merk dan Tipe Kendaraan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'merk_dan_tipe_kendaraan', '... (Merk dan Tipe Kendaraan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Jenis Kendaraan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Mobil/Motor)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'jenis_kendaraan', '... (Mobil/Motor)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Tahun Pembuatan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Tahun)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'tahun_pembuatan', '... (Tahun)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Warna</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Warna Kendaraan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'warna_kendaraan', '... (Warna Kendaraan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">No. Polisi</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nomor Polisi)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nomor_polisi', '... (Nomor Polisi)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">No. Rangka</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nomor Rangka)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nomor_rangka', '... (Nomor Rangka)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">No. Mesin</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nomor Mesin)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nomor_mesin', '... (Nomor Mesin)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">No. BPKB</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nomor BPKB)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nomor_bpkb', '... (Nomor BPKB)')}</td>
           </tr>
         </tbody>
       </table>

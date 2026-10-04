@@ -224,6 +224,11 @@ class _AccountUpdateScreenState extends State<AccountUpdateScreen>
       child: TabBar(
         controller: _tabController,
         isScrollable: true,
+        tabAlignment: TabAlignment.start,
+        // First tab lines up with the 20px content padding below.
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        labelPadding: const EdgeInsets.only(right: 24),
+        indicatorSize: TabBarIndicatorSize.label,
         labelColor: kPrimary,
         unselectedLabelColor: Colors.black54,
         indicatorColor: kPrimary,
@@ -299,8 +304,8 @@ class _AccountUpdateScreenState extends State<AccountUpdateScreen>
                 icon: Icons.domain_outlined),
             _buildInput(_educationStudyProgramController, 'Program Studi',
                 icon: Icons.menu_book_outlined),
-            _buildInput(_educationAddressController,
-                'Alamat Institusi/Sekolah/Kampus',
+            _buildInput(
+                _educationAddressController, 'Alamat Institusi/Sekolah/Kampus',
                 icon: Icons.location_on_outlined, isLast: true),
           ],
         ),
@@ -321,8 +326,7 @@ class _AccountUpdateScreenState extends State<AccountUpdateScreen>
           children: [
             _buildInput(_telephoneController, 'No. Telp',
                 isRequired: true, icon: Icons.phone_outlined),
-            _buildInput(_emailController, 'Email',
-                icon: Icons.email_outlined),
+            _buildInput(_emailController, 'Email', icon: Icons.email_outlined),
             _buildInput(_heightOrWeightController, 'Tinggi / Berat Badan',
                 hint: '60/165 cm', icon: Icons.straighten_outlined),
             _buildInput(
@@ -375,8 +379,8 @@ class _AccountUpdateScreenState extends State<AccountUpdateScreen>
                         width: double.infinity,
                         height: double.infinity,
                         alignment: Alignment.center,
-                        child: Image.memory(const Base64Decoder()
-                            .convert(signatureText ?? '')),
+                        child: Image.memory(
+                            const Base64Decoder().convert(signatureText ?? '')),
                       ),
                     Positioned(
                       top: 4,

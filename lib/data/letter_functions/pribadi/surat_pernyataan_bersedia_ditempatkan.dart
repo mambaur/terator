@@ -1,9 +1,21 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanBersediaDitempatkanVariables = [
+  LetterVariable(key: 'nomor_ktp_nik', label: 'Nomor KTP/NIK'),
+  LetterVariable(
+      key: 'wilayah_penempatan',
+      label: 'Wilayah Penempatan',
+      hint: 'mis. Negara Kesatuan Republik Indonesia'),
+  LetterVariable(
+      key: 'nama_instansi_perusahaan', label: 'Nama Instansi/Perusahaan'),
+];
 
 String suratPernyataanBersediaDitempatkan(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -45,7 +57,7 @@ String suratPernyataanBersediaDitempatkan(
           <tr>
             <td style="white-space: nowrap">No. KTP/NIK</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nomor KTP/NIK)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nomor_ktp_nik', '... (Nomor KTP/NIK)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat</td>
@@ -61,7 +73,7 @@ String suratPernyataanBersediaDitempatkan(
       </table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini menyatakan dengan sesungguhnya bahwa saya bersedia ditempatkan di seluruh wilayah <b>... (Wilayah Penempatan, mis. Negara Kesatuan Republik Indonesia)</b> oleh <b>... (Nama Instansi/Perusahaan)</b> sesuai dengan kebijakan dan kebutuhan organisasi.
+      Dengan ini menyatakan dengan sesungguhnya bahwa saya bersedia ditempatkan di seluruh wilayah ${fillVar(vars, 'wilayah_penempatan', '... (Wilayah Penempatan, mis. Negara Kesatuan Republik Indonesia)')} oleh ${fillVar(vars, 'nama_instansi_perusahaan', '... (Nama Instansi/Perusahaan)')} sesuai dengan kebijakan dan kebutuhan organisasi.
     </p>
     <p style="text-align: justify; ">
       Apabila di kemudian hari saya menolak penempatan tersebut tanpa alasan yang dapat dipertanggungjawabkan, maka saya bersedia menerima sanksi sesuai dengan ketentuan yang berlaku, termasuk pemutusan hubungan kerja maupun pencabutan status kepegawaian.

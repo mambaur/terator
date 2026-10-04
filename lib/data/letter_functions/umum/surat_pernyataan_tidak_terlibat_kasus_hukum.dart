@@ -1,9 +1,20 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanTidakTerlibatKasusHukumVariables = [
+  LetterVariable(key: 'pekerjaan', label: 'Pekerjaan'),
+  LetterVariable(key: 'nomor_ktp_nik', label: 'Nomor KTP/NIK'),
+  LetterVariable(
+      key: 'keperluan',
+      label: 'Keperluan',
+      hint: 'mis. Lamaran Kerja/CPNS/Pengajuan Visa/Pencalonan'),
+];
 
 String suratPernyataanTidakTerlibatKasusHukum(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -45,12 +56,12 @@ String suratPernyataanTidakTerlibatKasusHukum(
           <tr>
             <td style="white-space: nowrap">Pekerjaan</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Pekerjaan)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'pekerjaan', '... (Pekerjaan)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">No. KTP/NIK</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nomor KTP/NIK)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nomor_ktp_nik', '... (Nomor KTP/NIK)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat</td>
@@ -80,7 +91,7 @@ String suratPernyataanTidakTerlibatKasusHukum(
       5. <b>TIDAK SEDANG DICEKAL</b> atau dilarang bepergian ke luar negeri oleh pihak yang berwenang.
     </p>
     <p style="text-align: justify; ">
-      Surat pernyataan ini saya buat untuk keperluan <b>... (Keperluan, mis. Lamaran Kerja/CPNS/Pengajuan Visa/Pencalonan)</b>.
+      Surat pernyataan ini saya buat untuk keperluan ${fillVar(vars, 'keperluan', '... (Keperluan, mis. Lamaran Kerja/CPNS/Pengajuan Visa/Pencalonan)')}.
     </p>
     <p style="text-align: justify; ">
       Apabila di kemudian hari pernyataan ini terbukti tidak benar, maka saya bersedia:

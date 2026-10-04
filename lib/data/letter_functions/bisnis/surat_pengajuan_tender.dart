@@ -1,9 +1,33 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPengajuanTenderVariables = [
+  LetterVariable(
+      key: 'nama_panitia_pengadaan_pejabat',
+      label: 'Nama Panitia Pengadaan/Pejabat'),
+  LetterVariable(
+      key: 'nama_instansi_perusahaan', label: 'Nama Instansi/Perusahaan'),
+  LetterVariable(
+      key: 'alamat', label: 'Alamat', type: LetterVariableType.multiline),
+  LetterVariable(key: 'jabatan', label: 'Jabatan'),
+  LetterVariable(key: 'nama_perusahaan', label: 'Nama Perusahaan'),
+  LetterVariable(key: 'nama_proyek_pengadaan', label: 'Nama Proyek/Pengadaan'),
+  LetterVariable(key: 'nomor_tender', label: 'Nomor Tender'),
+  LetterVariable(
+      key: 'nilai_penawaran',
+      label: 'Nilai Penawaran',
+      type: LetterVariableType.currency),
+  LetterVariable(
+      key: 'jangka_waktu_pelaksanaan', label: 'Jangka Waktu Pelaksanaan'),
+  LetterVariable(
+      key: 'masa_berlaku_penawaran', label: 'Masa Berlaku Penawaran'),
+];
 
 String suratPengajuanTender(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,11 +36,11 @@ String suratPengajuanTender(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama Panitia Pengadaan/Pejabat)</b>
+      ${fillVar(vars, 'nama_panitia_pengadaan_pejabat', '... (Nama Panitia Pengadaan/Pejabat)')}
       <br>
-      <b>... (Nama Instansi/Perusahaan)</b>
+      ${fillVar(vars, 'nama_instansi_perusahaan', '... (Nama Instansi/Perusahaan)')}
       <br>
-      di <b>... (Alamat)</b>
+      di ${fillVar(vars, 'alamat', '... (Alamat)')}
     </p>
     <p><br></p>
     <p>Perihal: <b>Pengajuan Penawaran Tender</b></p>
@@ -38,12 +62,12 @@ String suratPengajuanTender(
 					<tr>
 						<td style="white-space: nowrap">Jabatan</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Jabatan)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'jabatan', '... (Jabatan)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Perusahaan</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Nama Perusahaan)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Alamat</td>
@@ -64,7 +88,7 @@ String suratPengajuanTender(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini mengajukan penawaran untuk mengikuti proses tender/pengadaan <b>... (Nama Proyek/Pengadaan)</b> dengan nomor referensi <b>... (Nomor Tender)</b>.
+      Dengan ini mengajukan penawaran untuk mengikuti proses tender/pengadaan ${fillVar(vars, 'nama_proyek_pengadaan', '... (Nama Proyek/Pengadaan)')} dengan nomor referensi ${fillVar(vars, 'nomor_tender', '... (Nomor Tender)')}.
     </p>
     <p style="text-align: justify; ">
       Adapun rincian penawaran kami adalah sebagai berikut:
@@ -75,17 +99,17 @@ String suratPengajuanTender(
 					<tr>
 						<td style="white-space: nowrap">Nilai Penawaran</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>Rp ... (Nominal)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nilai_penawaran', 'Rp ... (Nominal)', prefix: 'Rp ')}</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap">Jangka Waktu Pelaksanaan</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Durasi)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'jangka_waktu_pelaksanaan', '... (Durasi)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Masa Berlaku Penawaran</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Masa Berlaku)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'masa_berlaku_penawaran', '... (Masa Berlaku)')}</td>
 					</tr>
 				</tbody>
 			</table>

@@ -30,15 +30,22 @@ Pick the folder that matches the letter's domain. If none fits, prefer `umum/` r
 
 ## 2. Required function signature
 
-Every template file exports **one** top-level function with this exact signature:
+Every template file exports **one** top-level function with this exact signature, plus a `const List<LetterVariable> suratXxxYyyVariables` declaring its fillable fields (see Section 4):
 
 ```dart
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
 
-String suratXxxYyy(
-    LetterModel? letter, String? img, AccountModel? account) {
+const List<LetterVariable> suratXxxYyyVariables = [
+  LetterVariable(key: 'nama_pimpinan', label: 'Nama Pimpinan'),
+  LetterVariable(
+      key: 'tanggal_mulai', label: 'Tanggal Mulai', type: LetterVariableType.date),
+];
+
+String suratXxxYyy(LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -52,8 +59,8 @@ String suratXxxYyy(
 Rules:
 
 - Function returns a single `String` of HTML — no widgets, no async, no I/O.
-- Parameter order is **always** `(LetterModel? letter, String? img, AccountModel? account)`. Do not reorder, do not rename, do not drop unused parameters — the registry calls them positionally.
-- All three parameters are nullable. Always guard with `?.` and provide a sensible empty fallback (`?? ''`).
+- Parameter order is **always** `(LetterModel? letter, String? img, AccountModel? account, [Map<String, String>? vars])`. Do not reorder, do not rename, do not drop unused parameters — the registry calls them positionally.
+- All parameters are nullable. Always guard with `?.` and provide a sensible empty fallback (`?? ''`).
 - Use a triple-quoted raw-ish string (`"""..."""`) with `${...}` interpolation. Do not concatenate with `+`.
 - Use the date format `DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now())` for the letter date (Indonesian locale is initialized in `main.dart`).
 
@@ -106,6 +113,22 @@ Rules:
 - Keep the label short and descriptive (`(Nama Perusahaan)`, not `(masukkan nama perusahaan yang dituju)`).
 - Currency: prefix with `Rp ` inside the bold, e.g. `<b>Rp ... (Nominal)</b>`.
 - Never leave a bare empty `<td></td>` for fields the user is expected to fill — use the placeholder so the user sees what to type.
+
+### 4a. Template variables (form "Isi Data Surat")
+
+Every placeholder must be a **declared variable** so the user can fill it in the optional form shown after "Gunakan Template". Write the placeholder through `fillVar` instead of raw `<b>`:
+
+```dart
+${fillVar(vars, 'nama_pimpinan', '... (Nama Pimpinan)')}
+${fillVar(vars, 'nominal', 'Rp ... (Nominal)', prefix: 'Rp ')}
+${fillVar(vars, 'semester', 'Semester ... (Ganjil/Genap)', prefix: 'Semester ')}
+```
+
+- `fillVar` returns the user's value (plus `prefix`/`suffix`), or the original `<b>placeholder</b>` when the field was skipped — so skipping keeps today's behaviour.
+- Every `key` used in `fillVar` must appear in the file's `suratXxxVariables` list, and vice versa (`test/letter_variable_test.dart` checks this). Reuse the same key when one value appears several times; use different keys for different people/things with the same label (e.g. `jabatan_pihak_pertama`, `jabatan_pihak_kedua`).
+- Pick the `LetterVariableType` that matches the input: `date` / `dateWithDay` (date picker → "d MMMM yyyy" / "EEEE, d MMMM yyyy"), `currency` (digits with thousand separators; keep `Rp ` as `prefix`), `number`, `multiline` (alasan, uraian, alamat), `choice` with `options`, else `text`.
+- Put examples in `hint` (e.g. `hint: 'mis. Sakit/Acara Keluarga'`), not in the label.
+- Item tables meant to be filled row-by-row in the editor (e.g. daftar barang) may keep raw `<b>...</b>` cells.
 
 ---
 
@@ -305,7 +328,8 @@ After creating the file in `lib/data/letter_functions/<category>/`, wire it up i
    {
      "key": "surat_xxx",
      "title": "Surat Xxx",
-     "html": suratXxx(letter, image, account),
+     "html": suratXxx(letter, image, account, vars),
+     "variables": suratXxxVariables
    },
    ```
 4. **Premium (optional)** — if the letter is paid, add the key to `premiumLetterMap`:
@@ -321,10 +345,10 @@ The `key` string must be byte-identical in all three places (and ideally match t
 ## 9. Checklist before considering the template done
 
 - [ ] File lives under the correct category folder; name is `surat_xxx.dart`.
-- [ ] Function signature is exactly `String suratXxx(LetterModel? letter, String? img, AccountModel? account)`.
-- [ ] `intl`, `AccountModel`, and `LetterModel` are imported.
+- [ ] Function signature is exactly `String suratXxx(LetterModel? letter, String? img, AccountModel? account, [Map<String, String>? vars])`.
+- [ ] `intl`, `AccountModel`, `LetterModel`, and `LetterVariable` are imported.
 - [ ] Every account-derived value is guarded with `?.` and `?? ''`.
-- [ ] Every non-account value is a `<b>... (Label)</b>` placeholder in Bahasa Indonesia.
+- [ ] Every non-account value is a `fillVar(vars, 'key', '... (Label)')` placeholder in Bahasa Indonesia, declared in `suratXxxVariables`.
 - [ ] All copy (title, body, role labels, placeholders) is in Bahasa Indonesia.
 - [ ] Date uses `DateFormat("d MMMM yyyy", "id_ID")`.
 - [ ] Opener matches letter type: addressed letter → date-right + "Kepada Yth."; declaration → centered bold title.
@@ -333,7 +357,7 @@ The `key` string must be byte-identical in all three places (and ideally match t
 - [ ] No `<div>`, `<style>`, `<script>`, `class=`, external CSS, or custom fonts.
 - [ ] Imported and registered in `letter_data.dart` (`listLetters` **and** `letterDataMap`).
 - [ ] If premium, added to `premiumLetterMap` with value `true`.
-- [ ] `flutter analyze` is clean.
+- [ ] `flutter analyze` and `flutter test test/letter_variable_test.dart` are clean.
 
 ---
 

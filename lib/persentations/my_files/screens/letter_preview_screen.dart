@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_html_to_pdf/flutter_native_html_to_pdf.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:terator/core/platform/html_preview.dart';
 import 'package:terator/core/styles.dart';
 
 class LetterPreviewScreen extends StatefulWidget {
@@ -29,6 +30,11 @@ class _LetterPreviewScreenState extends State<LetterPreviewScreen> {
   @override
   void initState() {
     super.initState();
+    // Web has no native PDF renderer — the HTML is shown directly instead.
+    if (kIsWeb) {
+      _isLoading = false;
+      return;
+    }
     _generatePdf();
   }
 
@@ -99,44 +105,48 @@ class _LetterPreviewScreenState extends State<LetterPreviewScreen> {
                 ],
               ),
             )
-          : _pdfBytes == null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.error_outline_rounded,
-                          color: Colors.white70,
-                          size: 48,
-                        ),
+          : kIsWeb
+              ? HtmlPreview(
+                  html:
+                      '<div style="margin: 105px 90px">${widget.htmlContent}</div>')
+              : _pdfBytes == null
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.error_outline_rounded,
+                              color: Colors.white70,
+                              size: 48,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'Gagal memuat preview',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Coba lagi nanti',
+                            style: TextStyle(
+                              color: Colors.white54,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'Gagal memuat preview',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Coba lagi nanti',
-                        style: TextStyle(
-                          color: Colors.white54,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : _buildPdfViewer(),
+                    )
+                  : _buildPdfViewer(),
     );
   }
 

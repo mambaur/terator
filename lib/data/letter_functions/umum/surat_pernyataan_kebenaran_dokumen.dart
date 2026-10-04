@@ -1,9 +1,16 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPernyataanKebenaranDokumenVariables = [
+  LetterVariable(key: 'nama_acara', label: 'Nama Acara'),
+  LetterVariable(key: 'nama_institusi', label: 'Nama Institusi'),
+];
 
 String suratPernyataanKebenaranDokumen(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   // String dateNow =
   //     DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
 
@@ -55,11 +62,11 @@ String suratPernyataanKebenaranDokumen(
     </p>
 
     <p style="text-align: justify; ">
-      Dengan ini menyatakan sesungguhnya bahwa seluruh dokumen persyaratan administrasi <b>... (Nama Acara)</b> adalah <b>BENAR</b>.
+      Dengan ini menyatakan sesungguhnya bahwa seluruh dokumen persyaratan administrasi ${fillVar(vars, 'nama_acara', '... (Nama Acara)')} adalah <b>BENAR</b>.
     </p>
 
     <p style="text-align: justify; ">
-      Apabila kemudian hari ternyata dokumen tersebut tidak benar (PALSU), maka saya siap menanggung resiko apapun yang diberikan kepada saya oleh <b>... (Nama Institusi)</b>.
+      Apabila kemudian hari ternyata dokumen tersebut tidak benar (PALSU), maka saya siap menanggung resiko apapun yang diberikan kepada saya oleh ${fillVar(vars, 'nama_institusi', '... (Nama Institusi)')}.
     </p>
 
     <p style="text-align: justify; ">

@@ -1,9 +1,23 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratPermohonanRekamMedisVariables = [
+  LetterVariable(
+      key: 'nama_direktur_rumah_sakit', label: 'Nama Direktur Rumah Sakit'),
+  LetterVariable(key: 'nama_rumah_sakit', label: 'Nama Rumah Sakit'),
+  LetterVariable(key: 'nomor_rekam_medis', label: 'Nomor Rekam Medis'),
+  LetterVariable(
+      key: 'tujuan_permohonan',
+      label: 'Tujuan Permohonan',
+      hint:
+          'misal: pengajuan klaim asuransi / rujukan ke rumah sakit lain / keperluan hukum'),
+];
 
 String suratPermohonanRekamMedis(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -12,9 +26,9 @@ String suratPermohonanRekamMedis(
     <p>
       Kepada Yth.
       <br>
-      <b>... (Nama Direktur Rumah Sakit)</b>
+      ${fillVar(vars, 'nama_direktur_rumah_sakit', '... (Nama Direktur Rumah Sakit)')}
       <br>
-      <b>... (Nama Rumah Sakit)</b>
+      ${fillVar(vars, 'nama_rumah_sakit', '... (Nama Rumah Sakit)')}
       <br>
       di Tempat
     </p>
@@ -55,10 +69,10 @@ String suratPermohonanRekamMedis(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini mengajukan permohonan untuk mendapatkan salinan rekam medis saya yang tercatat di <b>... (Nama Rumah Sakit)</b> dengan nomor rekam medis <b>... (Nomor Rekam Medis)</b>.
+      Dengan ini mengajukan permohonan untuk mendapatkan salinan rekam medis saya yang tercatat di ${fillVar(vars, 'nama_rumah_sakit', '... (Nama Rumah Sakit)')} dengan nomor rekam medis ${fillVar(vars, 'nomor_rekam_medis', '... (Nomor Rekam Medis)')}.
     </p>
     <p style="text-align: justify; ">
-      Adapun tujuan permohonan rekam medis ini adalah untuk keperluan <b>... (Tujuan Permohonan, misal: pengajuan klaim asuransi / rujukan ke rumah sakit lain / keperluan hukum)</b>.
+      Adapun tujuan permohonan rekam medis ini adalah untuk keperluan ${fillVar(vars, 'tujuan_permohonan', '... (Tujuan Permohonan, misal: pengajuan klaim asuransi / rujukan ke rumah sakit lain / keperluan hukum)')}.
     </p>
     <p style="text-align: justify; ">
       Demikian surat permohonan ini saya buat. Atas perhatian dan kerjasamanya saya ucapkan terima kasih.

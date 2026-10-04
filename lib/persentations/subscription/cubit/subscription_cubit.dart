@@ -14,6 +14,11 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
   /// Initialize RevenueCat SDK and check subscription status.
   /// Call this once during app startup.
   Future<void> init() async {
+    // Web is only used for UI development: unlock every premium feature.
+    if (kIsWeb) {
+      emit(const SubscriptionState(status: SubscriptionStatus.active));
+      return;
+    }
     try {
       await Purchases.setLogLevel(LogLevel.debug);
 
@@ -43,6 +48,7 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
 
   /// Check current subscription status from RevenueCat.
   Future<void> checkStatus() async {
+    if (kIsWeb) return;
     try {
       final customerInfo = await Purchases.getCustomerInfo();
       _updateStatusFromCustomerInfo(customerInfo);
@@ -58,14 +64,14 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
         customerInfo.entitlements.all[entitlementId]?.isActive ?? false;
 
     emit(SubscriptionState(
-      status: isActive
-          ? SubscriptionStatus.active
-          : SubscriptionStatus.inactive,
+      status:
+          isActive ? SubscriptionStatus.active : SubscriptionStatus.inactive,
     ));
   }
 
   /// Restore purchases and re-check status.
   Future<bool> restorePurchases() async {
+    if (kIsWeb) return true;
     try {
       emit(state.copyWith(status: SubscriptionStatus.loading));
       final customerInfo = await Purchases.restorePurchases();
@@ -81,6 +87,7 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
   /// Show RevenueCat's native paywall UI.
   /// Returns true if purchase was made successfully.
   Future<bool> showPaywall() async {
+    if (kIsWeb) return true;
     try {
       final result = await RevenueCatUI.presentPaywallIfNeeded(entitlementId);
       if (kDebugMode) print('Paywall result: $result');

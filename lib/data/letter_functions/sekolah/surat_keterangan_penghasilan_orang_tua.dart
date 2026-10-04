@@ -1,9 +1,18 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratKeteranganPenghasilanOrangTuaVariables = [
+  LetterVariable(
+      key: 'penghasilan',
+      label: 'Penghasilan',
+      type: LetterVariableType.currency),
+];
 
 String suratKeteranganPenghasilanOrangTua(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   // String dateNow =
   //     DateFormat("EEEE, d MMMM yyyy", "id_ID").format(DateTime.now());
 
@@ -106,7 +115,7 @@ String suratKeteranganPenghasilanOrangTua(
 			</table>
     </p>
     <p style="text-align: justify; ">
-      Menyatakan bahwa saat ini, kami selaku orang tua/wali mempunyai penghasilan rata-rata sebesar <b> Rp ... (Penghasilan)</b>.
+      Menyatakan bahwa saat ini, kami selaku orang tua/wali mempunyai penghasilan rata-rata sebesar  ${fillVar(vars, 'penghasilan', 'Rp ... (Penghasilan)', prefix: 'Rp ')}.
     </p>
     <p style="text-align: justify; ">
       Demikian pernyataan ini kami buat dengan sebenar-benarnya dan penuh rasa tanggung jawab, dan apabila dikemudian hari ternyata pernyataan ini tidak benar/menyimpang dengan keadaan yang sebenarnya, kami bersedia menerima sanksi yang telah ditetapkan.

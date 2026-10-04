@@ -1,9 +1,18 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable>
+    suratPernyataanBersediaMengikutiPeraturanPerusahaanVariables = [
+  LetterVariable(key: 'nomor_ktp_nik', label: 'Nomor KTP/NIK'),
+  LetterVariable(key: 'jabatan_yang_dilamar', label: 'Jabatan yang Dilamar'),
+  LetterVariable(key: 'nama_perusahaan', label: 'Nama Perusahaan'),
+];
 
 String suratPernyataanBersediaMengikutiPeraturanPerusahaan(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -45,7 +54,7 @@ String suratPernyataanBersediaMengikutiPeraturanPerusahaan(
           <tr>
             <td style="white-space: nowrap">No. KTP/NIK</td>
             <td>:&nbsp</td>
-            <td style="width: 100%"><b>... (Nomor KTP/NIK)</b></td>
+            <td style="width: 100%">${fillVar(vars, 'nomor_ktp_nik', '... (Nomor KTP/NIK)')}</td>
           </tr>
           <tr>
             <td style="white-space: nowrap">Alamat</td>
@@ -61,7 +70,7 @@ String suratPernyataanBersediaMengikutiPeraturanPerusahaan(
       </table>
     </p>
     <p style="text-align: justify; ">
-      Dengan ini menyatakan dengan sesungguhnya bahwa apabila saya diterima bekerja sebagai <b>... (Jabatan yang Dilamar)</b> di <b>... (Nama Perusahaan)</b>, maka saya bersedia:
+      Dengan ini menyatakan dengan sesungguhnya bahwa apabila saya diterima bekerja sebagai ${fillVar(vars, 'jabatan_yang_dilamar', '... (Jabatan yang Dilamar)')} di ${fillVar(vars, 'nama_perusahaan', '... (Nama Perusahaan)')}, maka saya bersedia:
     </p>
     <p style="text-align: justify; ">
       1. <b>Mematuhi seluruh peraturan dan tata tertib</b> yang berlaku di perusahaan, baik yang telah ada saat ini maupun yang akan ditetapkan kemudian;

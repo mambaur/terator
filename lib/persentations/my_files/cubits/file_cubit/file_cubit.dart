@@ -17,12 +17,27 @@ class FileCubit extends Cubit<FileState> {
   int _page = 1;
   bool hasReachMax = false;
 
+  // Active filter from the File Saya search bar / category chips; kept so
+  // pagination and refreshes stay within it.
+  String _query = '';
+  List<String>? _templateNames;
+
+  /// Sets the search text / template filter (null = all) and reloads.
+  Future<void> applyFilter({String query = '', List<String>? templateNames}) {
+    _query = query;
+    _templateNames = templateNames;
+    return getFiles(isInit: true);
+  }
+
   Future<void> getFiles({bool isInit = false}) async {
     if (isInit) {
       emit(const FileState(status: FileStatusCubit.loading));
       _page = 1;
-      List<LetterModel> response =
-          await _letterRepo.all(page: _page, limit: _limit);
+      List<LetterModel> response = await _letterRepo.all(
+          page: _page,
+          limit: _limit,
+          query: _query,
+          templateNames: _templateNames);
       _data = response;
       hasReachMax = _data.length < _limit ? true : false;
       emit(FileState(
@@ -31,8 +46,11 @@ class FileCubit extends Cubit<FileState> {
           letters: _data));
     } else {
       _page++;
-      List<LetterModel> response =
-          await _letterRepo.all(page: _page, limit: _limit);
+      List<LetterModel> response = await _letterRepo.all(
+          page: _page,
+          limit: _limit,
+          query: _query,
+          templateNames: _templateNames);
       _data.addAll(response);
       hasReachMax = (response).length < _limit ? true : false;
       emit(FileState(

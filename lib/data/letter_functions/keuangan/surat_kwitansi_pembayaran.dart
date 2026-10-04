@@ -1,9 +1,19 @@
 import 'package:intl/intl.dart';
 import 'package:terator/models/account_model.dart';
 import 'package:terator/models/letter_model.dart';
+import 'package:terator/models/letter_variable.dart';
+
+const List<LetterVariable> suratKwitansiPembayaranVariables = [
+  LetterVariable(key: 'nomor_kwitansi', label: 'Nomor Kwitansi'),
+  LetterVariable(
+      key: 'nominal', label: 'Nominal', type: LetterVariableType.currency),
+  LetterVariable(key: 'terbilang', label: 'Terbilang'),
+  LetterVariable(key: 'untuk_pembayaran', label: 'Untuk pembayaran'),
+];
 
 String suratKwitansiPembayaran(
-    LetterModel? letter, String? img, AccountModel? account) {
+    LetterModel? letter, String? img, AccountModel? account,
+    [Map<String, String>? vars]) {
   String dateNow2 = DateFormat("d MMMM yyyy", "id_ID").format(DateTime.now());
 
   String html = """
@@ -17,7 +27,7 @@ String suratKwitansiPembayaran(
 					<tr>
 						<td style="white-space: nowrap">Nomor</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Nomor Kwitansi)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nomor_kwitansi', '... (Nomor Kwitansi)')}</td>
 					</tr>
 					<tr>
 						<td style="white-space: nowrap">Telah terima dari</td>
@@ -32,17 +42,17 @@ String suratKwitansiPembayaran(
           <tr>
 						<td style="white-space: nowrap">Sejumlah</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>Rp ... (Nominal)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'nominal', 'Rp ... (Nominal)', prefix: 'Rp ')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Terbilang</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Terbilang)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'terbilang', '... (Terbilang)')}</td>
 					</tr>
           <tr>
 						<td style="white-space: nowrap">Untuk pembayaran</td>
 						<td>:&nbsp</td>
-						<td style="width: 100%"><b>... (Keperluan)</b></td>
+						<td style="width: 100%">${fillVar(vars, 'untuk_pembayaran', '... (Keperluan)')}</td>
 					</tr>
 				</tbody>
 			</table>

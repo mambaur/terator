@@ -1,0 +1,31 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Web: Run (Chrome)",
+      "type": "shell",
+      "command": "flutter run -d chrome",
+      "problemMatcher": []
+    },
+    {
+      "label": "Web: Run (Safari)",
+      "type": "shell",
+      "command": "(sleep 25 && open -a Safari http://localhost:8080) & flutter run -d web-server --web-port 8080",
+      "problemMatcher": []
+    },
+    {
+      "label": "Build: APK split per ABI",
+      "type": "shell",
+      "command": "flutter build apk --release --split-per-abi",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Build: App Bundle",
+      "type": "shell",
+      "command": "flutter build appbundle --release",
+      "group": "build",
+      "problemMatcher": []
+    }
+  ]
+}
