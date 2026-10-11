@@ -153,9 +153,9 @@ class _NavbarState extends State<Navbar> {
     return BlocBuilder<SubscriptionCubit, SubscriptionState>(
       builder: (context, state) {
         return Container(
-          width: 44,
-          height: 44,
-          margin: const EdgeInsets.only(right: 12),
+          width: 36,
+          height: 36,
+          margin: const EdgeInsets.only(right: 14),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
               colors: [Color(0xFFD97706), Color(0xFFFBBF24)],
@@ -165,9 +165,9 @@ class _NavbarState extends State<Navbar> {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFD97706).withValues(alpha: 0.4),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
+                color: const Color(0xFFD97706).withValues(alpha: 0.25),
+                blurRadius: 3,
+                offset: const Offset(0, 1),
               ),
             ],
           ),
@@ -176,7 +176,7 @@ class _NavbarState extends State<Navbar> {
             fit: StackFit.expand,
             children: [
               // Not an IconButton: its 48px minimum size would overflow the
-              // 44px circle and push the icon off-center.
+              // 36px circle and push the icon off-center.
               Material(
                 type: MaterialType.transparency,
                 shape: const CircleBorder(),
@@ -196,7 +196,7 @@ class _NavbarState extends State<Navbar> {
                     child: Icon(
                       LucideIcons.crown,
                       color: Colors.white,
-                      size: 22,
+                      size: 18,
                     ),
                   ),
                 ),
@@ -204,11 +204,11 @@ class _NavbarState extends State<Navbar> {
               // Premium: dot on the top-right edge.
               if (state.isPremium)
                 const Positioned(
-                  top: 1,
-                  right: 1,
+                  top: 0,
+                  right: 0,
                   child: SizedBox(
-                    width: 10,
-                    height: 10,
+                    width: 8,
+                    height: 8,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         color: Colors.white,

@@ -1,3 +1,14 @@
+## 1.7.0 (15) - RELEASED
+
+* Perbaikan tinggi editor surat (buat & edit) yang mengecil saat keyboard muncul
+* Tombol premium di navbar lebih kecil dengan bayangan lebih tipis agar tidak terpotong
+* Fitur ubah nama surat di File Saya
+* Field Jabatan baru pada data akun
+* Jarak vertikal switch "Gunakan Kop Surat" di modal detail File Saya
+* Pencarian dan chip kategori di halaman Surat Tersimpan
+* Pengaturan kop surat kini bisa dibuka & dicoba pengguna gratis (pemakaian di surat tetap Premium)
+* Perbaikan halaman detail surat yang tersendat saat modal premium muncul
+
 ## 1.6.0 (14) - RELEASED
 
 * Fitur kop surat (Premium): upload logo, isi identitas instansi, pilih 4 desain dan set default, aktifkan per surat lewat switch di halaman detail

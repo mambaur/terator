@@ -162,6 +162,9 @@ class _LetterEditorScreenState extends State<LetterEditorScreen> {
           ]),
           htmlEditorOptions: const HtmlEditorOptions(
             hint: "Tulis surat disini...",
+            // The Scaffold already shrinks the body above the keyboard; the
+            // package's own keyboard resize would shrink it a second time.
+            adjustHeightForKeyboard: false,
           ),
           otherOptions: OtherOptions(
             height: constraints.maxHeight,

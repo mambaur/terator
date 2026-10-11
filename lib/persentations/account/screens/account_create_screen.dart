@@ -45,6 +45,7 @@ class _AccountCreateScreenState extends State<AccountCreateScreen>
   final _telephoneController = TextEditingController();
   final _emailController = TextEditingController();
   final _maritalStatusController = TextEditingController();
+  final _positionController = TextEditingController();
   final _addressController = TextEditingController();
   final _letterCityWrittenController = TextEditingController();
 
@@ -93,6 +94,7 @@ class _AccountCreateScreenState extends State<AccountCreateScreen>
       "telephone": _telephoneController.text,
       "email": _emailController.text,
       "marital_status": _maritalStatusController.text,
+      "position": _positionController.text,
       "address": _addressController.text,
       "signature_image": image,
       "letter_city_written": _letterCityWrittenController.text,
@@ -236,6 +238,9 @@ class _AccountCreateScreenState extends State<AccountCreateScreen>
                 icon: Icons.auto_awesome_outlined),
             _buildInput(_maritalStatusController, 'Status Perkawinan',
                 icon: Icons.favorite_outline),
+            _buildInput(_positionController, 'Jabatan',
+                hint: 'Contoh: Staff Administrasi',
+                icon: Icons.work_outline_rounded),
             _buildInput(_parentNameController, 'Nama Ortu/Wali',
                 icon: Icons.family_restroom_outlined, isLast: true),
           ],

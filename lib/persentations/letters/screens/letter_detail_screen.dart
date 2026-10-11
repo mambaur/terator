@@ -43,6 +43,9 @@ class _LetterDetailScreenState extends State<LetterDetailScreen> {
   // Web has no native PDF renderer — the HTML is shown directly instead.
   String? _webHtml;
   bool _kopEnabled = false;
+  // The PDF preview is a native platform view; compositing the premium sheet
+  // over it makes the sheet animation stutter, so it is hidden meanwhile.
+  bool _hidePreview = false;
 
   // Dummy sample account so the preview shows realistic content
   AccountModel get _sampleAccount => AccountModel(
@@ -62,6 +65,7 @@ class _LetterDetailScreenState extends State<LetterDetailScreen> {
         telephone: '081234567890',
         email: 'budi.santoso@example.com',
         maritalStatus: 'Belum Menikah',
+        position: 'Staff Administrasi',
         address: 'Jl. Merdeka No. 17, Jakarta Pusat',
         letterCityWritten: 'Jakarta',
       );
@@ -127,10 +131,16 @@ class _LetterDetailScreenState extends State<LetterDetailScreen> {
     }
   }
 
+  Future<void> _showPremiumGate() async {
+    setState(() => _hidePreview = true);
+    await PremiumGate.show(context);
+    if (mounted) setState(() => _hidePreview = false);
+  }
+
   Future<void> _toggleKop(bool value) async {
     if (value) {
       if (!context.read<SubscriptionCubit>().state.isPremium) {
-        PremiumGate.show(context);
+        _showPremiumGate();
         return;
       }
       if (!(await _kopRepo.get()).isConfigured) {
@@ -324,7 +334,7 @@ class _LetterDetailScreenState extends State<LetterDetailScreen> {
                   ),
                   onPressed: () {
                     if (isPremiumLetter && !subState.isPremium) {
-                      PremiumGate.show(context);
+                      _showPremiumGate();
                       return;
                     }
                     _useTemplate();
@@ -469,13 +479,16 @@ class _LetterDetailScreenState extends State<LetterDetailScreen> {
       );
     }
 
-    return PDFView(
-      filePath: _pdfFile!.path,
-      enableSwipe: true,
-      swipeHorizontal: true,
-      autoSpacing: false,
-      pageFling: false,
-      backgroundColor: Colors.transparent,
+    return Offstage(
+      offstage: _hidePreview,
+      child: PDFView(
+        filePath: _pdfFile!.path,
+        enableSwipe: true,
+        swipeHorizontal: true,
+        autoSpacing: false,
+        pageFling: false,
+        backgroundColor: Colors.transparent,
+      ),
     );
   }
 }

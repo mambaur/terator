@@ -6,13 +6,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_file_saver/flutter_file_saver.dart';
 import 'package:flutter_native_html_to_pdf/flutter_native_html_to_pdf.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:terator/core/generator.dart';
 import 'package:terator/core/loading_overlay.dart';
 import 'package:terator/core/styles.dart';
-import 'package:terator/data/letter_categories.dart';
 import 'package:terator/data/letter_data.dart';
 import 'package:terator/models/letter_model.dart';
 import 'package:terator/persentations/ads/widgets/banner_ad_widget.dart';
@@ -24,6 +24,7 @@ import 'package:terator/persentations/subscription/cubit/subscription_cubit.dart
 import 'package:terator/persentations/subscription/widgets/premium_gate.dart';
 import 'package:terator/repositories/kop_surat_repository.dart';
 import 'package:terator/repositories/letter_repository.dart';
+import 'package:terator/utils/category_chips.dart';
 import 'package:terator/utils/custom_snackbar.dart';
 import 'package:terator/utils/search_field.dart';
 
@@ -197,7 +198,12 @@ class _MyFileScreenState extends State<MyFileScreen> {
                 },
               ),
             ),
-            SliverToBoxAdapter(child: _buildCategoryChips()),
+            SliverToBoxAdapter(
+              child: CategoryChips(
+                selectedIndex: _categoryIndex,
+                onSelected: _selectCategory,
+              ),
+            ),
             SliverToBoxAdapter(
               child: BannerAdWidget(
                 placement: BannerPlacement.myFilePage,
@@ -382,72 +388,6 @@ class _MyFileScreenState extends State<MyFileScreen> {
     );
   }
 
-  Widget _buildCategoryChips() {
-    return SizedBox(
-      height: 52,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 4),
-        children: [
-          _categoryChip(
-            label: 'Semua',
-            icon: Icons.apps_rounded,
-            color: kPrimary,
-            selected: _categoryIndex == null,
-            onTap: () => _selectCategory(null),
-          ),
-          for (final cat in letterCategories)
-            _categoryChip(
-              label: cat['label'],
-              icon: cat['icon'],
-              color: (cat['gradient'] as List<Color>).first,
-              selected: _categoryIndex == cat['index'],
-              onTap: () => _selectCategory(cat['index']),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _categoryChip({
-    required String label,
-    required IconData icon,
-    required Color color,
-    required bool selected,
-    required VoidCallback onTap,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 8),
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: selected ? color : kCardWhite,
-            borderRadius: BorderRadius.circular(kRadiusFull),
-            border: Border.all(color: selected ? color : Colors.grey.shade200),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 16, color: selected ? Colors.white : color),
-              const SizedBox(width: 6),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: selected ? Colors.white : kTextPrimary,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   /// Adds or removes the kop on a saved letter and persists the new HTML.
   /// Returns whether the change was applied.
   Future<bool> _setKop(LetterModel letter, bool enabled) async {
@@ -476,7 +416,7 @@ class _MyFileScreenState extends State<MyFileScreen> {
     final enabled = KopSuratRepository.hasKop(letter.html ?? '');
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.fromLTRB(12, 4, 4, 4),
+      padding: const EdgeInsets.fromLTRB(12, 10, 4, 10),
       decoration: BoxDecoration(
         color: kBgLavender,
         borderRadius: BorderRadius.circular(kRadiusMd),
@@ -571,6 +511,15 @@ class _MyFileScreenState extends State<MyFileScreen> {
             },
           ),
           _buildActionTile(
+            icon: Icons.drive_file_rename_outline_rounded,
+            color: kWarning,
+            title: 'Ubah Nama',
+            onTap: () {
+              Navigator.pop(context);
+              _showRenameModal(letter);
+            },
+          ),
+          _buildActionTile(
             icon: Icons.share_rounded,
             color: kSuccess,
             title: 'Berbagi',
@@ -640,6 +589,70 @@ class _MyFileScreenState extends State<MyFileScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _rename(LetterModel letter, String title) async {
+    LoadingOverlay.show(context);
+    await _letterRepo.update({'id': letter.id, 'title': title});
+    LoadingOverlay.hide();
+    _refresh();
+    CustomSnackbar.show(context,
+        type: SnackbarType.success, message: "Nama surat berhasil diubah");
+  }
+
+  Future<void> _showRenameModal(LetterModel letter) async {
+    final controller = TextEditingController(text: letter.title ?? '');
+    await AppTheme.showModernBottomSheet(
+      context: context,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Text(
+            'Ubah Nama Surat',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: kTextPrimary,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            letter.name ?? '',
+            style: const TextStyle(color: kTextSecondary, fontSize: 13),
+          ),
+          const SizedBox(height: 20),
+          TextFormField(
+            controller: controller,
+            autofocus: true,
+            textInputAction: TextInputAction.done,
+            decoration: AppTheme.inputDecoration(
+              label: 'Nama File',
+              hint: 'Contoh: Surat Izin Sakit - Budi',
+              prefixIcon: Icons.insert_drive_file_outlined,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Builder(
+            builder: (sheetContext) => AppTheme.gradientButton(
+              label: 'Simpan',
+              icon: Icons.save_rounded,
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              onTap: () {
+                final title = controller.text.trim();
+                if (title.isEmpty) {
+                  Fluttertoast.showToast(msg: "Nama file tidak boleh kosong");
+                  return;
+                }
+                Navigator.pop(sheetContext);
+                if (title != letter.title) _rename(letter, title);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
   }
 
   Future<void> _showDeleteDialog(LetterModel letter) async {

@@ -76,11 +76,9 @@ class _SettingScreenState extends State<SettingScreen> {
                       color: const Color(0xFFD97706),
                       title: 'Kop Surat',
                       showProBadge: !state.isPremium,
+                      // Open for everyone so free users can discover the
+                      // feature; applying it to letters stays premium-only.
                       onTap: () {
-                        if (!state.isPremium) {
-                          PremiumGate.show(context);
-                          return;
-                        }
                         Navigator.push(context,
                             MaterialPageRoute(builder: (builder) {
                           return const KopSuratScreen();

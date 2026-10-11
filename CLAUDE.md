@@ -90,7 +90,7 @@ Configured in Pengaturan → Kop Surat ([lib/persentations/kop_surat/](lib/perse
 
 ### Persistence — sqflite
 
-Single local SQLite DB `surat_generator.db` opened by `DatabaseInstance` ([lib/core/database.dart](lib/core/database.dart)) with two tables: `accounts` (the Akun Surat / profile fields including `signature_image` as base64) and `letters` (saved generated documents storing the rendered HTML). `_databaseVersion = 1` with no migrations — adding columns means bumping the version and writing an `onUpgrade` handler.
+Single local SQLite DB `surat_generator.db` opened by `DatabaseInstance` ([lib/core/database.dart](lib/core/database.dart)) with three tables: `accounts` (the Akun Surat / profile fields including `signature_image` as base64 and `position`/jabatan), `letters` (saved generated documents storing the rendered HTML) and `bookmarks`. `_databaseVersion = 3`; `onUpgrade` migrates step by step (v2 adds `bookmarks`, v3 adds `accounts.position`) — adding columns means bumping the version, adding an `if (oldVersion < N)` step, and updating `onCreate`.
 
 ### Subscriptions & premium gating
 

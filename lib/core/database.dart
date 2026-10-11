@@ -7,7 +7,7 @@ import 'package:terator/core/platform/db_factory.dart';
 
 class DatabaseInstance {
   final String _databaseName = "surat_generator.db";
-  final int _databaseVersion = 2;
+  final int _databaseVersion = 3;
 
   // Account Table
   final String accountTable = 'accounts';
@@ -28,6 +28,7 @@ class DatabaseInstance {
   final String accountTelephone = 'telephone';
   final String accountEmail = 'email';
   final String accountMaritalStatus = 'marital_status';
+  final String accountPosition = 'position'; // jabatan
   final String accountAddress = 'address';
   final String accountSignatureImage = 'signature_image';
   final String accountLetterCityWritten = 'letter_city_written';
@@ -89,6 +90,10 @@ class DatabaseInstance {
             )
             ''');
     }
+    if (oldVersion < 3) {
+      await db.execute(
+          'ALTER TABLE $accountTable ADD COLUMN $accountPosition TEXT NULL');
+    }
   }
 
   // SQL code to create the database table
@@ -112,6 +117,7 @@ class DatabaseInstance {
             $accountTelephone TEXT NULL,
             $accountEmail TEXT NULL,
             $accountMaritalStatus TEXT NULL,
+            $accountPosition TEXT NULL,
             $accountAddress TEXT NULL,
             $accountSignatureImage TEXT NULL,
             $accountLetterCityWritten TEXT NULL,

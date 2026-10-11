@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:terator/core/styles.dart';
 
-/// Search box used at the top of list screens (File Saya, Akun Surat).
+/// Search box used at the top of list screens (File Saya, Akun Surat,
+/// Surat Tersimpan).
 /// [onSearch] fires 300ms after the user stops typing, and right away when
 /// the text is cleared.
 class SearchField extends StatefulWidget {

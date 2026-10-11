@@ -157,12 +157,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Future<void> _setupKop() async {
-    if (!context.read<SubscriptionCubit>().state.isPremium) {
-      await PremiumGate.show(context);
-      if (!mounted || !context.read<SubscriptionCubit>().state.isPremium) {
-        return;
-      }
-    }
     await Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const KopSuratScreen()),
@@ -456,16 +450,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 icon: LucideIcons.crown,
                 color: const Color(0xFFD97706),
                 title: 'Fitur Premium',
-                subtitle: 'Upgrade untuk memakai kop surat dengan logo '
-                    'sendiri. Kamu juga bisa melewati langkah ini.',
+                subtitle: 'Kamu bisa mencoba mengatur kop surat, tapi '
+                    'memakainya di surat perlu upgrade ke Premium. Kamu juga '
+                    'bisa melewati langkah ini.',
               ),
               const SizedBox(height: 12),
               AppTheme.gradientButton(
-                label: 'Lihat Premium',
+                label: _kopConfigured ? 'Ubah Kop Surat' : 'Atur Kop Surat',
                 width: double.infinity,
-                icon: LucideIcons.crown,
-                colors: const [Color(0xFFD97706), Color(0xFFF59E0B)],
+                icon: Icons.article_rounded,
                 onTap: _setupKop,
+              ),
+              const SizedBox(height: 10),
+              _outlinedButton(
+                label: 'Lihat Premium',
+                icon: LucideIcons.crown,
+                onTap: () => PremiumGate.show(context),
               ),
             ],
           );

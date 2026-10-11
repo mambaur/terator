@@ -106,6 +106,9 @@ class AccountRepository {
             maritalStatus: data[i]['marital_status'].toString() == "null"
                 ? null
                 : data[i]['marital_status'].toString(),
+            position: data[i]['position'].toString() == "null"
+                ? null
+                : data[i]['position'].toString(),
             address: data[i]['address'].toString() == "null"
                 ? null
                 : data[i]['address'].toString(),

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:terator/core/styles.dart';
 import 'package:terator/data/kop_surat_designs.dart';
 import 'package:terator/models/kop_surat_model.dart';
 import 'package:terator/persentations/kop_surat/screens/kop_design_screen.dart';
 import 'package:terator/persentations/kop_surat/widgets/kop_design_preview.dart';
+import 'package:terator/persentations/subscription/cubit/subscription_cubit.dart';
+import 'package:terator/persentations/subscription/widgets/premium_gate.dart';
 import 'package:terator/repositories/kop_surat_repository.dart';
 import 'package:terator/utils/custom_snackbar.dart';
 
@@ -119,8 +123,14 @@ class _KopSuratScreenState extends State<KopSuratScreen> {
     _savedLogoPath = kop.logoPath;
     _savedSecondaryLogoPath = kop.secondaryLogoPath;
     if (!mounted) return;
+    // Non-premium users may set up the kop to try it out, but it is only
+    // applied to letters once they upgrade.
+    final isPremium = context.read<SubscriptionCubit>().state.isPremium;
     CustomSnackbar.show(context,
-        type: SnackbarType.success, message: 'Kop surat berhasil disimpan');
+        type: isPremium ? SnackbarType.success : SnackbarType.warning,
+        message: isPremium
+            ? 'Kop surat berhasil disimpan'
+            : 'Kop surat disimpan. Upgrade ke Premium untuk memakainya di surat');
     Navigator.pop(context);
   }
 
@@ -139,6 +149,7 @@ class _KopSuratScreenState extends State<KopSuratScreen> {
               physics: const BouncingScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
               children: [
+                _buildPremiumBanner(),
                 _buildInfoCard(),
                 const SizedBox(height: 16),
                 _buildLogoCard(
@@ -175,6 +186,50 @@ class _KopSuratScreenState extends State<KopSuratScreen> {
                 ),
               ),
             ),
+    );
+  }
+
+  /// Shown to non-premium users: they can explore and save the kop, but it
+  /// is only applied to letters with Premium.
+  Widget _buildPremiumBanner() {
+    return BlocBuilder<SubscriptionCubit, SubscriptionState>(
+      builder: (context, state) {
+        if (state.isPremium) return const SizedBox.shrink();
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.fromLTRB(14, 12, 8, 12),
+          decoration: BoxDecoration(
+            color: const Color(0xFFD97706).withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(kRadiusMd),
+            border: Border.all(
+                color: const Color(0xFFD97706).withValues(alpha: 0.3)),
+          ),
+          child: Row(
+            children: [
+              const Icon(LucideIcons.crown, color: Color(0xFFD97706), size: 20),
+              const SizedBox(width: 10),
+              const Expanded(
+                child: Text(
+                  'Kop surat adalah fitur Premium. Kamu bisa mencoba mengaturnya '
+                  'sekarang, tapi kop baru bisa dipakai di surat setelah upgrade.',
+                  style:
+                      TextStyle(fontSize: 12, color: kTextPrimary, height: 1.4),
+                ),
+              ),
+              TextButton(
+                onPressed: () => PremiumGate.show(context),
+                child: const Text(
+                  'Upgrade',
+                  style: TextStyle(
+                    color: Color(0xFFD97706),
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
