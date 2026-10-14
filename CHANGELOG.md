@@ -1,4 +1,4 @@
-## 1.7.0 (15) - RELEASED
+## 1.7.0 (16) - RELEASED
 
 * Perbaikan tinggi editor surat (buat & edit) yang mengecil saat keyboard muncul
 * Tombol premium di navbar lebih kecil dengan bayangan lebih tipis agar tidak terpotong
@@ -8,6 +8,7 @@
 * Pencarian dan chip kategori di halaman Surat Tersimpan
 * Pengaturan kop surat kini bisa dibuka & dicoba pengguna gratis (pemakaian di surat tetap Premium)
 * Perbaikan halaman detail surat yang tersendat saat modal premium muncul
+* Logo aplikasi baru untuk launcher icon (termasuk adaptive icon) dan splash screen
 
 ## 1.6.0 (14) - RELEASED
 

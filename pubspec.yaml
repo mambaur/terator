@@ -2,7 +2,7 @@ name: terator
 description: Template Surat Generator.
 
 publish_to: 'none'
-version: 1.7.0+15
+version: 1.7.0+16
 
 environment:
   sdk: '>=2.18.2 <3.0.0'
@@ -47,6 +47,7 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   flutter_launcher_icons: ^0.14.4
   change_app_package_name: ^1.5.0
+  flutter_native_splash: ^2.4.8
 
 flutter:
   uses-material-design: true
@@ -81,3 +82,13 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
+
+# dart run flutter_native_splash:create
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/img/splash.png
+  android_12:
+    color: "#FFFFFF"
+    image: assets/img/splash_android12.png
+    icon_background_color: "#FFFFFF"
+  web: false
